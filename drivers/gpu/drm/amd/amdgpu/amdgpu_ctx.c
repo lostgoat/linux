@@ -35,6 +35,13 @@ static int amdgpu_ctx_init(struct amdgpu_device *adev, int priority, struct amdg
 	if (priority < 0 || priority >= AMD_SCHED_MAX_PRIORITY)
 		return -EINVAL;
 
+	if (priority == AMD_SCHED_PRIORITY_NORMAL)
+		printk("Allocating normal context for %d\n", pid);
+	else if (priority == AMD_SCHED_PRIORITY_HIGH)
+		printk("Allocating high context for %d\n", pid);
+	else
+		printk("Allocating %d context for %d\n", priority, pid);
+
 	if (priority == AMD_SCHED_PRIORITY_HIGH && !capable(CAP_SYS_ADMIN))
 		return -EACCES;
 
