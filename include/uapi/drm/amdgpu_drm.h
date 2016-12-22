@@ -160,10 +160,11 @@ union drm_amdgpu_bo_list {
 /* unknown cause */
 #define AMDGPU_CTX_UNKNOWN_RESET	3
 
+#define AMDGPU_CTX_FLAG_HIGHPRIORITY	(1 << 0)
 struct drm_amdgpu_ctx_in {
 	/** AMDGPU_CTX_OP_* */
 	__u32	op;
-	/** For future use, no flags defined so far */
+	/** AMDGPU_CTX_FLAG_* */
 	__u32	flags;
 	__u32	ctx_id;
 	__u32	_pad;

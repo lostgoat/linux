@@ -25,10 +25,18 @@
 #include <drm/drmP.h>
 #include "amdgpu.h"
 
-static int amdgpu_ctx_init(struct amdgpu_device *adev, struct amdgpu_ctx *ctx)
+static int amdgpu_ctx_init(struct amdgpu_device *adev, int priority, struct amdgpu_ctx *ctx)
 {
 	unsigned i, j;
 	int r;
+
+	int pid = task_pid_nr(current);
+
+	if (priority < 0 || priority >= AMD_SCHED_MAX_PRIORITY)
+		return -EINVAL;
+
+	if (priority == AMD_SCHED_PRIORITY_HIGH && !capable(CAP_SYS_ADMIN))
+		return -EACCES;
 
 	memset(ctx, 0, sizeof(*ctx));
 	ctx->adev = adev;
@@ -51,7 +59,7 @@ static int amdgpu_ctx_init(struct amdgpu_device *adev, struct amdgpu_ctx *ctx)
 		struct amdgpu_ring *ring = adev->rings[i];
 		struct amd_sched_rq *rq;
 
-		rq = &ring->sched.sched_rq[AMD_SCHED_PRIORITY_NORMAL];
+		rq = &ring->sched.sched_rq[priority];
 		r = amd_sched_entity_init(&ring->sched, &ctx->rings[i].entity,
 					  rq, amdgpu_sched_jobs);
 		if (r)
@@ -90,11 +98,15 @@ static void amdgpu_ctx_fini(struct amdgpu_ctx *ctx)
 
 static int amdgpu_ctx_alloc(struct amdgpu_device *adev,
 			    struct amdgpu_fpriv *fpriv,
+			    int flags,
 			    uint32_t *id)
 {
 	struct amdgpu_ctx_mgr *mgr = &fpriv->ctx_mgr;
 	struct amdgpu_ctx *ctx;
-	int r;
+	int r, priority;
+
+	priority = flags & AMDGPU_CTX_FLAG_HIGHPRIORITY ?
+		AMD_SCHED_PRIORITY_HIGH : AMD_SCHED_PRIORITY_NORMAL;
 
 	ctx = kmalloc(sizeof(*ctx), GFP_KERNEL);
 	if (!ctx)
@@ -107,8 +119,9 @@ static int amdgpu_ctx_alloc(struct amdgpu_device *adev,
 		kfree(ctx);
 		return r;
 	}
+
 	*id = (uint32_t)r;
-	r = amdgpu_ctx_init(adev, ctx);
+	r = amdgpu_ctx_init(adev, priority, ctx);
 	if (r) {
 		idr_remove(&mgr->ctx_handles, *id);
 		*id = 0;
@@ -186,7 +199,7 @@ int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 		     struct drm_file *filp)
 {
 	int r;
-	uint32_t id;
+	uint32_t id, flags;
 
 	union drm_amdgpu_ctx *args = data;
 	struct amdgpu_device *adev = dev->dev_private;
@@ -194,10 +207,11 @@ int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 
 	r = 0;
 	id = args->in.ctx_id;
+	flags = args->in.flags;
 
 	switch (args->in.op) {
 	case AMDGPU_CTX_OP_ALLOC_CTX:
-		r = amdgpu_ctx_alloc(adev, fpriv, &id);
+		r = amdgpu_ctx_alloc(adev, fpriv, flags, &id);
 		args->out.alloc.ctx_id = id;
 		break;
 	case AMDGPU_CTX_OP_FREE_CTX:
