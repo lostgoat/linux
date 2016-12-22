@@ -108,6 +108,7 @@ struct amd_sched_backend_ops {
 
 enum amd_sched_priority {
 	AMD_SCHED_PRIORITY_KERNEL = 0,
+	AMD_SCHED_PRIORITY_HIGH,
 	AMD_SCHED_PRIORITY_NORMAL,
 	AMD_SCHED_MAX_PRIORITY
 };
