@@ -25,10 +25,18 @@
 #include <drm/drmP.h>
 #include "amdgpu.h"
 
-static int amdgpu_ctx_init(struct amdgpu_device *adev, struct amdgpu_ctx *ctx)
+static int amdgpu_ctx_init(struct amdgpu_device *adev,
+			   enum amd_sched_priority priority,
+			   struct amdgpu_ctx *ctx)
 {
 	unsigned i, j;
 	int r;
+
+	if (priority < 0 || priority >= AMD_SCHED_MAX_PRIORITY)
+		return -EINVAL;
+
+	if (priority == AMD_SCHED_PRIORITY_HIGH && !capable(CAP_SYS_ADMIN))
+		return -EACCES;
 
 	memset(ctx, 0, sizeof(*ctx));
 	ctx->adev = adev;
@@ -51,7 +59,7 @@ static int amdgpu_ctx_init(struct amdgpu_device *adev, struct amdgpu_ctx *ctx)
 		struct amdgpu_ring *ring = adev->rings[i];
 		struct amd_sched_rq *rq;
 
-		rq = &ring->sched.sched_rq[AMD_SCHED_PRIORITY_NORMAL];
+		rq = &ring->sched.sched_rq[priority];
 		r = amd_sched_entity_init(&ring->sched, &ctx->rings[i].entity,
 					  rq, amdgpu_sched_jobs);
 		if (r)
@@ -96,6 +104,7 @@ static void amdgpu_ctx_fini(struct amdgpu_ctx *ctx)
 
 static int amdgpu_ctx_alloc(struct amdgpu_device *adev,
 			    struct amdgpu_fpriv *fpriv,
+			    enum amd_sched_priority priority,
 			    uint32_t *id)
 {
 	struct amdgpu_ctx_mgr *mgr = &fpriv->ctx_mgr;
@@ -113,8 +122,9 @@ static int amdgpu_ctx_alloc(struct amdgpu_device *adev,
 		kfree(ctx);
 		return r;
 	}
+
 	*id = (uint32_t)r;
-	r = amdgpu_ctx_init(adev, ctx);
+	r = amdgpu_ctx_init(adev, priority, ctx);
 	if (r) {
 		idr_remove(&mgr->ctx_handles, *id);
 		*id = 0;
@@ -184,11 +194,25 @@ static int amdgpu_ctx_query(struct amdgpu_device *adev,
 	return 0;
 }
 
+static enum amd_sched_priority amdgpu_to_sched_priority(int amdgpu_priority)
+{
+	switch (amdgpu_priority) {
+	case AMDGPU_CTX_PRIORITY_HIGH:
+		return AMD_SCHED_PRIORITY_HIGH;
+	case AMDGPU_CTX_PRIORITY_NORMAL:
+		return AMD_SCHED_PRIORITY_NORMAL;
+	default:
+		WARN(1, "Invalid context priority %d\n", amdgpu_priority);
+		return AMD_SCHED_PRIORITY_NORMAL;
+	}
+}
+
 int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 		     struct drm_file *filp)
 {
 	int r;
 	uint32_t id;
+	enum amd_sched_priority priority;
 
 	union drm_amdgpu_ctx *args = data;
 	struct amdgpu_device *adev = dev->dev_private;
@@ -196,10 +220,14 @@ int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 
 	r = 0;
 	id = args->in.ctx_id;
+	priority = amdgpu_to_sched_priority(args->in.priority);
+
+	if (priority >= AMD_SCHED_MAX_PRIORITY)
+		return -EINVAL;
 
 	switch (args->in.op) {
 	case AMDGPU_CTX_OP_ALLOC_CTX:
-		r = amdgpu_ctx_alloc(adev, fpriv, &id);
+		r = amdgpu_ctx_alloc(adev, fpriv, priority, &id);
 		args->out.alloc.ctx_id = id;
 		break;
 	case AMDGPU_CTX_OP_FREE_CTX:

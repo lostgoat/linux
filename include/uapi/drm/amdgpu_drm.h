@@ -160,13 +160,19 @@ union drm_amdgpu_bo_list {
 /* unknown cause */
 #define AMDGPU_CTX_UNKNOWN_RESET	3
 
+/* Context priority level */
+#define AMDGPU_CTX_PRIORITY_NORMAL	0
+/* Selecting a priority above NORMAL requires CAP_SYS_ADMIN */
+#define AMDGPU_CTX_PRIORITY_HIGH	1
+#define AMDGPU_CTX_PRIORITY_NUM		2
+
 struct drm_amdgpu_ctx_in {
 	/** AMDGPU_CTX_OP_* */
 	__u32	op;
 	/** For future use, no flags defined so far */
 	__u32	flags;
 	__u32	ctx_id;
-	__u32	_pad;
+	__u32	priority;
 };
 
 union drm_amdgpu_ctx_out {
