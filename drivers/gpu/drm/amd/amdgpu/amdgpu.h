@@ -671,6 +671,7 @@ struct amdgpu_ctx {
 	spinlock_t		ring_lock;
 	struct dma_fence	**fences;
 	struct amdgpu_ctx_ring	rings[AMDGPU_MAX_RINGS];
+	int			priority;
 	bool preamble_presented;
 };
 
