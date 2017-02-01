@@ -4891,6 +4891,7 @@ static int gfx_v8_0_kiq_queue_init(struct amdgpu_ring *ring,
 				   struct vi_mqd *mqd,
 				   u64 mqd_gpu_addr)
 {
+	int r = 0;
 	struct amdgpu_device *adev = ring->adev;
 	struct amdgpu_kiq *kiq = &adev->gfx.kiq;
 	uint64_t eop_gpu_addr;
@@ -4912,7 +4913,12 @@ static int gfx_v8_0_kiq_queue_init(struct amdgpu_ring *ring,
 	gfx_v8_0_mqd_init(adev, mqd, mqd_gpu_addr, eop_gpu_addr, ring);
 
 	if (is_kiq) {
-		gfx_v8_0_mqd_deactivate(adev);
+		r = gfx_v8_0_mqd_deactivate(adev);
+		if (r) {
+			dev_err(adev->dev, "failed to deactivate ring %s\n", ring->name);
+			goto out_unlock;
+		}
+
 		gfx_v8_0_enable_doorbell(adev, ring->use_doorbell);
 		gfx_v8_0_mqd_commit(adev, mqd);
 	}
@@ -4926,6 +4932,12 @@ static int gfx_v8_0_kiq_queue_init(struct amdgpu_ring *ring,
 		gfx_v8_0_map_queue_enable(&kiq->ring, ring);
 
 	return 0;
+
+out_unlock:
+	vi_srbm_select(adev, 0, 0, 0, 0);
+	mutex_unlock(&adev->srbm_mutex);
+
+	return r;
 }
 
 static void gfx_v8_0_kiq_free_queue(struct amdgpu_device *adev)
@@ -5059,10 +5071,16 @@ static int gfx_v8_0_compute_queue_init(struct amdgpu_device *adev,
 
 	gfx_v8_0_mqd_init(adev, mqd, mqd_gpu_addr, eop_gpu_addr, ring);
 
-	gfx_v8_0_mqd_deactivate(adev);
+	r = gfx_v8_0_mqd_deactivate(adev);
+	if (r) {
+		dev_err(adev->dev, "failed to deactivate ring %s\n", ring->name);
+		goto out_unlock;
+	}
+
 	gfx_v8_0_enable_doorbell(adev, ring->use_doorbell);
 	gfx_v8_0_mqd_commit(adev, mqd);
 
+out_unlock:
 	vi_srbm_select(adev, 0, 0, 0, 0);
 	mutex_unlock(&adev->srbm_mutex);
 
