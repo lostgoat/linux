@@ -4804,7 +4804,7 @@ static void gfx_v8_0_enable_doorbell(struct amdgpu_device *adev, bool enable)
 {
 	uint32_t tmp;
 
-	if (!enable)
+	if (!enable || adev->gfx.doorbell_enabled)
 		return;
 
 	if ((adev->asic_type == CHIP_CARRIZO) ||
@@ -4819,6 +4819,8 @@ static void gfx_v8_0_enable_doorbell(struct amdgpu_device *adev, bool enable)
 	tmp = RREG32(mmCP_PQ_STATUS);
 	tmp = REG_SET_FIELD(tmp, CP_PQ_STATUS, DOORBELL_ENABLE, 1);
 	WREG32(mmCP_PQ_STATUS, tmp);
+
+	adev->gfx.doorbell_enabled = true;
 }
 
 static int gfx_v8_0_mqd_commit(struct amdgpu_device *adev, struct vi_mqd *mqd)
@@ -5115,6 +5117,8 @@ static int gfx_v8_0_cp_compute_resume(struct amdgpu_device *adev)
 static int gfx_v8_0_cp_resume(struct amdgpu_device *adev)
 {
 	int r;
+
+	adev->gfx.doorbell_enabled = false;
 
 	if (!(adev->flags & AMD_IS_APU))
 		gfx_v8_0_enable_gui_idle_interrupt(adev, false);
