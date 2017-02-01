@@ -1075,6 +1075,9 @@ struct amdgpu_gfx {
 	bool                            in_suspend;
 	/* NGG */
 	struct amdgpu_ngg		ngg;
+
+	/* doorbell */
+	bool				doorbell_enabled;
 };
 
 int amdgpu_ib_get(struct amdgpu_device *adev, struct amdgpu_vm *vm,
