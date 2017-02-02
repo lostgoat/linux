@@ -776,9 +776,9 @@ struct amdgpu_rlc {
 struct amdgpu_mec {
 	struct amdgpu_bo	*hpd_eop_obj;
 	u64			hpd_eop_gpu_addr;
-	u32 num_pipe;
 	u32 num_mec;
-	u32 num_queue;
+	u32 num_pipe_per_mec;
+	u32 num_queue_per_pipe;
 };
 
 struct amdgpu_kiq {
