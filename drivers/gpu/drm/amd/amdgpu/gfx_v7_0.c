@@ -2840,7 +2840,7 @@ static void gfx_v7_0_compute_queue_acquire(struct amdgpu_device *adev)
 			break;
 
 		/* policy: amdgpu owns all queues in the first pipe */
-		if (mec == 0 && pipe == 0)
+		if (mec == 0 && queue < 2)
 			set_bit(i, adev->gfx.mec.queue_bitmap);
 	}
 
