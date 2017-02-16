@@ -52,6 +52,51 @@ static int amdgpu_debugfs_ring_init(struct amdgpu_device *adev,
 static void amdgpu_debugfs_ring_fini(struct amdgpu_ring *ring);
 
 /**
+ * amdgpu_ring_is_valid_index - check if a ring idex is valid for a HW IP
+ *
+ * @adev: amdgpu_device pointer
+ * @ip_type: The HW IP to check against
+ * @ring: the ring index
+ *
+ * Check if @ring is a valid index for @ip_type (all asics).
+ * Returns 0 on success, error on failure.
+ */
+int amdgpu_ring_is_valid_index(struct amdgpu_device *adev,
+			       int ip_type, int ring)
+{
+	int ip_num_rings;
+
+	switch (ip_type) {
+	case AMDGPU_HW_IP_GFX:
+		ip_num_rings = adev->gfx.num_gfx_rings;
+		break;
+	case AMDGPU_HW_IP_COMPUTE:
+		ip_num_rings = adev->gfx.num_compute_rings;
+		break;
+	case AMDGPU_HW_IP_DMA:
+		ip_num_rings = adev->sdma.num_instances;
+		break;
+	case AMDGPU_HW_IP_UVD:
+		ip_num_rings = 1;
+		break;
+	case AMDGPU_HW_IP_VCE:
+		ip_num_rings = adev->vce.num_rings;
+		break;
+	default:
+		DRM_ERROR("unknown ip type: %d\n", ip_type);
+		return -EINVAL;
+	}
+
+	if (ring >= ip_num_rings) {
+		DRM_ERROR("Ring index:%d exceeds maximum:%d for ip:%d\n",
+				ring, ip_num_rings, ip_type);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+/**
  * amdgpu_ring_alloc - allocate space on the ring buffer
  *
  * @adev: amdgpu_device pointer

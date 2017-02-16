@@ -185,6 +185,8 @@ struct amdgpu_ring {
 #endif
 };
 
+int amdgpu_ring_is_valid_index(struct amdgpu_device *adev,
+			       int hw_ip, int ring);
 int amdgpu_ring_alloc(struct amdgpu_ring *ring, unsigned ndw);
 void amdgpu_ring_insert_nop(struct amdgpu_ring *ring, uint32_t count);
 void amdgpu_ring_generic_pad_ib(struct amdgpu_ring *ring, struct amdgpu_ib *ib);
