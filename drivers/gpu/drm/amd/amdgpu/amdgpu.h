@@ -49,6 +49,7 @@
 #include <kgd_kfd_interface.h>
 
 #include "amd_shared.h"
+#include "amdgpu_defs.h"
 #include "amdgpu_mode.h"
 #include "amdgpu_ih.h"
 #include "amdgpu_irq.h"
@@ -58,6 +59,7 @@
 #include "amdgpu_gds.h"
 #include "amdgpu_sync.h"
 #include "amdgpu_ring.h"
+#include "amdgpu_queue_mgr.h"
 #include "amdgpu_vm.h"
 #include "amd_powerplay.h"
 #include "amdgpu_dpm.h"
@@ -206,8 +208,6 @@ int amdgpu_wait_for_idle(struct amdgpu_device *adev,
 			 enum amd_ip_block_type block_type);
 bool amdgpu_is_idle(struct amdgpu_device *adev,
 		    enum amd_ip_block_type block_type);
-
-#define AMDGPU_MAX_IP_NUM 16
 
 struct amdgpu_ip_block_status {
 	bool valid;
@@ -785,6 +785,7 @@ struct amdgpu_ctx_ring {
 struct amdgpu_ctx {
 	struct kref		refcount;
 	struct amdgpu_device    *adev;
+	struct amdgpu_queue_mgr queue_mgr;
 	unsigned		reset_counter;
 	spinlock_t		ring_lock;
 	struct dma_fence	**fences;
@@ -1889,9 +1890,6 @@ bool amdgpu_need_post(struct amdgpu_device *adev);
 void amdgpu_update_display_priority(struct amdgpu_device *adev);
 
 int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, void *data);
-int amdgpu_cs_get_ring(struct amdgpu_device *adev, u32 ip_type,
-		       u32 ip_instance, u32 ring,
-		       struct amdgpu_ring **out_ring);
 void amdgpu_cs_report_moved_bytes(struct amdgpu_device *adev, u64 num_bytes);
 void amdgpu_ttm_placement_from_domain(struct amdgpu_bo *abo, u32 domain);
 bool amdgpu_ttm_bo_is_amdgpu_bo(struct ttm_buffer_object *bo);
