@@ -29,60 +29,28 @@
 #include <drm/amdgpu_drm.h>
 #include "amdgpu.h"
 #include "amdgpu_trace.h"
+#include "amdgpu_queue_mgr.h"
 
-int amdgpu_cs_get_ring(struct amdgpu_device *adev, u32 ip_type,
-		       u32 ip_instance, u32 ring,
+int amdgpu_cs_get_ring(struct amdgpu_device *adev,
+		       struct amdgpu_queue_mgr *mgr,
+		       u32 ip_type, u32 ip_instance, u32 user_ring,
 		       struct amdgpu_ring **out_ring)
 {
+	int r;
+
 	/* Right now all IPs have only one instance - multiple rings. */
 	if (ip_instance != 0) {
 		DRM_ERROR("invalid ip instance: %d\n", ip_instance);
 		return -EINVAL;
 	}
 
-	switch (ip_type) {
-	default:
-		DRM_ERROR("unknown ip type: %d\n", ip_type);
-		return -EINVAL;
-	case AMDGPU_HW_IP_GFX:
-		if (ring < adev->gfx.num_gfx_rings) {
-			*out_ring = &adev->gfx.gfx_ring[ring];
-		} else {
-			DRM_ERROR("only %d gfx rings are supported now\n",
-				  adev->gfx.num_gfx_rings);
-			return -EINVAL;
-		}
-		break;
-	case AMDGPU_HW_IP_COMPUTE:
-		if (ring < adev->gfx.num_compute_rings) {
-			*out_ring = &adev->gfx.compute_ring[ring];
-		} else {
-			DRM_ERROR("only %d compute rings are supported now\n",
-				  adev->gfx.num_compute_rings);
-			return -EINVAL;
-		}
-		break;
-	case AMDGPU_HW_IP_DMA:
-		if (ring < adev->sdma.num_instances) {
-			*out_ring = &adev->sdma.instance[ring].ring;
-		} else {
-			DRM_ERROR("only %d SDMA rings are supported\n",
-				  adev->sdma.num_instances);
-			return -EINVAL;
-		}
-		break;
-	case AMDGPU_HW_IP_UVD:
-		*out_ring = &adev->uvd.ring;
-		break;
-	case AMDGPU_HW_IP_VCE:
-		if (ring < adev->vce.num_rings){
-			*out_ring = &adev->vce.ring[ring];
-		} else {
-			DRM_ERROR("only %d VCE rings are supported\n", adev->vce.num_rings);
-			return -EINVAL;
-		}
-		break;
+	r = amdgpu_queue_mgr_map(adev, mgr, ip_type, user_ring, out_ring);
+	if (r) {
+		DRM_ERROR("unable to map userspace ip:%d ring:%d to kernel ring\n",
+				ip_type, user_ring);
+		return r;
 	}
+
 	return 0;
 }
 
@@ -875,7 +843,7 @@ static int amdgpu_cs_ib_fill(struct amdgpu_device *adev,
 		if (chunk->chunk_id != AMDGPU_CHUNK_ID_IB)
 			continue;
 
-		r = amdgpu_cs_get_ring(adev, chunk_ib->ip_type,
+		r = amdgpu_cs_get_ring(adev, &fpriv->queue_mgr, chunk_ib->ip_type,
 				       chunk_ib->ip_instance, chunk_ib->ring,
 				       &ring);
 		if (r)
@@ -979,7 +947,8 @@ static int amdgpu_cs_dependencies(struct amdgpu_device *adev,
 			struct amdgpu_ctx *ctx;
 			struct dma_fence *fence;
 
-			r = amdgpu_cs_get_ring(adev, deps[j].ip_type,
+			r = amdgpu_cs_get_ring(adev, &fpriv->queue_mgr,
+					       deps[j].ip_type,
 					       deps[j].ip_instance,
 					       deps[j].ring, &ring);
 			if (r)
@@ -1106,6 +1075,7 @@ out:
 int amdgpu_cs_wait_ioctl(struct drm_device *dev, void *data,
 			 struct drm_file *filp)
 {
+	struct amdgpu_fpriv *fpriv = filp->driver_priv;
 	union drm_amdgpu_wait_cs *wait = data;
 	struct amdgpu_device *adev = dev->dev_private;
 	unsigned long timeout = amdgpu_gem_timeout(wait->in.timeout);
@@ -1114,7 +1084,8 @@ int amdgpu_cs_wait_ioctl(struct drm_device *dev, void *data,
 	struct dma_fence *fence;
 	long r;
 
-	r = amdgpu_cs_get_ring(adev, wait->in.ip_type, wait->in.ip_instance,
+	r = amdgpu_cs_get_ring(adev, &fpriv->queue_mgr,
+			       wait->in.ip_type, wait->in.ip_instance,
 			       wait->in.ring, &ring);
 	if (r)
 		return r;
@@ -1156,10 +1127,11 @@ static struct dma_fence *amdgpu_cs_get_fence(struct amdgpu_device *adev,
 	struct amdgpu_ring *ring;
 	struct amdgpu_ctx *ctx;
 	struct dma_fence *fence;
+	struct amdgpu_fpriv *fpriv = filp->driver_priv;
 	int r;
 
-	r = amdgpu_cs_get_ring(adev, user->ip_type, user->ip_instance,
-			       user->ring, &ring);
+	r = amdgpu_cs_get_ring(adev, &fpriv->queue_mgr, user->ip_type,
+			       user->ip_instance, user->ring, &ring);
 	if (r)
 		return ERR_PTR(r);
 

@@ -30,6 +30,7 @@
 #include <drm/amdgpu_drm.h>
 #include "amdgpu_uvd.h"
 #include "amdgpu_vce.h"
+#include "amdgpu_queue_mgr.h"
 
 #include <linux/vga_switcheroo.h>
 #include <linux/slab.h>
@@ -665,6 +666,7 @@ int amdgpu_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
 	idr_init(&fpriv->bo_list_handles);
 
 	amdgpu_ctx_mgr_init(&fpriv->ctx_mgr);
+	amdgpu_queue_mgr_init(adev, &fpriv->queue_mgr);
 
 	file_priv->driver_priv = fpriv;
 
@@ -694,6 +696,7 @@ void amdgpu_driver_postclose_kms(struct drm_device *dev,
 	if (!fpriv)
 		return;
 
+	amdgpu_queue_mgr_fini(adev, &fpriv->queue_mgr);
 	amdgpu_ctx_mgr_fini(&fpriv->ctx_mgr);
 
 	amdgpu_uvd_free_handles(adev, file_priv);

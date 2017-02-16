@@ -696,6 +696,22 @@ void amdgpu_ctx_mgr_init(struct amdgpu_ctx_mgr *mgr);
 void amdgpu_ctx_mgr_fini(struct amdgpu_ctx_mgr *mgr);
 
 /*
+ * Queue manager related structures
+ */
+struct amdgpu_queue_mapper;
+
+struct amdgpu_queue_mapper {
+	int 		hw_ip;
+	struct mutex	lock;
+	/* protected by lock */
+	struct amdgpu_ring *queue_map[AMDGPU_MAX_RINGS];
+};
+
+struct amdgpu_queue_mgr {
+	struct amdgpu_queue_mapper mapper[AMDGPU_MAX_IP_NUM];
+};
+
+/*
  * file private structure
  */
 
@@ -704,6 +720,7 @@ struct amdgpu_fpriv {
 	struct mutex		bo_list_lock;
 	struct idr		bo_list_handles;
 	struct amdgpu_ctx_mgr	ctx_mgr;
+	struct amdgpu_queue_mgr queue_mgr;
 };
 
 /*
@@ -1730,8 +1747,9 @@ bool amdgpu_need_post(struct amdgpu_device *adev);
 void amdgpu_update_display_priority(struct amdgpu_device *adev);
 
 int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, void *data);
-int amdgpu_cs_get_ring(struct amdgpu_device *adev, u32 ip_type,
-		       u32 ip_instance, u32 ring,
+int amdgpu_cs_get_ring(struct amdgpu_device *adev,
+		       struct amdgpu_queue_mgr *mgr,
+		       u32 ip_type, u32 ip_instance, u32 user_ring,
 		       struct amdgpu_ring **out_ring);
 void amdgpu_cs_report_moved_bytes(struct amdgpu_device *adev, u64 num_bytes);
 void amdgpu_ttm_placement_from_domain(struct amdgpu_bo *abo, u32 domain);
