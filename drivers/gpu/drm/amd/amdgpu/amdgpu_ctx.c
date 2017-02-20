@@ -32,7 +32,7 @@ static int amdgpu_ctx_init(struct amdgpu_device *adev,
 	unsigned i, j;
 	int r;
 
-	if (priority < 0 || priority >= AMD_SCHED_MAX_PRIORITY)
+	if (priority < 0 || priority >= AMD_SCHED_PRIORITY_MAX)
 		return -EINVAL;
 
 	if (priority == AMD_SCHED_PRIORITY_HIGH && !capable(CAP_SYS_ADMIN))
@@ -222,7 +222,7 @@ int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 	id = args->in.ctx_id;
 	priority = amdgpu_to_sched_priority(args->in.priority);
 
-	if (priority >= AMD_SCHED_MAX_PRIORITY)
+	if (priority >= AMD_SCHED_PRIORITY_MAX)
 		return -EINVAL;
 
 	switch (args->in.op) {

@@ -95,6 +95,7 @@ static void amdgpu_job_free_cb(struct amd_sched_job *s_job)
 {
 	struct amdgpu_job *job = container_of(s_job, struct amdgpu_job, base);
 
+	amdgpu_ring_priority_put(job->ring, amd_sched_get_job_priority(s_job));
 	dma_fence_put(job->fence);
 	amdgpu_sync_free(&job->sync);
 	kfree(job);
@@ -169,6 +170,11 @@ static struct dma_fence *amdgpu_job_run(struct amd_sched_job *sched_job)
 
 	BUG_ON(amdgpu_sync_peek_fence(&job->sync, NULL));
 
+	r = amdgpu_ring_priority_get(job->ring,
+				     amd_sched_get_job_priority(&job->base));
+	if (r)
+		DRM_ERROR("Failed to set job priority (%d)\n", r);
+
 	trace_amdgpu_sched_run_job(job);
 	r = amdgpu_ib_schedule(job->ring, job->num_ibs, job->ibs, job, &fence);
 	if (r)
@@ -177,6 +183,7 @@ static struct dma_fence *amdgpu_job_run(struct amd_sched_job *sched_job)
 	/* if gpu reset, hw fence will be replaced here */
 	dma_fence_put(job->fence);
 	job->fence = dma_fence_get(fence);
+
 	amdgpu_job_free_resources(job);
 	return fence;
 }
