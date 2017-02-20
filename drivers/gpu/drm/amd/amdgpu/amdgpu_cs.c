@@ -1102,6 +1102,8 @@ static int amdgpu_cs_submit(struct amdgpu_cs_parser *p,
 	job->uf_sequence = cs->out.handle;
 	amdgpu_job_free_resources(job);
 	amdgpu_cs_parser_fini(p, 0, true);
+	amdgpu_ring_priority_get(job->ring,
+				 amd_sched_get_job_priority(&job->base));
 
 	trace_amdgpu_cs_ioctl(job);
 	amd_sched_entity_push_job(&job->base);
