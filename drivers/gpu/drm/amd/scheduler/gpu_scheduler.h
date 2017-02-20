@@ -159,4 +159,11 @@ int amd_sched_job_init(struct amd_sched_job *job,
 		       void *owner);
 void amd_sched_hw_job_reset(struct amd_gpu_scheduler *sched);
 void amd_sched_job_recovery(struct amd_gpu_scheduler *sched);
+
+static inline enum amd_sched_priority
+amd_sched_get_job_priority(struct amd_sched_job *job)
+{
+	return (job->s_entity->rq - job->sched->sched_rq);
+}
+
 #endif
