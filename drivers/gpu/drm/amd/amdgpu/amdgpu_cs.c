@@ -186,7 +186,7 @@ int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, void *data)
 		}
 	}
 
-	ret = amdgpu_job_alloc(p->adev, num_ibs, &p->job, vm);
+	ret = amdgpu_job_alloc(p->adev, num_ibs, p->ctx->priority, &p->job, vm);
 	if (ret)
 		goto free_all_kdata;
 

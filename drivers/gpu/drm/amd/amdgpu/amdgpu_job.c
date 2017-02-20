@@ -39,7 +39,7 @@ static void amdgpu_job_timedout(struct amd_sched_job *s_job)
 	amdgpu_gpu_reset(job->adev);
 }
 
-int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs,
+int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs, int priority,
 		     struct amdgpu_job **job, struct amdgpu_vm *vm)
 {
 	size_t size = sizeof(struct amdgpu_job);
@@ -55,6 +55,7 @@ int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs,
 
 	(*job)->adev = adev;
 	(*job)->vm = vm;
+	(*job)->priority = priority;
 	(*job)->ibs = (void *)&(*job)[1];
 	(*job)->num_ibs = num_ibs;
 
@@ -68,7 +69,7 @@ int amdgpu_job_alloc_with_ib(struct amdgpu_device *adev, unsigned size,
 {
 	int r;
 
-	r = amdgpu_job_alloc(adev, 1, job, NULL);
+	r = amdgpu_job_alloc(adev, 1, AMD_SCHED_PRIORITY_NORMAL, job, NULL);
 	if (r)
 		return r;
 
@@ -169,6 +170,10 @@ static struct dma_fence *amdgpu_job_run(struct amd_sched_job *sched_job)
 
 	BUG_ON(amdgpu_sync_peek_fence(&job->sync, NULL));
 
+	r = amdgpu_ring_elevate_priority(job->ring, job->priority, job);
+	if (r)
+		DRM_ERROR("Failed to set job priority (%d)\n", r);
+
 	trace_amdgpu_sched_run_job(job);
 	r = amdgpu_ib_schedule(job->ring, job->num_ibs, job->ibs, job, &fence);
 	if (r)
@@ -177,6 +182,7 @@ static struct dma_fence *amdgpu_job_run(struct amd_sched_job *sched_job)
 	/* if gpu reset, hw fence will be replaced here */
 	dma_fence_put(job->fence);
 	job->fence = dma_fence_get(fence);
+
 	amdgpu_job_free_resources(job);
 	return fence;
 }

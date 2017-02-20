@@ -24,6 +24,7 @@
 #ifndef __AMDGPU_RING_H__
 #define __AMDGPU_RING_H__
 
+#include <drm/amdgpu_drm.h>
 #include "gpu_scheduler.h"
 
 /* max number of rings */
@@ -137,6 +138,8 @@ struct amdgpu_ring_funcs {
 	void (*emit_cntxcntl) (struct amdgpu_ring *ring, uint32_t flags);
 	void (*emit_rreg)(struct amdgpu_ring *ring, uint32_t reg);
 	void (*emit_wreg)(struct amdgpu_ring *ring, uint32_t reg, uint32_t val);
+	/* priority functions */
+	void (*set_priority) (struct amdgpu_ring *ring, int priority);
 };
 
 struct amdgpu_ring {
@@ -171,6 +174,12 @@ struct amdgpu_ring {
 	unsigned		cond_exe_offs;
 	u64			cond_exe_gpu_addr;
 	volatile u32		*cond_exe_cpu_addr;
+
+	spinlock_t		priority_lock;
+	/* protected by priority_lock */
+	struct amdgpu_job 	*last_job[AMD_SCHED_MAX_PRIORITY];
+	int			priority;
+
 #if defined(CONFIG_DEBUG_FS)
 	struct dentry *ent;
 #endif
@@ -183,6 +192,8 @@ void amdgpu_ring_insert_nop(struct amdgpu_ring *ring, uint32_t count);
 void amdgpu_ring_generic_pad_ib(struct amdgpu_ring *ring, struct amdgpu_ib *ib);
 void amdgpu_ring_commit(struct amdgpu_ring *ring);
 void amdgpu_ring_undo(struct amdgpu_ring *ring);
+int amdgpu_ring_elevate_priority(struct amdgpu_ring *ring, int priority,
+				 struct amdgpu_job *job);
 int amdgpu_ring_init(struct amdgpu_device *adev, struct amdgpu_ring *ring,
 		     unsigned ring_size, struct amdgpu_irq_src *irq_src,
 		     unsigned irq_type);

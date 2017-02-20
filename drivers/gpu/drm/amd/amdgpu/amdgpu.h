@@ -643,7 +643,7 @@ struct amdgpu_ib {
 
 extern const struct amd_sched_backend_ops amdgpu_sched_ops;
 
-int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs,
+int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs, int priority,
 		     struct amdgpu_job **job, struct amdgpu_vm *vm);
 int amdgpu_job_alloc_with_ib(struct amdgpu_device *adev, unsigned size,
 			     struct amdgpu_job **job);
@@ -988,6 +988,8 @@ struct amdgpu_job {
 	struct amdgpu_sync	sync;
 	struct amdgpu_ib	*ibs;
 	struct dma_fence	*fence; /* the hw fence */
+	struct dma_fence_cb	cb;
+	int			priority;
 	uint32_t		preamble_status;
 	uint32_t		num_ibs;
 	void			*owner;
