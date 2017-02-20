@@ -200,6 +200,86 @@ void amdgpu_ring_undo(struct amdgpu_ring *ring)
 }
 
 /**
+ * amdgpu_ring_restore_priority - restore a ring's priority
+ *
+ * @job: job which completed execution
+ *
+ * If necessary, restore a ring's priority after a job finishes executing
+ */
+void amdgpu_ring_restore_priority(struct amdgpu_job *job)
+{
+	int i;
+	struct amdgpu_ring *ring = job->ring;
+	enum amd_sched_priority job_priority;
+
+	if (!ring->funcs->set_priority)
+		return;
+
+	job_priority = amd_sched_get_job_priority(&job->base);
+	if (atomic_dec_return(&ring->num_jobs[job_priority]) > 0)
+		return;
+
+	/* no need to restore if the job is already at the lowest priority */
+	if (job_priority == AMD_SCHED_PRIORITY_NORMAL)
+		return;
+
+	spin_lock(&ring->priority_lock);
+	/* something higher prio is executing, no need to decay */
+	if (ring->priority < job_priority)
+		goto out_unlock;
+
+	/* decay priority to the next level with a job available */
+	for (i = job_priority; i < AMD_SCHED_MAX_PRIORITY; i++) {
+		if (i == AMD_SCHED_PRIORITY_NORMAL
+				|| atomic_read(&ring->num_jobs[i])) {
+			ring->priority = i;
+			ring->funcs->set_priority(ring, i);
+			break;
+		}
+	}
+
+out_unlock:
+	spin_unlock(&ring->priority_lock);
+}
+
+/**
+ * amdgpu_ring_elevate_priority - change the ring's priority
+ *
+ * @ring: amdgpu_ring structure holding the information
+ * @priority: target priority
+ * @job: priority should remain elevated for the duration of this job
+ *
+ * Use HW specific mechanism's to elevate the ring's priority while @job
+ * is executing. Once @job finishes executing, the ring will reset back
+ * to normal priority.
+ * Returns 0 on success, error otherwise
+ */
+int amdgpu_ring_elevate_priority(struct amdgpu_ring *ring,
+				 enum amd_sched_priority priority,
+				 struct amdgpu_job *job)
+{
+	if (priority < 0 || priority >= AMD_SCHED_MAX_PRIORITY)
+		return -EINVAL;
+
+	if (!ring->funcs->set_priority)
+		return 0;
+
+	atomic_inc(&ring->num_jobs[priority]);
+
+	/* lower number means higher priority */
+	spin_lock(&ring->priority_lock);
+	if (priority >= ring->priority)
+		goto out_unlock;
+
+	ring->priority = priority;
+	ring->funcs->set_priority(ring, priority);
+
+out_unlock:
+	spin_unlock(&ring->priority_lock);
+	return 0;
+}
+
+/**
  * amdgpu_ring_init - init driver ring struct.
  *
  * @adev: amdgpu_device pointer
@@ -281,6 +361,8 @@ int amdgpu_ring_init(struct amdgpu_device *adev, struct amdgpu_ring *ring,
 	}
 	ring->ptr_mask = (ring->ring_size / 4) - 1;
 	ring->max_dw = max_dw;
+	ring->priority = AMD_SCHED_PRIORITY_NORMAL;
+	spin_lock_init(&ring->priority_lock);
 	INIT_LIST_HEAD(&ring->lru_list);
 	amdgpu_ring_lru_touch(adev, ring);
 
