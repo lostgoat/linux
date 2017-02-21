@@ -53,7 +53,10 @@
 
 #define GFX8_NUM_GFX_RINGS     1
 #define GFX8_MEC_HPD_SIZE 2048
-
+#define GFX8_CU_RESERVE_RESOURCES 0x45888
+#define GFX8_CU_NUM 8
+#define GFX8_UNRESERVED_CU_NUM 2
+#define GFX8_CU_RESERVE_PIPE_SHIFT 7
 
 #define TOPAZ_GB_ADDR_CONFIG_GOLDEN 0x22010001
 #define CARRIZO_GB_ADDR_CONFIG_GOLDEN 0x22010001
@@ -6696,6 +6699,96 @@ static void gfx_v8_0_ring_set_wptr_compute(struct amdgpu_ring *ring)
 	WDOORBELL32(ring->doorbell_index, lower_32_bits(ring->wptr));
 }
 
+static void gfx_v8_0_cu_reserve(struct amdgpu_device *adev,
+				struct amdgpu_ring *ring, bool acquire)
+{
+	int i, resources;
+	int tmp = 0, queue_mask = 0, type_mask = 0;
+	int reserve_res_reg, reserve_en_reg;
+
+	/* gfx_v8_0_cu_reserve only supports compute path */
+	if (ring->funcs->type != AMDGPU_RING_TYPE_COMPUTE)
+		return;
+
+	spin_lock(&adev->gfx.cu_reserve_lock);
+	if (acquire) {
+		adev->gfx.cu_reserve_pipe_mask |= (1 << ring->pipe);
+		adev->gfx.cu_reserve_queue_mask[ring->pipe] |= (1 << ring->queue);
+	} else {
+		adev->gfx.cu_reserve_pipe_mask &= ~(1 << ring->pipe);
+		adev->gfx.cu_reserve_queue_mask[ring->pipe] &= ~(1 << ring->queue);
+	}
+
+	/* compute pipe 0 starts at GFX8_CU_RESERVE_PIPE_SHIFT */
+	type_mask = (adev->gfx.cu_reserve_pipe_mask << GFX8_CU_RESERVE_PIPE_SHIFT);
+
+	/* HW only has one register for queue mask, so we collaspse them */
+	for (i = 0; i < AMDGPU_MAX_COMPUTE_RINGS; i++)
+		queue_mask |= adev->gfx.cu_reserve_queue_mask[i];
+
+	/* leave the first CUs for general processing */
+	for (i = GFX8_UNRESERVED_CU_NUM; i < GFX8_CU_NUM; i++) {
+		reserve_res_reg = mmSPI_RESOURCE_RESERVE_CU_0 + i;
+		reserve_en_reg = mmSPI_RESOURCE_RESERVE_EN_CU_0 + i;
+
+		tmp = REG_SET_FIELD(tmp, SPI_RESOURCE_RESERVE_EN_CU_0,
+				    TYPE_MASK, type_mask);
+		tmp = REG_SET_FIELD(tmp, SPI_RESOURCE_RESERVE_EN_CU_0,
+				    QUEUE_MASK, queue_mask);
+		if (queue_mask) {
+			resources = GFX8_CU_RESERVE_RESOURCES;
+			tmp = REG_SET_FIELD(tmp, SPI_RESOURCE_RESERVE_EN_CU_0,
+					    EN, 1);
+		} else {
+			resources = 0;
+			tmp = REG_SET_FIELD(tmp, SPI_RESOURCE_RESERVE_EN_CU_0,
+					    EN, 0);
+		}
+		/* Commit */
+		WREG32(reserve_res_reg, resources);
+		WREG32(reserve_en_reg, tmp);
+	}
+
+	spin_unlock(&adev->gfx.cu_reserve_lock);
+}
+
+static void gfx_v8_0_set_spi_priority(struct amdgpu_device *adev,
+				      struct amdgpu_ring *ring,
+				      enum amd_sched_priority priority)
+{
+	spin_lock(&adev->srbm_lock);
+	vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
+
+	switch (priority) {
+	case AMD_SCHED_PRIORITY_NORMAL:
+		WREG32(mmCP_HQD_PIPE_PRIORITY, 0x0);
+		WREG32(mmCP_HQD_QUEUE_PRIORITY, 0x0);
+		break;
+	case AMD_SCHED_PRIORITY_HIGH:
+		WREG32(mmCP_HQD_PIPE_PRIORITY, 0x2);
+		WREG32(mmCP_HQD_QUEUE_PRIORITY, 0xf);
+		break;
+	default:
+		WARN(1, "Attempt to set invalid SPI priority:%d for ring:%d\n",
+				priority, ring->idx);
+		break;
+	}
+
+	vi_srbm_select(adev, 0, 0, 0, 0);
+	spin_unlock(&adev->srbm_lock);
+}
+static void gfx_v8_0_ring_set_priority_compute(struct amdgpu_ring *ring,
+					       enum amd_sched_priority priority)
+{
+	struct amdgpu_device *adev = ring->adev;
+
+	if (ring->funcs->type != AMDGPU_RING_TYPE_COMPUTE)
+		return;
+
+	gfx_v8_0_set_spi_priority(adev, ring, priority);
+	gfx_v8_0_cu_reserve(adev, ring, priority == AMD_SCHED_PRIORITY_HIGH);
+}
+
 static void gfx_v8_0_ring_emit_fence_compute(struct amdgpu_ring *ring,
 					     u64 addr, u64 seq,
 					     unsigned flags)
@@ -7142,6 +7235,7 @@ static const struct amdgpu_ring_funcs gfx_v8_0_ring_funcs_compute = {
 	.test_ib = gfx_v8_0_ring_test_ib,
 	.insert_nop = amdgpu_ring_insert_nop,
 	.pad_ib = amdgpu_ring_generic_pad_ib,
+	.set_priority = gfx_v8_0_ring_set_priority_compute,
 };
 
 static const struct amdgpu_ring_funcs gfx_v8_0_ring_funcs_kiq = {

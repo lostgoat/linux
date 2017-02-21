@@ -1088,6 +1088,9 @@ struct amdgpu_gfx {
 	unsigned			num_gfx_rings;
 	struct amdgpu_ring		compute_ring[AMDGPU_MAX_COMPUTE_RINGS];
 	unsigned			num_compute_rings;
+	spinlock_t			cu_reserve_lock;
+	uint32_t			cu_reserve_pipe_mask;
+	uint32_t			cu_reserve_queue_mask[AMDGPU_MAX_COMPUTE_RINGS];
 	struct amdgpu_irq_src		eop_irq;
 	struct amdgpu_irq_src		priv_reg_irq;
 	struct amdgpu_irq_src		priv_inst_irq;
