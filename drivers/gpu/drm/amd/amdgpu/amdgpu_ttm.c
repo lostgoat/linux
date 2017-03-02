@@ -1280,7 +1280,7 @@ int amdgpu_copy_buffer(struct amdgpu_ring *ring,
 				     AMDGPU_FENCE_OWNER_UNDEFINED);
 		if (r) {
 			DRM_ERROR("sync failed (%d).\n", r);
-			goto error_free;
+			goto out_unref;
 		}
 	}
 
@@ -1301,20 +1301,21 @@ int amdgpu_copy_buffer(struct amdgpu_ring *ring,
 		r = amdgpu_ib_schedule(ring, job->num_ibs, job->ibs,
 				       NULL, fence);
 		job->fence = dma_fence_get(*fence);
-		if (r)
+		if (r) {
 			DRM_ERROR("Error scheduling IBs (%d)\n", r);
-		amdgpu_job_free(job);
+			goto out_unref;
+		}
 	} else {
 		r = amdgpu_job_submit(job, ring, &adev->mman.entity,
 				      AMDGPU_FENCE_OWNER_UNDEFINED, fence);
-		if (r)
-			goto error_free;
+		if (r) {
+			DRM_ERROR("Error submitting job (%d)\n", r);
+			goto out_unref;
+		}
 	}
 
-	return r;
-
-error_free:
-	amdgpu_job_free(job);
+out_unref:
+	amdgpu_job_put(&job);
 	return r;
 }
 
@@ -1363,7 +1364,7 @@ int amdgpu_fill_buffer(struct amdgpu_bo *bo,
 				     AMDGPU_FENCE_OWNER_UNDEFINED);
 		if (r) {
 			DRM_ERROR("sync failed (%d).\n", r);
-			goto error_free;
+			goto out_unref;
 		}
 	}
 
@@ -1398,12 +1399,10 @@ int amdgpu_fill_buffer(struct amdgpu_bo *bo,
 	r = amdgpu_job_submit(job, ring, &adev->mman.entity,
 			      AMDGPU_FENCE_OWNER_UNDEFINED, fence);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
-	return 0;
-
-error_free:
-	amdgpu_job_free(job);
+out_unref:
+	amdgpu_job_put(&job);
 	return r;
 }
 

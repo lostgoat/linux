@@ -53,6 +53,7 @@ int amdgpu_job_alloc(struct amdgpu_device *adev, unsigned num_ibs, int priority,
 	if (!*job)
 		return -ENOMEM;
 
+	kref_init(&(*job)->refcount);
 	(*job)->adev = adev;
 	(*job)->vm = vm;
 	(*job)->priority = priority;
@@ -96,18 +97,31 @@ static void amdgpu_job_free_cb(struct amd_sched_job *s_job)
 {
 	struct amdgpu_job *job = container_of(s_job, struct amdgpu_job, base);
 
-	dma_fence_put(job->fence);
-	amdgpu_sync_free(&job->sync);
-	kfree(job);
+	amdgpu_job_put(&job);
 }
 
-void amdgpu_job_free(struct amdgpu_job *job)
+static void amdgpu_job_free(struct kref *ref)
 {
+	struct amdgpu_job *job;
+	job = container_of(ref, struct amdgpu_job, refcount);
+
 	amdgpu_job_free_resources(job);
 
 	dma_fence_put(job->fence);
 	amdgpu_sync_free(&job->sync);
 	kfree(job);
+}
+
+struct amdgpu_job *amdgpu_job_get(struct amdgpu_job *job)
+{
+	kref_get(&job->refcount);
+	return job;
+}
+
+void amdgpu_job_put(struct amdgpu_job **job)
+{
+	kref_put(&(*job)->refcount, amdgpu_job_free);
+	(*job) = NULL;
 }
 
 int amdgpu_job_submit(struct amdgpu_job *job, struct amdgpu_ring *ring,
@@ -128,6 +142,8 @@ int amdgpu_job_submit(struct amdgpu_job *job, struct amdgpu_ring *ring,
 	job->fence_ctx = entity->fence_context;
 	*f = dma_fence_get(&job->base.s_fence->finished);
 	amdgpu_job_free_resources(job);
+
+	amdgpu_job_get(job);
 	amd_sched_entity_push_job(&job->base);
 
 	return 0;

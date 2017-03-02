@@ -649,7 +649,8 @@ int amdgpu_job_alloc_with_ib(struct amdgpu_device *adev, unsigned size,
 			     struct amdgpu_job **job);
 
 void amdgpu_job_free_resources(struct amdgpu_job *job);
-void amdgpu_job_free(struct amdgpu_job *job);
+struct amdgpu_job *amdgpu_job_get(struct amdgpu_job *job);
+void amdgpu_job_put(struct amdgpu_job **job);
 int amdgpu_job_submit(struct amdgpu_job *job, struct amdgpu_ring *ring,
 		      struct amd_sched_entity *entity, void *owner,
 		      struct dma_fence **f);
@@ -982,6 +983,7 @@ struct amdgpu_cs_parser {
 
 struct amdgpu_job {
 	struct amd_sched_job    base;
+	struct kref		refcount;
 	struct amdgpu_device	*adev;
 	struct amdgpu_vm	*vm;
 	struct amdgpu_ring	*ring;

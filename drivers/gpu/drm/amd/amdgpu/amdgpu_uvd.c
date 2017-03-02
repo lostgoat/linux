@@ -980,8 +980,6 @@ static int amdgpu_uvd_send_msg(struct amdgpu_ring *ring, struct amdgpu_bo *bo,
 		job->fence = dma_fence_get(f);
 		if (r)
 			goto err_free;
-
-		amdgpu_job_free(job);
 	} else {
 		r = amdgpu_job_submit(job, ring, &adev->uvd.entity,
 				      AMDGPU_FENCE_OWNER_UNDEFINED, &f);
@@ -995,12 +993,12 @@ static int amdgpu_uvd_send_msg(struct amdgpu_ring *ring, struct amdgpu_bo *bo,
 		*fence = dma_fence_get(f);
 	amdgpu_bo_unref(&bo);
 	dma_fence_put(f);
+	amdgpu_job_put(&job);
 
 	return 0;
 
 err_free:
-	amdgpu_job_free(job);
-
+	amdgpu_job_put(&job);
 err:
 	ttm_eu_backoff_reservation(&ticket, &head);
 	return r;

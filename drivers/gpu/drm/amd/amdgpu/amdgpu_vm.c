@@ -668,7 +668,7 @@ int amdgpu_vm_update_page_directory(struct amdgpu_device *adev,
 	}
 
 	if (params.ib->length_dw == 0) {
-		amdgpu_job_free(job);
+		amdgpu_job_put(&job);
 		return 0;
 	}
 
@@ -683,17 +683,15 @@ int amdgpu_vm_update_page_directory(struct amdgpu_device *adev,
 	r = amdgpu_job_submit(job, ring, &vm->entity,
 			      AMDGPU_FENCE_OWNER_VM, &fence);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
 	amdgpu_bo_fence(vm->page_directory, fence, true);
 	dma_fence_put(vm->page_directory_fence);
 	vm->page_directory_fence = dma_fence_get(fence);
 	dma_fence_put(fence);
 
-	return 0;
-
-error_free:
-	amdgpu_job_free(job);
+out_unref:
+	amdgpu_job_put(&job);
 	return r;
 }
 
@@ -965,16 +963,16 @@ static int amdgpu_vm_bo_update_mapping(struct amdgpu_device *adev,
 
 	r = amdgpu_sync_fence(adev, &job->sync, exclusive);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
 	r = amdgpu_sync_resv(adev, &job->sync, vm->page_directory->tbo.resv,
 			     owner);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
 	r = reservation_object_reserve_shared(vm->page_directory->tbo.resv);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
 	params.shadow = true;
 	amdgpu_vm_frag_ptes(&params, vm, start, last + 1, addr, flags);
@@ -986,7 +984,7 @@ static int amdgpu_vm_bo_update_mapping(struct amdgpu_device *adev,
 	r = amdgpu_job_submit(job, ring, &vm->entity,
 			      AMDGPU_FENCE_OWNER_VM, &f);
 	if (r)
-		goto error_free;
+		goto out_unref;
 
 	amdgpu_bo_fence(vm->page_directory, f, true);
 	if (fence) {
@@ -994,10 +992,9 @@ static int amdgpu_vm_bo_update_mapping(struct amdgpu_device *adev,
 		*fence = dma_fence_get(f);
 	}
 	dma_fence_put(f);
-	return 0;
 
-error_free:
-	amdgpu_job_free(job);
+out_unref:
+	amdgpu_job_put(&job);
 	return r;
 }
 

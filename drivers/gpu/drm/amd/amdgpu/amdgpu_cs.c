@@ -714,7 +714,7 @@ static void amdgpu_cs_parser_fini(struct amdgpu_cs_parser *parser, int error, bo
 		drm_free_large(parser->chunks[i].kdata);
 	kfree(parser->chunks);
 	if (parser->job)
-		amdgpu_job_free(parser->job);
+		amdgpu_job_put(&parser->job);
 	amdgpu_bo_unref(&parser->uf_entry.robj);
 }
 
@@ -988,11 +988,10 @@ static int amdgpu_cs_submit(struct amdgpu_cs_parser *p,
 	int r;
 
 	job = p->job;
-	p->job = NULL;
 
 	r = amd_sched_job_init(&job->base, &ring->sched, entity, p->filp);
 	if (r) {
-		amdgpu_job_free(job);
+		amdgpu_job_put(&job);
 		return r;
 	}
 
@@ -1004,6 +1003,7 @@ static int amdgpu_cs_submit(struct amdgpu_cs_parser *p,
 	amdgpu_job_free_resources(job);
 
 	trace_amdgpu_cs_ioctl(job);
+	amdgpu_job_get(job);
 	amd_sched_entity_push_job(&job->base);
 
 	return 0;
