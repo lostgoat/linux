@@ -389,7 +389,7 @@ static int cik_sdma_gfx_resume(struct amdgpu_device *adev)
 		ring = &adev->sdma.instance[i].ring;
 		wb_offset = (ring->rptr_offs * 4);
 
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		for (j = 0; j < 16; j++) {
 			cik_srbm_select(adev, 0, 0, 0, j);
 			/* SDMA GFX */
@@ -398,7 +398,7 @@ static int cik_sdma_gfx_resume(struct amdgpu_device *adev)
 			/* XXX SDMA RLC - todo */
 		}
 		cik_srbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 
 		WREG32(mmSDMA0_TILING_CONFIG + sdma_offsets[i],
 		       adev->gfx.config.gb_addr_config & 0x70);

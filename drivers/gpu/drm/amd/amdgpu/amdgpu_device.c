@@ -1872,7 +1872,7 @@ int amdgpu_device_init(struct amdgpu_device *adev,
 	mutex_init(&adev->firmware.mutex);
 	mutex_init(&adev->pm.mutex);
 	mutex_init(&adev->gfx.gpu_clock_mutex);
-	mutex_init(&adev->srbm_mutex);
+	spin_lock_init(&adev->srbm_lock);
 	mutex_init(&adev->grbm_idx_mutex);
 	mutex_init(&adev->mn_lock);
 	hash_init(adev->mn_hash);

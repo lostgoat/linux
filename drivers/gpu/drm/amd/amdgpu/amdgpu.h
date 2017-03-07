@@ -1499,7 +1499,7 @@ struct amdgpu_device {
 #endif
 	struct amdgpu_atif		atif;
 	struct amdgpu_atcs		atcs;
-	struct mutex			srbm_mutex;
+	spinlock_t			srbm_lock;
 	/* GRBM index mutex. Protects concurrent access to GRBM index */
 	struct mutex                    grbm_idx_mutex;
 	struct dev_pm_domain		vga_pm_domain;
