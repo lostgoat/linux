@@ -3943,7 +3943,7 @@ static void gfx_v8_0_init_compute_vmid(struct amdgpu_device *adev)
 			MTYPE_CC << SH_MEM_CONFIG__DEFAULT_MTYPE__SHIFT |
 			SH_MEM_CONFIG__PRIVATE_ATC_MASK;
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	for (i = FIRST_COMPUTE_VMID; i < LAST_COMPUTE_VMID; i++) {
 		vi_srbm_select(adev, 0, 0, 0, i);
 		/* CP and shaders */
@@ -3953,7 +3953,7 @@ static void gfx_v8_0_init_compute_vmid(struct amdgpu_device *adev)
 		WREG32(mmSH_MEM_BASES, sh_mem_bases);
 	}
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static void gfx_v8_0_config_init(struct amdgpu_device *adev)
@@ -3992,7 +3992,7 @@ static void gfx_v8_0_gpu_init(struct amdgpu_device *adev)
 				   ELEMENT_SIZE, 1);
 	sh_static_mem_cfg = REG_SET_FIELD(sh_static_mem_cfg, SH_STATIC_MEM_CONFIG,
 				   INDEX_STRIDE, 3);
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	for (i = 0; i < adev->vm_manager.num_ids; i++) {
 		vi_srbm_select(adev, 0, 0, 0, i);
 		/* CP and shaders */
@@ -4018,7 +4018,7 @@ static void gfx_v8_0_gpu_init(struct amdgpu_device *adev)
 		WREG32(mmSH_STATIC_MEM_CONFIG, sh_static_mem_cfg);
 	}
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 
 	gfx_v8_0_init_compute_vmid(adev);
 
@@ -5149,7 +5149,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
 		ring->wptr = 0;
 		amdgpu_ring_clear_ring(ring);
 
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 		r = gfx_v8_0_mqd_deactivate(adev);
 		if (r) {
@@ -5159,9 +5159,9 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
 		gfx_v8_0_enable_doorbell(adev, ring->use_doorbell);
 		gfx_v8_0_mqd_commit(adev, mqd);
 		vi_srbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 	} else {
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 		gfx_v8_0_mqd_init(ring);
 		r = gfx_v8_0_mqd_deactivate(adev);
@@ -5172,7 +5172,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
 		gfx_v8_0_enable_doorbell(adev, ring->use_doorbell);
 		gfx_v8_0_mqd_commit(adev, mqd);
 		vi_srbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 
 		if (adev->gfx.mec.mqd_backup[mqd_idx])
 			memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(*mqd));
@@ -5182,7 +5182,7 @@ static int gfx_v8_0_kiq_init_queue(struct amdgpu_ring *ring)
 
 out_unlock:
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 	return r;
 }
 
@@ -5194,11 +5194,11 @@ static int gfx_v8_0_kcq_init_queue(struct amdgpu_ring *ring)
 
 	if (!adev->gfx.in_reset && !adev->gfx.in_suspend) {
 		memset((void *)mqd, 0, sizeof(*mqd));
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 		gfx_v8_0_mqd_init(ring);
 		vi_srbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 
 		if (adev->gfx.mec.mqd_backup[mqd_idx])
 			memcpy(adev->gfx.mec.mqd_backup[mqd_idx], mqd, sizeof(*mqd));
@@ -5493,7 +5493,7 @@ static void gfx_v8_0_inactive_hqd(struct amdgpu_device *adev,
 {
 	int i;
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 	if (RREG32(mmCP_HQD_ACTIVE) & CP_HQD_ACTIVE__ACTIVE_MASK) {
 		WREG32_FIELD(CP_HQD_DEQUEUE_REQUEST, DEQUEUE_REQ, 2);
@@ -5504,7 +5504,7 @@ static void gfx_v8_0_inactive_hqd(struct amdgpu_device *adev,
 		}
 	}
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 }
 
 static int gfx_v8_0_pre_soft_reset(void *handle)
@@ -5610,13 +5610,13 @@ static int gfx_v8_0_soft_reset(void *handle)
 static void gfx_v8_0_init_hqd(struct amdgpu_device *adev,
 			      struct amdgpu_ring *ring)
 {
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	vi_srbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 	WREG32(mmCP_HQD_DEQUEUE_REQUEST, 0);
 	WREG32(mmCP_HQD_PQ_RPTR, 0);
 	WREG32(mmCP_HQD_PQ_WPTR, 0);
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static int gfx_v8_0_post_soft_reset(void *handle)
@@ -6884,14 +6884,14 @@ static void gfx_v8_0_set_compute_eop_interrupt_state(struct amdgpu_device *adev,
 		return;
 	}
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	vi_srbm_select(adev, me, pipe, 0, 0);
 
 	WREG32_FIELD(CPC_INT_CNTL, TIME_STAMP_INT_ENABLE,
 			state == AMDGPU_IRQ_STATE_DISABLE ? 0 : 1);
 
 	vi_srbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static int gfx_v8_0_set_priv_reg_fault_state(struct amdgpu_device *adev,
