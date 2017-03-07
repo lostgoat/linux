@@ -130,7 +130,7 @@ static void lock_srbm(struct kgd_dev *kgd, uint32_t mec, uint32_t pipe,
 	struct amdgpu_device *adev = get_amdgpu_device(kgd);
 	uint32_t value = PIPEID(pipe) | MEID(mec) | VMID(vmid) | QUEUEID(queue);
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	WREG32(mmSRBM_GFX_CNTL, value);
 }
 
@@ -139,7 +139,7 @@ static void unlock_srbm(struct kgd_dev *kgd)
 	struct amdgpu_device *adev = get_amdgpu_device(kgd);
 
 	WREG32(mmSRBM_GFX_CNTL, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static void acquire_queue(struct kgd_dev *kgd, uint32_t pipe_id,
