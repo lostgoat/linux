@@ -1,6 +1,18 @@
-linux (4.11.0-041100rc4.201703261831) unstable; urgency=low
+linux (4.11.0-rc4+lostgoat-2) yakkety; urgency=low
 
-  Mainline build at commit: v4.11-rc4
+  Fix my own name, before its too late!
 
- -- Mainline Build <kernel@gloin>  Sun, 26 Mar 2017 18:31:33 -0400
+ -- Andres Rodriguez <andresx7@gmail.com>  Sun, 26 Mar 2017 18:31:33 -0400
+
+linux (4.11.0-rc4+losgoat-1) yakkety; urgency=low
+
+  Disable d-i
+
+ -- Andres Rodriguez <andresx7@gmail.com>  Sun, 26 Mar 2017 18:31:33 -0400
+
+linux (4.11.0-rc4+losgoat-0) yakkety; urgency=low
+
+  Mainline build at commit: v4.11-rc4 + amdgpu trace fixes
+
+ -- Andres Rodriguez <andresx7@gmail.com>  Sun, 26 Mar 2017 18:31:33 -0400
 
