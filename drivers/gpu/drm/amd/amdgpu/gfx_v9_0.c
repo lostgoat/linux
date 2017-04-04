@@ -1910,12 +1910,31 @@ static void gfx_v9_0_kiq_setting(struct amdgpu_ring *ring)
 
 static void gfx_v9_0_kiq_enable(struct amdgpu_ring *ring)
 {
+	int i;
+	struct amdgpu_device *adev = ring->adev;
+	uint64_t queue_mask = 0;
+
+	for (i = 0; i < AMDGPU_MAX_COMPUTE_QUEUES; ++i) {
+		if (!test_bit(i, adev->gfx.mec.queue_bitmap))
+			continue;
+
+		/* This situation may be hit in the future if a new HW
+		 * generation exposes more than 64 queues. If so, the
+		 * definition of queue_mask needs updating */
+		if (WARN_ON(i > (sizeof(queue_mask)*8))) {
+			DRM_ERROR("Invalid KCQ enabled: %d\n", i);
+			break;
+		}
+
+		queue_mask |= (1ull << i);
+	}
+
 	amdgpu_ring_alloc(ring, 8);
 	/* set resources */
 	amdgpu_ring_write(ring, PACKET3(PACKET3_SET_RESOURCES, 6));
 	amdgpu_ring_write(ring, 0);	/* vmid_mask:0 queue_type:0 (KIQ) */
-	amdgpu_ring_write(ring, 0x000000FF);	/* queue mask lo */
-	amdgpu_ring_write(ring, 0);	/* queue mask hi */
+	amdgpu_ring_write(ring, lower_32_bits(queue_mask));	/* queue mask lo */
+	amdgpu_ring_write(ring, upper_32_bits(queue_mask));	/* queue mask hi */
 	amdgpu_ring_write(ring, 0);	/* gws mask lo */
 	amdgpu_ring_write(ring, 0);	/* gws mask hi */
 	amdgpu_ring_write(ring, 0);	/* oac mask */
