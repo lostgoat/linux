@@ -2239,9 +2239,7 @@ int amdgpu_device_resume(struct drm_device *dev, bool resume, bool fbcon)
 			return r;
 		}
 	}
-	if (adev->is_atom_fw)
-		amdgpu_atomfirmware_scratch_regs_restore(adev);
-	else
+	if (!adev->is_atom_fw)
 		amdgpu_atombios_scratch_regs_restore(adev);
 
 	/* post card */
@@ -2250,6 +2248,9 @@ int amdgpu_device_resume(struct drm_device *dev, bool resume, bool fbcon)
 		if (r)
 			DRM_ERROR("amdgpu asic init failed\n");
 	}
+
+	if (adev->is_atom_fw)
+		amdgpu_atomfirmware_scratch_regs_restore(adev);
 
 	r = amdgpu_resume(adev);
 	if (r) {
@@ -2633,12 +2634,12 @@ retry:
 		else
 			amdgpu_atombios_scratch_regs_save(adev);
 		r = amdgpu_asic_reset(adev);
-		if (adev->is_atom_fw)
-			amdgpu_atomfirmware_scratch_regs_restore(adev);
-		else
+		if (!adev->is_atom_fw)
 			amdgpu_atombios_scratch_regs_restore(adev);
 		/* post card */
 		amdgpu_atom_asic_init(adev->mode_info.atom_context);
+		if (adev->is_atom_fw)
+			amdgpu_atomfirmware_scratch_regs_restore(adev);
 
 		if (!r) {
 			dev_info(adev->dev, "GPU reset succeeded, trying to resume\n");
