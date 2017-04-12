@@ -616,7 +616,7 @@ static int sdma_v3_0_gfx_resume(struct amdgpu_device *adev)
 		amdgpu_ring_clear_ring(ring);
 		wb_offset = (ring->rptr_offs * 4);
 
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		for (j = 0; j < 16; j++) {
 			vi_srbm_select(adev, 0, 0, 0, j);
 			/* SDMA GFX */
@@ -624,7 +624,7 @@ static int sdma_v3_0_gfx_resume(struct amdgpu_device *adev)
 			WREG32(mmSDMA0_GFX_APE1_CNTL + sdma_offsets[i], 0);
 		}
 		vi_srbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 
 		WREG32(mmSDMA0_TILING_CONFIG + sdma_offsets[i],
 		       adev->gfx.config.gb_addr_config & 0x70);

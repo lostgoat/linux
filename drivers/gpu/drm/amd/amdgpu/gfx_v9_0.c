@@ -1379,7 +1379,7 @@ static void gfx_v9_0_init_compute_vmid(struct amdgpu_device *adev)
 			SH_MEM_ALIGNMENT_MODE_UNALIGNED <<
 			SH_MEM_CONFIG__ALIGNMENT_MODE__SHIFT; 
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	for (i = FIRST_COMPUTE_VMID; i < LAST_COMPUTE_VMID; i++) {
 		soc15_grbm_select(adev, 0, 0, 0, i);
 		/* CP and shaders */
@@ -1387,7 +1387,7 @@ static void gfx_v9_0_init_compute_vmid(struct amdgpu_device *adev)
 		WREG32_SOC15(GC, 0, mmSH_MEM_BASES, sh_mem_bases);
 	}
 	soc15_grbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static void gfx_v9_0_gpu_init(struct amdgpu_device *adev)
@@ -1404,7 +1404,7 @@ static void gfx_v9_0_gpu_init(struct amdgpu_device *adev)
 
 	/* XXX SH_MEM regs */
 	/* where to put LDS, scratch, GPUVM in FSA64 space */
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	for (i = 0; i < 16; i++) {
 		soc15_grbm_select(adev, 0, 0, 0, i);
 		/* CP and shaders */
@@ -1416,7 +1416,7 @@ static void gfx_v9_0_gpu_init(struct amdgpu_device *adev)
 	}
 	soc15_grbm_select(adev, 0, 0, 0, 0);
 
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 
 	gfx_v9_0_init_compute_vmid(adev);
 
@@ -2251,13 +2251,13 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
 
 	if (!adev->gfx.in_reset) {
 		memset((void *)mqd, 0, sizeof(*mqd));
-		mutex_lock(&adev->srbm_mutex);
+		spin_lock(&adev->srbm_lock);
 		soc15_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 		gfx_v9_0_mqd_init(ring);
 		if (is_kiq)
 			gfx_v9_0_kiq_init_register(ring);
 		soc15_grbm_select(adev, 0, 0, 0, 0);
-		mutex_unlock(&adev->srbm_mutex);
+		spin_unlock(&adev->srbm_lock);
 
 	} else { /* for GPU_RESET case */
 		/* reset MQD to a clean status */
@@ -2266,11 +2266,11 @@ static int gfx_v9_0_kiq_init_queue(struct amdgpu_ring *ring)
 		ring->wptr = 0;
 
 		if (is_kiq) {
-		    mutex_lock(&adev->srbm_mutex);
+		    spin_lock(&adev->srbm_lock);
 		    soc15_grbm_select(adev, ring->me, ring->pipe, ring->queue, 0);
 		    gfx_v9_0_kiq_init_register(ring);
 		    soc15_grbm_select(adev, 0, 0, 0, 0);
-		    mutex_unlock(&adev->srbm_mutex);
+		    spin_unlock(&adev->srbm_lock);
 		}
 	}
 
@@ -3333,14 +3333,14 @@ static void gfx_v9_0_set_compute_eop_interrupt_state(struct amdgpu_device *adev,
 		return;
 	}
 
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	soc15_grbm_select(adev, me, pipe, 0, 0);
 
 	WREG32_FIELD(CPC_INT_CNTL, TIME_STAMP_INT_ENABLE,
 			state == AMDGPU_IRQ_STATE_DISABLE ? 0 : 1);
 
 	soc15_grbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 }
 
 static int gfx_v9_0_set_priv_reg_fault_state(struct amdgpu_device *adev,
@@ -3856,7 +3856,7 @@ static int gfx_v9_0_init_queue(struct amdgpu_ring *ring)
 	mqd->compute_static_thread_mgmt_se2 = 0xffffffff;
 	mqd->compute_static_thread_mgmt_se3 = 0xffffffff;
 	mqd->compute_misc_reserved = 0x00000003;
-	mutex_lock(&adev->srbm_mutex);
+	spin_lock(&adev->srbm_lock);
 	soc15_grbm_select(adev, ring->me,
 			       ring->pipe,
 			       ring->queue, 0);
@@ -4000,7 +4000,7 @@ static int gfx_v9_0_init_queue(struct amdgpu_ring *ring)
 	WREG32_SOC15(GC, 0, mmCP_HQD_ACTIVE, mqd->cp_hqd_active);
 
 	soc15_grbm_select(adev, 0, 0, 0, 0);
-	mutex_unlock(&adev->srbm_mutex);
+	spin_unlock(&adev->srbm_lock);
 
 	amdgpu_bo_kunmap(ring->mqd_obj);
 	amdgpu_bo_unreserve(ring->mqd_obj);
