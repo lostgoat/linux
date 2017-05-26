@@ -412,7 +412,8 @@ static void gfx_v6_0_tiling_mode_table_init(struct amdgpu_device *adev)
 		break;
 	}
 
-	if (adev->asic_type == CHIP_VERDE) {
+	if (((adev->asic_type == CHIP_OLAND) && (adev->mc.vram_width < 128)) ||
+	    adev->asic_type == CHIP_VERDE) {
 		tilemode[0] =   MICRO_TILE_MODE(ADDR_SURF_DEPTH_MICRO_TILING) |
 				ARRAY_MODE(ARRAY_2D_TILED_THIN1) |
 				PIPE_CONFIG(ADDR_SURF_P4_8x16) |
@@ -636,7 +637,8 @@ static void gfx_v6_0_tiling_mode_table_init(struct amdgpu_device *adev)
 				NUM_BANKS(ADDR_SURF_2_BANK);
 		for (reg_offset = 0; reg_offset < num_tile_mode_states; reg_offset++)
 			WREG32(mmGB_TILE_MODE0 + reg_offset, tilemode[reg_offset]);
-	} else if (adev->asic_type == CHIP_OLAND || adev->asic_type == CHIP_HAINAN) {
+	} else if (((adev->asic_type == CHIP_OLAND) && (adev->mc.vram_width >= 128)) ||
+		   adev->asic_type == CHIP_HAINAN) {
 		tilemode[0] =   MICRO_TILE_MODE(ADDR_SURF_DEPTH_MICRO_TILING) |
 				ARRAY_MODE(ARRAY_2D_TILED_THIN1) |
 				PIPE_CONFIG(ADDR_SURF_P2) |
