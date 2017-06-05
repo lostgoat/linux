@@ -29,6 +29,7 @@
 
 struct amd_gpu_scheduler;
 struct amd_sched_rq;
+struct amd_sched_priority_ctr;
 
 /**
  * A scheduler entity is a wrapper around a job queue or a group
@@ -124,6 +125,17 @@ enum amd_sched_priority {
 	AMD_SCHED_PRIORITY_INVALID = -1
 };
 
+typedef void (*amd_sched_set_priority_func_t)(struct amd_sched_priority_ctr *p,
+					      enum amd_sched_priority priority);
+
+struct amd_sched_priority_ctr {
+	struct mutex			mutex;
+	atomic_t			requests[AMD_SCHED_PRIORITY_MAX];
+	enum amd_sched_priority		priority;
+	enum amd_sched_priority		default_priority;
+	amd_sched_set_priority_func_t	set_priority;
+};
+
 /**
  * One scheduler is implemented for each hardware ring
 */
@@ -177,5 +189,14 @@ amd_sched_get_job_priority(struct amd_sched_job *job)
 {
 	return (job->s_entity->rq - job->sched->sched_rq);
 }
+
+void amd_sched_priority_ctr_init(struct amd_sched_priority_ctr *p,
+				 enum amd_sched_priority default_priority,
+				 amd_sched_set_priority_func_t set_priority);
+void amd_sched_priority_ctr_fini(struct amd_sched_priority_ctr *p);
+void amd_sched_priority_ctr_get(struct amd_sched_priority_ctr *p,
+				enum amd_sched_priority priority);
+void amd_sched_priority_ctr_put(struct amd_sched_priority_ctr *p,
+				enum amd_sched_priority priority);
 
 #endif
