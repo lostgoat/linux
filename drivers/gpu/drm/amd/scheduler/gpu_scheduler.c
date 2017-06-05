@@ -500,6 +500,128 @@ int amd_sched_job_init(struct amd_sched_job *job,
 }
 
 /**
+ * Initialize a priority_ctr
+ *
+ * @p: priority_ctr to initialize
+ * @default_priority: priority to be used when no active requests exist
+ * @set_priority: callback for changing the underlying resource's priority
+ *
+ * The @set_priority callback will be invoked whenever a transition
+ * happens into a new priority state, e.g. NORMAL->HIGH or HIGH->NORMAL. It
+ * is guaranteed to be invoked exactly once per state transition.
+ *
+ */
+void amd_sched_priority_ctr_init(struct amd_sched_priority_ctr *p,
+				 enum amd_sched_priority default_priority,
+				 amd_sched_set_priority_func_t set_priority)
+{
+	int i;
+
+	for (i = 0; i < AMD_SCHED_PRIORITY_MAX; ++i)
+		atomic_set(&p->requests[i], 0);
+
+	p->default_priority = default_priority;
+	p->priority = p->default_priority;
+	p->set_priority = set_priority;
+	mutex_init(&p->mutex);
+}
+
+/**
+ * Cleanup a priority_ctr
+ *
+ * @p: priority_ctr to cleanup
+ *
+ * Must be called when the priority_ctr is no longer needed
+ */
+void amd_sched_priority_ctr_fini(struct amd_sched_priority_ctr *p)
+{
+	p->priority = AMD_SCHED_PRIORITY_INVALID;
+}
+
+/**
+ * Begin a request to set the current priority to @priority
+ *
+ * @p: priority_ctr
+ * @priority: requested priority
+ *
+ * Requests are reference counted.
+ *
+ * The current priority will be the highest priority for which an
+ * active request exists.
+ *
+ * If no active requests exist, the resource will default to
+ * p->default_priority
+ */
+void amd_sched_priority_ctr_get(struct amd_sched_priority_ctr *p,
+				enum amd_sched_priority priority)
+{
+	if (WARN_ON(priority > AMD_SCHED_PRIORITY_MAX
+			|| priority < AMD_SCHED_PRIORITY_MIN))
+		return;
+
+	if (atomic_inc_return(&p->requests[priority]) > 1)
+		return;
+
+	mutex_lock(&p->mutex);
+
+	/* A request with higher priority already exists */
+	if (priority <= p->priority)
+		goto out_unlock;
+
+	p->set_priority(p, priority);
+	p->priority = priority;
+
+out_unlock:
+	mutex_unlock(&p->mutex);
+}
+
+/**
+ * End a request to set the current priority to @priority
+ *
+ * @p: priority_ctr
+ * @priority: requested priority
+ *
+ * Refer to @amd_sched_priority_ctr_get for more details.
+ */
+void amd_sched_priority_ctr_put(struct amd_sched_priority_ctr *p,
+				enum amd_sched_priority priority)
+{
+	int i;
+	enum amd_sched_priority decayed_priority = AMD_SCHED_PRIORITY_INVALID;
+
+	if (WARN_ON(priority > AMD_SCHED_PRIORITY_MAX
+			|| priority < AMD_SCHED_PRIORITY_MIN))
+		return;
+
+	if (atomic_dec_return(&p->requests[priority]) > 0)
+		return;
+
+	mutex_lock(&p->mutex);
+
+	/* something higher prio is executing, no need to decay */
+	if (p->priority > priority)
+		goto out_unlock;
+
+	/* decay priority to the next level with an active request */
+	for (i = priority; i >= AMD_SCHED_PRIORITY_MIN; i--) {
+		if (atomic_read(&p->requests[i])) {
+			decayed_priority = i;
+			break;
+		}
+	}
+
+	/* If no requests are active, use the default priority */
+	if (decayed_priority == AMD_SCHED_PRIORITY_INVALID)
+		decayed_priority = p->default_priority;
+
+	p->set_priority(p, decayed_priority);
+	p->priority = decayed_priority;
+
+out_unlock:
+	mutex_unlock(&p->mutex);
+}
+
+/**
  * Return ture if we can push more jobs to the hw.
  */
 static bool amd_sched_ready(struct amd_gpu_scheduler *sched)

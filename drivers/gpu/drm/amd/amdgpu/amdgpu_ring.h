@@ -159,6 +159,7 @@ struct amdgpu_ring {
 	const struct amdgpu_ring_funcs	*funcs;
 	struct amdgpu_fence_driver	fence_drv;
 	struct amd_gpu_scheduler	sched;
+	struct amd_sched_priority_ctr	priority_ctr;
 	struct list_head		lru_list;
 
 	struct amdgpu_bo	*ring_obj;
@@ -192,11 +193,6 @@ struct amdgpu_ring {
 	volatile u32		*cond_exe_cpu_addr;
 	unsigned		vm_inv_eng;
 	bool			has_compute_vm_bug;
-
-	atomic_t		num_jobs[AMD_SCHED_PRIORITY_MAX];
-	struct mutex		priority_mutex;
-	/* protected by priority_mutex */
-	int			priority;
 
 #if defined(CONFIG_DEBUG_FS)
 	struct dentry *ent;
