@@ -42,6 +42,29 @@ static int amdgpu_ctx_priority_permit(struct drm_file *filp,
 	return -EACCES;
 }
 
+static void amdgpu_ctx_priority_set(struct amd_sched_priority_ctr *p,
+				    enum amd_sched_priority priority)
+{
+	int i;
+	struct amd_sched_rq *rq;
+	struct amd_sched_entity *entity;
+	struct amdgpu_ring *ring;
+	struct amdgpu_ctx *ctx = container_of(p, struct amdgpu_ctx,
+					      priority_ctr);
+	struct amdgpu_device *adev = ctx->adev;
+
+	for (i = 0; i < adev->num_rings; i++) {
+		ring = adev->rings[i];
+		entity = &ctx->rings[i].entity;
+		rq = &ring->sched.sched_rq[priority];
+
+		if (ring->funcs->type == AMDGPU_RING_TYPE_KIQ)
+			continue;
+
+		amd_sched_entity_set_rq(entity, rq);
+	}
+}
+
 static int amdgpu_ctx_init(struct amdgpu_device *adev,
 			   enum amd_sched_priority priority,
 			   struct drm_file *filp,
@@ -89,6 +112,10 @@ static int amdgpu_ctx_init(struct amdgpu_device *adev,
 			goto failed;
 	}
 
+	amd_sched_priority_ctr_init(&ctx->priority_ctr,
+				    priority,
+				    amdgpu_ctx_priority_set);
+
 	r = amdgpu_queue_mgr_init(adev, &ctx->queue_mgr);
 	if (r)
 		goto failed;
@@ -111,6 +138,8 @@ static void amdgpu_ctx_fini(struct amdgpu_ctx *ctx)
 
 	if (!adev)
 		return;
+
+	amd_sched_priority_ctr_fini(&ctx->priority_ctr);
 
 	for (i = 0; i < AMDGPU_MAX_RINGS; ++i)
 		for (j = 0; j < amdgpu_sched_jobs; ++j)
@@ -356,6 +385,20 @@ struct dma_fence *amdgpu_ctx_get_fence(struct amdgpu_ctx *ctx,
 	spin_unlock(&ctx->ring_lock);
 
 	return fence;
+}
+
+void amdgpu_ctx_priority_get(struct amdgpu_ctx *ctx,
+			     enum amd_sched_priority priority)
+{
+	amd_sched_priority_ctr_get(&ctx->priority_ctr, priority);
+
+}
+
+void amdgpu_ctx_priority_put(struct amdgpu_ctx *ctx,
+			     enum amd_sched_priority priority)
+{
+	amd_sched_priority_ctr_put(&ctx->priority_ctr, priority);
+
 }
 
 void amdgpu_ctx_mgr_init(struct amdgpu_ctx_mgr *mgr)
