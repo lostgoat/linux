@@ -825,7 +825,9 @@ struct amdgpu_ctx {
 	spinlock_t		ring_lock;
 	struct dma_fence	**fences;
 	struct amdgpu_ctx_ring	rings[AMDGPU_MAX_RINGS];
-	bool preamble_presented;
+	bool 			preamble_presented;
+
+	struct amd_sched_priority_ctr	priority_ctr;
 };
 
 struct amdgpu_ctx_mgr {
@@ -842,6 +844,10 @@ uint64_t amdgpu_ctx_add_fence(struct amdgpu_ctx *ctx, struct amdgpu_ring *ring,
 			      struct dma_fence *fence);
 struct dma_fence *amdgpu_ctx_get_fence(struct amdgpu_ctx *ctx,
 				   struct amdgpu_ring *ring, uint64_t seq);
+void amdgpu_ctx_priority_get(struct amdgpu_ctx *ctx,
+			     enum amd_sched_priority priority);
+void amdgpu_ctx_priority_put(struct amdgpu_ctx *ctx,
+			     enum amd_sched_priority priority);
 
 int amdgpu_ctx_ioctl(struct drm_device *dev, void *data,
 		     struct drm_file *filp);
