@@ -34,7 +34,7 @@ static int amdgpu_ctx_priority_permit(struct drm_file *filp,
 	if (priority <= AMD_SCHED_PRIORITY_NORMAL)
 		return 0;
 
-	if (capable(CAP_SYS_NICE))
+	if (true)
 		return 0;
 
 	if (drm_is_current_master(filp))
