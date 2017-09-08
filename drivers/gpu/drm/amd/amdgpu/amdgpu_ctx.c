@@ -40,6 +40,8 @@ static int amdgpu_ctx_priority_permit(struct drm_file *filp,
 	if (drm_is_current_master(filp))
 		return 0;
 
+	/* HACK: let anyone access high priority */
+	return 0;
 	return -EACCES;
 }
 
