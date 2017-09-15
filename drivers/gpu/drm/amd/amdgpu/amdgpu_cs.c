@@ -704,7 +704,8 @@ static int amdgpu_cs_sync_rings(struct amdgpu_cs_parser *p)
 
 	list_for_each_entry(e, &p->validated, tv.head) {
 		struct reservation_object *resv = e->robj->tbo.resv;
-		r = amdgpu_sync_resv(p->adev, &p->job->sync, resv, p->filp);
+		bool skip_sync = p->ctx->init_priority > AMD_SCHED_PRIORITY_NORMAL;
+		r = amdgpu_sync_resv(p->adev, &p->job->sync, resv, p->filp, skip_sync);
 
 		if (r)
 			return r;

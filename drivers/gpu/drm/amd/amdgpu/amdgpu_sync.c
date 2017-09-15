@@ -169,14 +169,16 @@ int amdgpu_sync_fence(struct amdgpu_device *adev, struct amdgpu_sync *sync,
  *
  * @sync: sync object to add fences from reservation object to
  * @resv: reservation object with embedded fence
- * @shared: true if we should only sync to the exclusive fence
+ * @owner: identifies who requested the sync operation
+ * @explicit_sync: disables implicit sync operations for the same device
  *
  * Sync to the fence
  */
 int amdgpu_sync_resv(struct amdgpu_device *adev,
 		     struct amdgpu_sync *sync,
 		     struct reservation_object *resv,
-		     void *owner)
+		     void *owner,
+		     bool explicit_sync)
 {
 	struct reservation_object_list *flist;
 	struct dma_fence *f;
@@ -199,6 +201,9 @@ int amdgpu_sync_resv(struct amdgpu_device *adev,
 		f = rcu_dereference_protected(flist->shared[i],
 					      reservation_object_held(resv));
 		if (amdgpu_sync_same_dev(adev, f)) {
+			if (explicit_sync)
+				continue;
+
 			/* VM updates are only interesting
 			 * for other VM updates and moves.
 			 */
