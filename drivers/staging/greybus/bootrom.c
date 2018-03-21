@@ -241,8 +241,8 @@ static int gb_bootrom_get_firmware(struct gb_operation *op)
 {
 	struct gb_bootrom *bootrom = gb_connection_get_data(op->connection);
 	const struct firmware *fw;
-	struct gb_bootrom_get_firmware_request *firmware_request;
-	struct gb_bootrom_get_firmware_response *firmware_response;
+	struct gb_bootrom_get_firmware_request *gb_firmware_request;
+	struct gb_bootrom_get_firmware_response *gb_firmware_response;
 	struct device *dev = &op->connection->bundle->dev;
 	unsigned int offset, size;
 	enum next_request_type next_request;
@@ -251,10 +251,10 @@ static int gb_bootrom_get_firmware(struct gb_operation *op)
 	/* Disable timeouts */
 	gb_bootrom_cancel_timeout(bootrom);
 
-	if (op->request->payload_size != sizeof(*firmware_request)) {
+	if (op->request->payload_size != sizeof(*gb_firmware_request)) {
 		dev_err(dev, "%s: Illegal size of get firmware request (%zu %zu)\n",
 			__func__, op->request->payload_size,
-			sizeof(*firmware_request));
+			sizeof(*gb_firmware_request));
 		ret = -EINVAL;
 		goto queue_work;
 	}
@@ -268,9 +268,9 @@ static int gb_bootrom_get_firmware(struct gb_operation *op)
 		goto unlock;
 	}
 
-	firmware_request = op->request->payload;
-	offset = le32_to_cpu(firmware_request->offset);
-	size = le32_to_cpu(firmware_request->size);
+	gb_firmware_request = op->request->payload;
+	offset = le32_to_cpu(gb_firmware_request->offset);
+	size = le32_to_cpu(gb_firmware_request->size);
 
 	if (offset >= fw->size || size > fw->size - offset) {
 		dev_warn(dev, "bad firmware request (offs = %u, size = %u)\n",
@@ -279,15 +279,15 @@ static int gb_bootrom_get_firmware(struct gb_operation *op)
 		goto unlock;
 	}
 
-	if (!gb_operation_response_alloc(op, sizeof(*firmware_response) + size,
-					 GFP_KERNEL)) {
+	if (!gb_operation_response_alloc(op, sizeof(*gb_firmware_response) +
+					 size, GFP_KERNEL)) {
 		dev_err(dev, "%s: error allocating response\n", __func__);
 		ret = -ENOMEM;
 		goto unlock;
 	}
 
-	firmware_response = op->response->payload;
-	memcpy(firmware_response->data, fw->data + offset, size);
+	gb_firmware_response = op->response->payload;
+	memcpy(gb_firmware_response->data, fw->data + offset, size);
 
 	dev_dbg(dev, "responding with firmware (offs = %u, size = %u)\n",
 		offset, size);
