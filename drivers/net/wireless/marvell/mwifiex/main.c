@@ -548,7 +548,7 @@ static int _mwifiex_fw_dpc(const struct firmware *firmware, void *context)
 	mwifiex_dbg(adapter, MSG, "WLAN FW is active\n");
 
 	if (cal_data_cfg) {
-		if ((request_firmware(&adapter->cal_data, cal_data_cfg,
+		if ((firmware_request(&adapter->cal_data, cal_data_cfg,
 				      adapter->dev)) < 0)
 			mwifiex_dbg(adapter, ERROR,
 				    "Cal data request_firmware() failed\n");
@@ -659,11 +659,11 @@ err_dnld_fw:
 	init_failed = true;
 done:
 	if (adapter->cal_data) {
-		release_firmware(adapter->cal_data);
+		firmware_release(adapter->cal_data);
 		adapter->cal_data = NULL;
 	}
 	if (adapter->firmware) {
-		release_firmware(adapter->firmware);
+		firmware_release(adapter->firmware);
 		adapter->firmware = NULL;
 	}
 	if (init_failed) {
@@ -704,11 +704,11 @@ static int mwifiex_init_hw_fw(struct mwifiex_adapter *adapter,
 	}
 
 	if (req_fw_nowait) {
-		ret = request_firmware_nowait(THIS_MODULE, 1, adapter->fw_name,
+		ret = firmware_request_nowait(THIS_MODULE, 1, adapter->fw_name,
 					      adapter->dev, GFP_KERNEL, adapter,
 					      mwifiex_fw_dpc);
 	} else {
-		ret = request_firmware(&adapter->firmware,
+		ret = firmware_request(&adapter->firmware,
 				       adapter->fw_name,
 				       adapter->dev);
 	}

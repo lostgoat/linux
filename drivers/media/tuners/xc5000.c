@@ -1121,7 +1121,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe, int force)
 		return 0;
 
 	if (!priv->firmware) {
-		ret = request_firmware(&fw, desired_fw->name,
+		ret = firmware_request(&fw, desired_fw->name,
 					priv->i2c_props.adap->dev.parent);
 		if (ret) {
 			pr_err("xc5000: Upload failed. rc %d\n", ret);
@@ -1131,7 +1131,7 @@ static int xc_load_fw_and_init_tuner(struct dvb_frontend *fe, int force)
 
 		if (fw->size != desired_fw->size) {
 			pr_err("xc5000: Firmware file with incorrect size\n");
-			release_firmware(fw);
+			firmware_release(fw);
 			return -EINVAL;
 		}
 		priv->firmware = fw;
@@ -1317,7 +1317,7 @@ static void xc5000_release(struct dvb_frontend *fe)
 	if (priv) {
 		cancel_delayed_work(&priv->timer_sleep);
 		if (priv->firmware) {
-			release_firmware(priv->firmware);
+			firmware_release(priv->firmware);
 			priv->firmware = NULL;
 		}
 		hybrid_tuner_release_state(priv);

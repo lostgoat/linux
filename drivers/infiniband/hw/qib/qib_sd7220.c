@@ -405,7 +405,7 @@ int qib_sd7220_init(struct qib_devdata *dd)
 		qib_sd_trimdone_monitor(dd, "Driver-reload");
 	}
 
-	ret = request_firmware(&fw, SD7220_FW_NAME, &dd->pcidev->dev);
+	ret = firmware_request(&fw, SD7220_FW_NAME, &dd->pcidev->dev);
 	if (ret) {
 		qib_dev_err(dd, "Failed to load IB SERDES image\n");
 		goto done;
@@ -531,7 +531,7 @@ done:
 	/* start relock timer regardless, but start at 1 second */
 	set_7220_relock_poll(dd, -1);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

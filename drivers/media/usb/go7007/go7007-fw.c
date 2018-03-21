@@ -1570,7 +1570,7 @@ int go7007_construct_fw_image(struct go7007 *go, u8 **fw, int *fwlen)
 	default:
 		return -1;
 	}
-	if (request_firmware(&fw_entry, GO7007_FW_NAME, go->dev)) {
+	if (firmware_request(&fw_entry, GO7007_FW_NAME, go->dev)) {
 		dev_err(go->dev,
 			"unable to load firmware from file \"%s\"\n",
 			GO7007_FW_NAME);
@@ -1614,14 +1614,14 @@ int go7007_construct_fw_image(struct go7007 *go, u8 **fw, int *fwlen)
 		srclen -= chunk_len + 2;
 		src += chunk_len + 2;
 	}
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	*fw = (u8 *)code;
 	*fwlen = i * 2;
 	return 0;
 
 fw_failed:
 	kfree(code);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return -1;
 }
 

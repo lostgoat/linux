@@ -1332,7 +1332,7 @@ static int wcn36xx_remove(struct platform_device *pdev)
 	struct wcn36xx *wcn = hw->priv;
 	wcn36xx_dbg(WCN36XX_DBG_MAC, "platform remove\n");
 
-	release_firmware(wcn->nv);
+	firmware_release(wcn->nv);
 
 	ieee80211_unregister_hw(hw);
 

@@ -201,7 +201,7 @@ static void *edid_load(struct drm_connector *connector, const char *name,
 			return ERR_CAST(pdev);
 		}
 
-		err = request_firmware(&fw, name, &pdev->dev);
+		err = firmware_request(&fw, name, &pdev->dev);
 		platform_device_unregister(pdev);
 		if (err) {
 			DRM_ERROR("Requesting EDID firmware \"%s\" failed (err=%d)\n",
@@ -268,7 +268,7 @@ static void *edid_load(struct drm_connector *connector, const char *name,
 	    name, connector_name);
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return edid;
 }
 

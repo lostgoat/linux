@@ -3907,7 +3907,7 @@ static int reset_atmel_card(struct net_device *dev)
 					       dev->name);
 					strcpy(priv->firmware_id, "atmel_at76c502.bin");
 				}
-				err = request_firmware(&fw_entry, priv->firmware_id, priv->sys_dev);
+				err = firmware_request(&fw_entry, priv->firmware_id, priv->sys_dev);
 				if (err != 0) {
 					printk(KERN_ALERT
 					       "%s: firmware %s is missing, cannot continue.\n",
@@ -3930,7 +3930,7 @@ static int reset_atmel_card(struct net_device *dev)
 						snprintf(priv->firmware_id, 32, "%s%s.%s", fw_table[fw_index].fw_file,
 							firmware_modifier[i], fw_table[fw_index].fw_file_ext);
 						priv->firmware_id[31] = '\0';
-						if (request_firmware(&fw_entry, priv->firmware_id, priv->sys_dev) == 0) {
+						if (firmware_request(&fw_entry, priv->firmware_id, priv->sys_dev) == 0) {
 							success = 1;
 							break;
 						}
@@ -3962,7 +3962,7 @@ static int reset_atmel_card(struct net_device *dev)
 			atmel_copy_to_card(priv->dev, 0x8000, &fw[0x6000], len - 0x6000);
 		}
 
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 	}
 
 	err = atmel_wakeup_firmware(priv);

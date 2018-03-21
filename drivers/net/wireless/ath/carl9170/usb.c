@@ -757,7 +757,7 @@ err_drop:
 static void carl9170_release_firmware(struct ar9170 *ar)
 {
 	if (ar->fw.fw) {
-		release_firmware(ar->fw.fw);
+		firmware_release(ar->fw.fw);
 		memset(&ar->fw, 0, sizeof(ar->fw));
 	}
 }
@@ -1098,7 +1098,7 @@ static int carl9170_usb_probe(struct usb_interface *intf,
 
 	carl9170_set_state(ar, CARL9170_STOPPED);
 
-	err = request_firmware_nowait(THIS_MODULE, 1, CARL9170FW_NAME,
+	err = firmware_request_nowait(THIS_MODULE, 1, CARL9170FW_NAME,
 		&ar->udev->dev, GFP_KERNEL, ar, carl9170_usb_firmware_step2);
 	if (err) {
 		usb_put_dev(udev);

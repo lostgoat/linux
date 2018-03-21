@@ -159,7 +159,7 @@ static int sst_acpi_probe(struct platform_device *pdev)
 		return PTR_ERR(sst_acpi->pdev_mach);
 
 	/* continue SST probing after firmware is loaded */
-	ret = request_firmware_nowait(THIS_MODULE, true, mach->fw_filename,
+	ret = firmware_request_nowait(THIS_MODULE, true, mach->fw_filename,
 				      dev, GFP_KERNEL, pdev, sst_acpi_fw_cb);
 	if (ret)
 		platform_device_unregister(sst_acpi->pdev_mach);
@@ -175,7 +175,7 @@ static int sst_acpi_remove(struct platform_device *pdev)
 	platform_device_unregister(sst_acpi->pdev_mach);
 	if (!IS_ERR_OR_NULL(sst_acpi->pdev_pcm))
 		platform_device_unregister(sst_acpi->pdev_pcm);
-	release_firmware(sst_pdata->fw);
+	firmware_release(sst_pdata->fw);
 
 	return 0;
 }

@@ -1373,22 +1373,22 @@ static void download_offload_pseudocode(struct vub300_mmc_host *vub300)
 	snprintf(vub300->vub_name + l, sizeof(vub300->vub_name) - l, ".bin");
 	dev_info(&vub300->udev->dev, "requesting offload firmware %s\n",
 		 vub300->vub_name);
-	retval = request_firmware(&fw, vub300->vub_name, &card->dev);
+	retval = firmware_request(&fw, vub300->vub_name, &card->dev);
 	if (retval < 0) {
 		strncpy(vub300->vub_name, "vub_default.bin",
 			sizeof(vub300->vub_name));
-		retval = request_firmware(&fw, vub300->vub_name, &card->dev);
+		retval = firmware_request(&fw, vub300->vub_name, &card->dev);
 		if (retval < 0) {
 			strncpy(vub300->vub_name,
 				"no SDIO offload firmware found",
 				sizeof(vub300->vub_name));
 		} else {
 			__download_offload_pseudocode(vub300, fw);
-			release_firmware(fw);
+			firmware_release(fw);
 		}
 	} else {
 		__download_offload_pseudocode(vub300, fw);
-		release_firmware(fw);
+		firmware_release(fw);
 	}
 }
 

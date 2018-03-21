@@ -731,7 +731,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 		default:
 		case TUNER_S0194:
 			fw_lme = fw_s0194;
-			ret = request_firmware(&fw, fw_lme, &udev->dev);
+			ret = firmware_request(&fw, fw_lme, &udev->dev);
 			if (ret == 0) {
 				st->dvb_usb_lme2510_firmware = TUNER_S0194;
 				cold = 0;
@@ -740,7 +740,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 			/* fall through */
 		case TUNER_LG:
 			fw_lme = fw_lg;
-			ret = request_firmware(&fw, fw_lme, &udev->dev);
+			ret = firmware_request(&fw, fw_lme, &udev->dev);
 			if (ret == 0) {
 				st->dvb_usb_lme2510_firmware = TUNER_LG;
 				break;
@@ -754,7 +754,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 		default:
 		case TUNER_S7395:
 			fw_lme = fw_c_s7395;
-			ret = request_firmware(&fw, fw_lme, &udev->dev);
+			ret = firmware_request(&fw, fw_lme, &udev->dev);
 			if (ret == 0) {
 				st->dvb_usb_lme2510_firmware = TUNER_S7395;
 				cold = 0;
@@ -763,7 +763,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 			/* fall through */
 		case TUNER_LG:
 			fw_lme = fw_c_lg;
-			ret = request_firmware(&fw, fw_lme, &udev->dev);
+			ret = firmware_request(&fw, fw_lme, &udev->dev);
 			if (ret == 0) {
 				st->dvb_usb_lme2510_firmware = TUNER_LG;
 				break;
@@ -771,7 +771,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 			/* fall through */
 		case TUNER_S0194:
 			fw_lme = fw_c_s0194;
-			ret = request_firmware(&fw, fw_lme, &udev->dev);
+			ret = firmware_request(&fw, fw_lme, &udev->dev);
 			if (ret == 0) {
 				st->dvb_usb_lme2510_firmware = TUNER_S0194;
 				break;
@@ -789,7 +789,7 @@ static const char *lme_firmware_switch(struct dvb_usb_device *d, int cold)
 		fw_lme = fw_c_s7395;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (cold) {
 		dvb_usb_lme2510_firmware = st->dvb_usb_lme2510_firmware;

@@ -1496,13 +1496,13 @@ out:
 
 static void b43legacy_release_firmware(struct b43legacy_wldev *dev)
 {
-	release_firmware(dev->fw.ucode);
+	firmware_release(dev->fw.ucode);
 	dev->fw.ucode = NULL;
-	release_firmware(dev->fw.pcm);
+	firmware_release(dev->fw.pcm);
 	dev->fw.pcm = NULL;
-	release_firmware(dev->fw.initvals);
+	firmware_release(dev->fw.initvals);
 	dev->fw.initvals = NULL;
-	release_firmware(dev->fw.initvals_band);
+	firmware_release(dev->fw.initvals_band);
 	dev->fw.initvals_band = NULL;
 }
 
@@ -1539,7 +1539,7 @@ static int do_request_fw(struct b43legacy_wldev *dev,
 	b43legacyinfo(dev->wl, "Loading firmware %s\n", path);
 	if (async) {
 		init_completion(&dev->fw_load_complete);
-		err = request_firmware_nowait(THIS_MODULE, 1, path,
+		err = firmware_request_nowait(THIS_MODULE, 1, path,
 					      dev->dev->dev, GFP_KERNEL,
 					      dev, b43legacy_fw_cb);
 		if (err) {
@@ -1552,7 +1552,7 @@ static int do_request_fw(struct b43legacy_wldev *dev,
 			err = -EINVAL;
 		*fw = dev->fwp;
 	} else {
-		err = request_firmware(fw, path, dev->dev->dev);
+		err = firmware_request(fw, path, dev->dev->dev);
 	}
 	if (err) {
 		b43legacyerr(dev->wl, "Firmware file \"%s\" not found "

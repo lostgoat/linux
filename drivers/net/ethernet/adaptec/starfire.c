@@ -1014,7 +1014,7 @@ static int netdev_open(struct net_device *dev)
 	writel(ETH_P_8021Q, ioaddr + VlanType);
 #endif /* VLAN_SUPPORT */
 
-	retval = request_firmware(&fw_rx, FIRMWARE_RX, &np->pci_dev->dev);
+	retval = firmware_request(&fw_rx, FIRMWARE_RX, &np->pci_dev->dev);
 	if (retval) {
 		printk(KERN_ERR "starfire: Failed to load firmware \"%s\"\n",
 		       FIRMWARE_RX);
@@ -1026,7 +1026,7 @@ static int netdev_open(struct net_device *dev)
 		retval = -EINVAL;
 		goto out_rx;
 	}
-	retval = request_firmware(&fw_tx, FIRMWARE_TX, &np->pci_dev->dev);
+	retval = firmware_request(&fw_tx, FIRMWARE_TX, &np->pci_dev->dev);
 	if (retval) {
 		printk(KERN_ERR "starfire: Failed to load firmware \"%s\"\n",
 		       FIRMWARE_TX);
@@ -1060,9 +1060,9 @@ static int netdev_open(struct net_device *dev)
 		       dev->name);
 
 out_tx:
-	release_firmware(fw_tx);
+	firmware_release(fw_tx);
 out_rx:
-	release_firmware(fw_rx);
+	firmware_release(fw_rx);
 out_init:
 	if (retval)
 		netdev_close(dev);

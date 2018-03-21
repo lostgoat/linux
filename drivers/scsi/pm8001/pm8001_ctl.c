@@ -732,7 +732,7 @@ static ssize_t pm8001_store_update_fw(struct device *cdev,
 		goto out;
 	}
 
-	ret = request_firmware(&pm8001_ha->fw_image,
+	ret = firmware_request(&pm8001_ha->fw_image,
 			       filename_ptr,
 			       pm8001_ha->dev);
 
@@ -750,7 +750,7 @@ static ssize_t pm8001_store_update_fw(struct device *cdev,
 	else
 		ret = pm8001_set_nvmd(pm8001_ha);
 
-	release_firmware(pm8001_ha->fw_image);
+	firmware_release(pm8001_ha->fw_image);
 out:
 	kfree(cmd_ptr);
 

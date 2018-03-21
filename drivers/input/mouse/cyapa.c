@@ -1016,7 +1016,7 @@ static int cyapa_firmware(struct cyapa *cyapa, const char *fw_name)
 	const struct firmware *fw;
 	int error;
 
-	error = request_firmware(&fw, fw_name, dev);
+	error = firmware_request(&fw, fw_name, dev);
 	if (error) {
 		dev_err(dev, "Could not load firmware from %s: %d\n",
 			fw_name, error);
@@ -1069,7 +1069,7 @@ err_detect:
 	pm_runtime_put_noidle(dev);
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 	return error;
 }
 

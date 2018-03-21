@@ -4094,7 +4094,7 @@ static ssize_t ipr_store_update_fw(struct device *dev,
 	if (endline)
 		*endline = '\0';
 
-	if (request_firmware(&fw_entry, fname, &ioa_cfg->pdev->dev)) {
+	if (firmware_request(&fw_entry, fname, &ioa_cfg->pdev->dev)) {
 		dev_err(&ioa_cfg->pdev->dev, "Firmware file %s not found\n", fname);
 		return -EIO;
 	}
@@ -4107,7 +4107,7 @@ static ssize_t ipr_store_update_fw(struct device *dev,
 
 	if (!sglist) {
 		dev_err(&ioa_cfg->pdev->dev, "Microcode buffer allocation failed\n");
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		return -ENOMEM;
 	}
 
@@ -4127,7 +4127,7 @@ static ssize_t ipr_store_update_fw(struct device *dev,
 		result = count;
 out:
 	ipr_free_ucode_buffer(sglist);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return result;
 }
 

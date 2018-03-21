@@ -2415,7 +2415,7 @@ static int stk9090m_frontend_attach(struct dvb_usb_adapter *adap)
 
 	dib9000_i2c_enumeration(&adap->dev->i2c_adap, 1, 0x10, 0x80);
 
-	if (request_firmware(&state->frontend_firmware, "dib9090.fw", &adap->dev->udev->dev)) {
+	if (firmware_request(&state->frontend_firmware, "dib9090.fw", &adap->dev->udev->dev)) {
 		deb_info("%s: Upload failed. (file not found?)\n", __func__);
 		return -ENODEV;
 	} else {
@@ -2449,7 +2449,7 @@ static int dib9090_tuner_attach(struct dvb_usb_adapter *adap)
 	dib0700_set_i2c_speed(adap->dev, 1500);
 	if (dib9000_firmware_post_pll_init(adap->fe_adap[0].fe) < 0)
 		return -ENODEV;
-	release_firmware(state->frontend_firmware);
+	firmware_release(state->frontend_firmware);
 	return 0;
 }
 
@@ -2481,7 +2481,7 @@ static int nim9090md_frontend_attach(struct dvb_usb_adapter *adap)
 	msleep(20);
 	dib0700_set_gpio(adap->dev, GPIO0, GPIO_OUT, 1);
 
-	if (request_firmware(&state->frontend_firmware, "dib9090.fw", &adap->dev->udev->dev)) {
+	if (firmware_request(&state->frontend_firmware, "dib9090.fw", &adap->dev->udev->dev)) {
 		deb_info("%s: Upload failed. (file not found?)\n", __func__);
 		return -EIO;
 	} else {
@@ -2543,7 +2543,7 @@ static int nim9090md_tuner_attach(struct dvb_usb_adapter *adap)
 		if (dib9000_firmware_post_pll_init(fe_slave) < 0)
 			return -ENODEV;
 	}
-	release_firmware(state->frontend_firmware);
+	firmware_release(state->frontend_firmware);
 
 	return 0;
 }

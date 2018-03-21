@@ -299,7 +299,7 @@ static int s3fwrn5_fw_request_firmware(struct s3fwrn5_fw_info *fw_info)
 	u32 custom_sig_off;
 	int ret;
 
-	ret = request_firmware(&fw->fw, fw_info->fw_name,
+	ret = firmware_request(&fw->fw, fw_info->fw_name,
 		&fw_info->ndev->nfc_dev->dev);
 	if (ret < 0)
 		return ret;
@@ -329,7 +329,7 @@ static int s3fwrn5_fw_request_firmware(struct s3fwrn5_fw_info *fw_info)
 
 static void s3fwrn5_fw_release_firmware(struct s3fwrn5_fw_info *fw_info)
 {
-	release_firmware(fw_info->fw.fw);
+	firmware_release(fw_info->fw.fw);
 }
 
 static int s3fwrn5_fw_get_base_addr(

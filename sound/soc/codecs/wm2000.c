@@ -889,7 +889,7 @@ static int wm2000_i2c_probe(struct i2c_client *i2c,
 			filename = pdata->download_file;
 	}
 
-	ret = request_firmware(&fw, filename, &i2c->dev);
+	ret = firmware_request(&fw, filename, &i2c->dev);
 	if (ret != 0) {
 		dev_err(&i2c->dev, "Failed to acquire ANC data: %d\n", ret);
 		goto err_supplies;
@@ -922,7 +922,7 @@ err_supplies:
 	regulator_bulk_disable(WM2000_NUM_SUPPLIES, wm2000->supplies);
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

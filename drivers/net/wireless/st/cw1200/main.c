@@ -462,7 +462,7 @@ static void cw1200_unregister_common(struct ieee80211_hw *dev)
 	priv->workqueue = NULL;
 
 	if (priv->sdd) {
-		release_firmware(priv->sdd);
+		firmware_release(priv->sdd);
 		priv->sdd = NULL;
 	}
 

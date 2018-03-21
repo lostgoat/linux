@@ -351,7 +351,7 @@ static int nokia_setup_fw(struct hci_uart *hu)
 		return -ENODEV;
 	}
 
-	err = request_firmware(&fw, fwname, dev);
+	err = firmware_request(&fw, fwname, dev);
 	if (err < 0) {
 		dev_err(dev, "%s: Failed to load Nokia firmware file (%d)",
 			hu->hdev->name, err);
@@ -395,7 +395,7 @@ static int nokia_setup_fw(struct hci_uart *hu)
 	}
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 

@@ -1137,7 +1137,7 @@ static int ath9k_hif_request_firmware(struct hif_device_usb *hif_dev,
 			 chip, MAJOR_VERSION_REQ, index);
 	}
 
-	ret = request_firmware_nowait(THIS_MODULE, true, hif_dev->fw_name,
+	ret = firmware_request_nowait(THIS_MODULE, true, hif_dev->fw_name,
 				      &hif_dev->udev->dev, GFP_KERNEL,
 				      hif_dev, ath9k_hif_usb_firmware_cb);
 	if (ret) {
@@ -1193,7 +1193,7 @@ static void ath9k_hif_usb_firmware_cb(const struct firmware *fw, void *context)
 		goto err_htc_hw_init;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 	hif_dev->flags |= HIF_USB_READY;
 	complete_all(&hif_dev->fw_done);
 
@@ -1204,7 +1204,7 @@ err_htc_hw_init:
 err_dev_init:
 	ath9k_htc_hw_free(hif_dev->htc_handle);
 err_dev_alloc:
-	release_firmware(fw);
+	firmware_release(fw);
 err_fw:
 	ath9k_hif_usb_firmware_fail(hif_dev);
 }
@@ -1390,7 +1390,7 @@ static int ath9k_hif_usb_resume(struct usb_interface *interface)
 
 	if (hif_dev->flags & HIF_USB_READY) {
 		/* request cached firmware during suspend/resume cycle */
-		ret = request_firmware(&fw, hif_dev->fw_name,
+		ret = firmware_request(&fw, hif_dev->fw_name,
 				       &hif_dev->udev->dev);
 		if (ret)
 			goto fail_resume;
@@ -1398,7 +1398,7 @@ static int ath9k_hif_usb_resume(struct usb_interface *interface)
 		hif_dev->fw_data = fw->data;
 		hif_dev->fw_size = fw->size;
 		ret = ath9k_hif_usb_download_fw(hif_dev);
-		release_firmware(fw);
+		firmware_release(fw);
 		if (ret)
 			goto fail_resume;
 	} else {

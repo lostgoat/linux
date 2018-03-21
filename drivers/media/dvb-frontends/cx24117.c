@@ -468,7 +468,7 @@ static int cx24117_firmware_ondemand(struct dvb_frontend *fe)
 		dev_dbg(&state->priv->i2c->dev,
 			"%s: Waiting for firmware upload (%s)...\n",
 			__func__, CX24117_DEFAULT_FIRMWARE);
-		ret = request_firmware(&fw, CX24117_DEFAULT_FIRMWARE,
+		ret = firmware_request(&fw, CX24117_DEFAULT_FIRMWARE,
 			state->priv->i2c->dev.parent);
 		dev_dbg(&state->priv->i2c->dev,
 			"%s: Waiting for firmware upload(2)...\n", __func__);
@@ -487,7 +487,7 @@ __func__);
 		if (ret)
 			dev_err(&state->priv->i2c->dev,
 				"%s: Writing firmware failed\n", __func__);
-		release_firmware(fw);
+		firmware_release(fw);
 
 		dev_info(&state->priv->i2c->dev,
 			"%s: Firmware upload %s\n", __func__,

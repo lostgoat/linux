@@ -133,7 +133,7 @@ static int gp8psk_load_bcm4500fw(struct dvb_usb_device *d)
 	const struct firmware *fw = NULL;
 	const u8 *ptr;
 	u8 *buf;
-	if ((ret = request_firmware(&fw, bcm4500_firmware,
+	if ((ret = firmware_request(&fw, bcm4500_firmware,
 					&d->udev->dev)) != 0) {
 		err("did not find the bcm4500 firmware file. (%s) Please see linux/Documentation/dvb/ for more details on firmware-problems. (%d)",
 			bcm4500_firmware,ret);
@@ -178,7 +178,7 @@ static int gp8psk_load_bcm4500fw(struct dvb_usb_device *d)
 out_free:
 	kfree(buf);
 out_rel_fw:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

@@ -289,7 +289,7 @@ static int rome_download_firmware(struct hci_dev *hdev,
 
 	bt_dev_info(hdev, "ROME Downloading %s", config->fwname);
 
-	ret = request_firmware(&fw, config->fwname, &hdev->dev);
+	ret = firmware_request(&fw, config->fwname, &hdev->dev);
 	if (ret) {
 		BT_ERR("%s: Failed to request file: %s (%d)", hdev->name,
 		       config->fwname, ret);
@@ -304,7 +304,7 @@ static int rome_download_firmware(struct hci_dev *hdev,
 		       config->fwname, ret);
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

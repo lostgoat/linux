@@ -2075,7 +2075,7 @@ int rtl8xxxu_load_firmware(struct rtl8xxxu_priv *priv, char *fw_name)
 	u16 signature;
 
 	dev_info(dev, "%s: Loading firmware %s\n", DRIVER_NAME, fw_name);
-	if (request_firmware(&fw, fw_name, &priv->udev->dev)) {
+	if (firmware_request(&fw, fw_name, &priv->udev->dev)) {
 		dev_warn(dev, "request_firmware(%s) failed\n", fw_name);
 		ret = -EAGAIN;
 		goto exit;
@@ -2112,7 +2112,7 @@ int rtl8xxxu_load_firmware(struct rtl8xxxu_priv *priv, char *fw_name)
 		 priv->fw_data->minor_version, signature);
 
 exit:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

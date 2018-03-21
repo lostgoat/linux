@@ -1075,7 +1075,7 @@ static int cxacru_find_firmware(struct cxacru_data *instance,
 	sprintf(buf, "cxacru-%s.bin", phase);
 	usb_dbg(usbatm, "cxacru_find_firmware: looking for %s\n", buf);
 
-	if (request_firmware(fw_p, buf, dev)) {
+	if (firmware_request(fw_p, buf, dev)) {
 		usb_dbg(usbatm, "no stage %s firmware found\n", phase);
 		return -ENOENT;
 	}
@@ -1101,7 +1101,7 @@ static int cxacru_heavy_init(struct usbatm_data *usbatm_instance,
 		ret = cxacru_find_firmware(instance, "bp", &bp);
 		if (ret) {
 			usb_warn(usbatm_instance, "boot ROM patch (cxacru-bp.bin) unavailable (system misconfigured?)\n");
-			release_firmware(fw);
+			firmware_release(fw);
 			return ret;
 		}
 	}
@@ -1109,8 +1109,8 @@ static int cxacru_heavy_init(struct usbatm_data *usbatm_instance,
 	cxacru_upload_firmware(instance, fw, bp);
 
 	if (instance->modem_type->boot_rom_patch)
-		release_firmware(bp);
-	release_firmware(fw);
+		firmware_release(bp);
+	firmware_release(fw);
 
 	ret = cxacru_card_status(instance);
 	if (ret)

@@ -1082,7 +1082,7 @@ static void qtnf_firmware_load(const struct firmware *fw, void *context)
 fw_load_err:
 
 	if (fw)
-		release_firmware(fw);
+		firmware_release(fw);
 
 	complete(&bus->request_firmware_complete);
 }
@@ -1119,7 +1119,7 @@ static int qtnf_bringup_fw(struct qtnf_bus *bus)
 
 	pr_info("starting firmware upload: %s\n", bus->fwname);
 
-	ret = request_firmware_nowait(THIS_MODULE, 1, bus->fwname, &pdev->dev,
+	ret = firmware_request_nowait(THIS_MODULE, 1, bus->fwname, &pdev->dev,
 				      GFP_KERNEL, priv, qtnf_firmware_load);
 	if (ret < 0)
 		pr_err("request_firmware_nowait error %d\n", ret);

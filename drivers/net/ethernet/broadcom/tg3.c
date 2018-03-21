@@ -11378,7 +11378,7 @@ static int tg3_request_firmware(struct tg3 *tp)
 {
 	const struct tg3_firmware_hdr *fw_hdr;
 
-	if (request_firmware(&tp->fw, tp->fw_needed, &tp->pdev->dev)) {
+	if (firmware_request(&tp->fw, tp->fw_needed, &tp->pdev->dev)) {
 		netdev_err(tp->dev, "Failed to load firmware \"%s\"\n",
 			   tp->fw_needed);
 		return -ENOENT;
@@ -11395,7 +11395,7 @@ static int tg3_request_firmware(struct tg3 *tp)
 	if (tp->fw_len < (tp->fw->size - TG3_FW_HDR_LEN)) {
 		netdev_err(tp->dev, "bogus length %d in \"%s\"\n",
 			   tp->fw_len, tp->fw_needed);
-		release_firmware(tp->fw);
+		firmware_release(tp->fw);
 		tp->fw = NULL;
 		return -EINVAL;
 	}
@@ -18025,7 +18025,7 @@ static void tg3_remove_one(struct pci_dev *pdev)
 
 		tg3_ptp_fini(tp);
 
-		release_firmware(tp->fw);
+		firmware_release(tp->fw);
 
 		tg3_reset_task_cancel(tp);
 

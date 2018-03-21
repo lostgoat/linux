@@ -1408,7 +1408,7 @@ static int wl18xx_load_conf_file(struct device *dev, struct wlcore_conf *conf,
 	const struct firmware *fw;
 	int ret;
 
-	ret = request_firmware(&fw, file, dev);
+	ret = firmware_request(&fw, file, dev);
 	if (ret < 0) {
 		wl1271_error("could not get configuration binary %s: %d",
 			     file, ret);
@@ -1444,7 +1444,7 @@ static int wl18xx_load_conf_file(struct device *dev, struct wlcore_conf *conf,
 	memcpy(priv_conf, &conf_file->priv, sizeof(*priv_conf));
 
 out_release:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

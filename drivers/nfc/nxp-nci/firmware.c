@@ -74,7 +74,7 @@ void nxp_nci_fw_work_complete(struct nxp_nci_info *info, int result)
 	info->mode = NXP_NCI_MODE_COLD;
 
 	if (fw_info->fw) {
-		release_firmware(fw_info->fw);
+		firmware_release(fw_info->fw);
 		fw_info->fw = NULL;
 	}
 
@@ -227,14 +227,14 @@ int nxp_nci_fw_download(struct nci_dev *ndev, const char *firmware_name)
 
 	strcpy(fw_info->name, firmware_name);
 
-	r = request_firmware(&fw_info->fw, firmware_name,
+	r = firmware_request(&fw_info->fw, firmware_name,
 			     ndev->nfc_dev->dev.parent);
 	if (r < 0)
 		goto fw_download_exit;
 
 	r = info->phy_ops->set_mode(info->phy_id, NXP_NCI_MODE_FW);
 	if (r < 0) {
-		release_firmware(fw_info->fw);
+		firmware_release(fw_info->fw);
 		goto fw_download_exit;
 	}
 

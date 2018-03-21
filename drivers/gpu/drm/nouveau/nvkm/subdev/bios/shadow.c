@@ -148,7 +148,7 @@ shadow_fw_init(struct nvkm_bios *bios, const char *name)
 {
 	struct device *dev = bios->subdev.device->dev;
 	const struct firmware *fw;
-	int ret = request_firmware(&fw, name, dev);
+	int ret = firmware_request(&fw, name, dev);
 	if (ret)
 		return ERR_PTR(-ENOENT);
 	return (void *)fw;

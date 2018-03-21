@@ -43,7 +43,7 @@ short hpi_dsp_code_open(u32 adapter, void *os_data, struct dsp_code *dsp_code,
 
 	sprintf(fw_name, "asihpi/dsp%04x.bin", adapter);
 
-	err = request_firmware(&firmware, fw_name, &dev->dev);
+	err = firmware_request(&firmware, fw_name, &dev->dev);
 
 	if (err || !firmware) {
 		dev_err(&dev->dev, "%d, request_firmware failed for %s\n",
@@ -94,7 +94,7 @@ short hpi_dsp_code_open(u32 adapter, void *os_data, struct dsp_code *dsp_code,
 	return 0;
 
 error2:
-	release_firmware(firmware);
+	firmware_release(firmware);
 error1:
 	dsp_code->block_length = 0;
 	return err_ret;
@@ -104,7 +104,7 @@ error1:
 void hpi_dsp_code_close(struct dsp_code *dsp_code)
 {
 	HPI_DEBUG_LOG(DEBUG, "dsp code closed\n");
-	release_firmware(dsp_code->pvt->firmware);
+	firmware_release(dsp_code->pvt->firmware);
 	kfree(dsp_code->pvt);
 }
 

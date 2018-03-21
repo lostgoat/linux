@@ -1594,7 +1594,7 @@ csio_hw_flash_config(struct csio_hw *hw, u32 *fw_cfg_param, char *path)
 	else
 		fw_cfg_file = FW_CFG_NAME_T6;
 
-	if (request_firmware(&cf, fw_cfg_file, dev) < 0) {
+	if (firmware_request(&cf, fw_cfg_file, dev) < 0) {
 		csio_err(hw, "could not find config file %s, err: %d\n",
 			 fw_cfg_file, ret);
 		return -ENOENT;
@@ -1641,7 +1641,7 @@ csio_hw_flash_config(struct csio_hw *hw, u32 *fw_cfg_param, char *path)
 
 leave:
 	kfree(cfg_data);
-	release_firmware(cf);
+	firmware_release(cf);
 	return ret;
 }
 
@@ -2044,7 +2044,7 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
 	else
 		fw_bin_file = FW_FNAME_T6;
 
-	if (request_firmware(&fw, fw_bin_file, dev) < 0) {
+	if (firmware_request(&fw, fw_bin_file, dev) < 0) {
 		csio_err(hw, "could not find firmware image %s, err: %d\n",
 			 fw_bin_file, ret);
 	} else {
@@ -2063,7 +2063,7 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
 
 	/* Cleaning up */
 	if (fw != NULL)
-		release_firmware(fw);
+		firmware_release(fw);
 	kfree(card_fw);
 	return ret;
 }

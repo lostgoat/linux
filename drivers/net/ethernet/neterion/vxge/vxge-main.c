@@ -4141,7 +4141,7 @@ int vxge_fw_upgrade(struct vxgedev *vdev, char *fw_name, int override)
 	const struct firmware *fw;
 	int ret;
 
-	ret = request_firmware(&fw, fw_name, &vdev->pdev->dev);
+	ret = firmware_request(&fw, fw_name, &vdev->pdev->dev);
 	if (ret) {
 		vxge_debug_init(VXGE_ERR, "%s: Firmware file '%s' not found",
 				VXGE_DRIVER_NAME, fw_name);
@@ -4198,7 +4198,7 @@ int vxge_fw_upgrade(struct vxgedev *vdev, char *fw_name, int override)
 	       "hotplug event.\n");
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

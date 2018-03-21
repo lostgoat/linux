@@ -356,15 +356,15 @@ static int speedtch_find_firmware(struct usbatm_data *usbatm, struct usb_interfa
 	sprintf(buf, "speedtch-%d.bin.%x.%02x", phase, major_revision, minor_revision);
 	usb_dbg(usbatm, "%s: looking for %s\n", __func__, buf);
 
-	if (request_firmware(fw_p, buf, dev)) {
+	if (firmware_request(fw_p, buf, dev)) {
 		sprintf(buf, "speedtch-%d.bin.%x", phase, major_revision);
 		usb_dbg(usbatm, "%s: looking for %s\n", __func__, buf);
 
-		if (request_firmware(fw_p, buf, dev)) {
+		if (firmware_request(fw_p, buf, dev)) {
 			sprintf(buf, "speedtch-%d.bin", phase);
 			usb_dbg(usbatm, "%s: looking for %s\n", __func__, buf);
 
-			if (request_firmware(fw_p, buf, dev)) {
+			if (firmware_request(fw_p, buf, dev)) {
 				usb_err(usbatm, "%s: no stage %d firmware found!\n", __func__, phase);
 				return -ENOENT;
 			}
@@ -386,15 +386,15 @@ static int speedtch_heavy_init(struct usbatm_data *usbatm, struct usb_interface 
 		return ret;
 
 	if ((ret = speedtch_find_firmware(usbatm, intf, 2, &fw2)) < 0) {
-		release_firmware(fw1);
+		firmware_release(fw1);
 		return ret;
 	}
 
 	if ((ret = speedtch_upload_firmware(instance, fw1, fw2)) < 0)
 		usb_err(usbatm, "%s: firmware upload failed (%d)!\n", __func__, ret);
 
-	release_firmware(fw2);
-	release_firmware(fw1);
+	firmware_release(fw2);
+	firmware_release(fw1);
 
 	return ret;
 }

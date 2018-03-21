@@ -99,13 +99,13 @@ static void rtl92se_fw_cb(const struct firmware *firmware, void *context)
 	if (firmware->size > rtlpriv->max_fw_size) {
 		pr_err("Firmware is too big!\n");
 		rtlpriv->max_fw_size = 0;
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return;
 	}
 	pfirmware = (struct rt_firmware *)rtlpriv->rtlhal.pfirmware;
 	memcpy(pfirmware->sz_fw_tmpbuffer, firmware->data, firmware->size);
 	pfirmware->sz_fw_tmpbufferlen = firmware->size;
-	release_firmware(firmware);
+	firmware_release(firmware);
 }
 
 static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
@@ -212,7 +212,7 @@ static int rtl92s_init_sw_vars(struct ieee80211_hw *hw)
 	pr_info("Driver for Realtek RTL8192SE/RTL8191SE\n"
 		"Loading firmware %s\n", fw_name);
 	/* request fw */
-	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
+	err = firmware_request_nowait(THIS_MODULE, 1, fw_name,
 				      rtlpriv->io.dev, GFP_KERNEL, hw,
 				      rtl92se_fw_cb);
 	if (err) {

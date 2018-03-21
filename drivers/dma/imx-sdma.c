@@ -1513,7 +1513,7 @@ static void sdma_load_firmware(const struct firmware *fw, void *context)
 			header->version_minor);
 
 err_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 #define EVENT_REMAP_CELLS 3
@@ -1587,7 +1587,7 @@ static int sdma_get_firmware(struct sdma_engine *sdma,
 {
 	int ret;
 
-	ret = request_firmware_nowait(THIS_MODULE,
+	ret = firmware_request_nowait(THIS_MODULE,
 			FW_ACTION_HOTPLUG, fw_name, sdma->dev,
 			GFP_KERNEL, sdma, sdma_load_firmware);
 

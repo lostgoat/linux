@@ -188,7 +188,7 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id 
 	if (!data->urb)
 		return -ENOMEM;
 
-	if (request_firmware(&firmware, "BCM2033-MD.hex", &udev->dev) < 0) {
+	if (firmware_request(&firmware, "BCM2033-MD.hex", &udev->dev) < 0) {
 		BT_ERR("Mini driver request failed");
 		usb_free_urb(data->urb);
 		return -EIO;
@@ -201,7 +201,7 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id 
 	data->buffer = kmalloc(size, GFP_KERNEL);
 	if (!data->buffer) {
 		BT_ERR("Can't allocate memory for mini driver");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		usb_free_urb(data->urb);
 		return -ENOMEM;
 	}
@@ -211,9 +211,9 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id 
 	usb_fill_bulk_urb(data->urb, udev, usb_sndbulkpipe(udev, BCM203X_OUT_EP),
 			data->buffer, firmware->size, bcm203x_complete, data);
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
-	if (request_firmware(&firmware, "BCM2033-FW.bin", &udev->dev) < 0) {
+	if (firmware_request(&firmware, "BCM2033-FW.bin", &udev->dev) < 0) {
 		BT_ERR("Firmware request failed");
 		usb_free_urb(data->urb);
 		kfree(data->buffer);
@@ -225,7 +225,7 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id 
 	data->fw_data = kmemdup(firmware->data, firmware->size, GFP_KERNEL);
 	if (!data->fw_data) {
 		BT_ERR("Can't allocate memory for firmware image");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		usb_free_urb(data->urb);
 		kfree(data->buffer);
 		return -ENOMEM;
@@ -234,7 +234,7 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id 
 	data->fw_size = firmware->size;
 	data->fw_sent = 0;
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	INIT_WORK(&data->work, bcm203x_work);
 

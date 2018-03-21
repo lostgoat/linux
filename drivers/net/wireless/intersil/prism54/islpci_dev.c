@@ -91,7 +91,7 @@ isl_upload_firmware(islpci_private *priv)
 		long fw_len;
 		const u32 *fw_ptr;
 
-		rc = request_firmware(&fw_entry, priv->firmware, PRISM_FW_PDEV);
+		rc = firmware_request(&fw_entry, priv->firmware, PRISM_FW_PDEV);
 		if (rc) {
 			printk(KERN_ERR
 			       "%s: request_firmware() failed for '%s'\n",
@@ -108,7 +108,7 @@ isl_upload_firmware(islpci_private *priv)
 			printk(KERN_ERR
 			       "%s: firmware '%s' size is not multiple of 32bit, aborting!\n",
 			       "prism54", priv->firmware);
-			release_firmware(fw_entry);
+			firmware_release(fw_entry);
 			return -EILSEQ; /* Illegal byte sequence  */;
 		}
 
@@ -150,7 +150,7 @@ isl_upload_firmware(islpci_private *priv)
 		printk(KERN_DEBUG "%s: firmware version: %.8s\n",
 		       priv->ndev->name, fw_entry->data + 40);
 
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 	}
 
 	/* now reset the device

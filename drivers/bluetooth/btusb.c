@@ -1563,7 +1563,7 @@ static const struct firmware *btusb_setup_intel_get_fw(struct hci_dev *hdev,
 		 ver->fw_variant,  ver->fw_revision, ver->fw_build_num,
 		 ver->fw_build_ww, ver->fw_build_yy);
 
-	ret = request_firmware(&fw, fwname, &hdev->dev);
+	ret = firmware_request(&fw, fwname, &hdev->dev);
 	if (ret < 0) {
 		if (ret == -EINVAL) {
 			BT_ERR("%s Intel firmware file request failed (%d)",
@@ -1579,7 +1579,7 @@ static const struct firmware *btusb_setup_intel_get_fw(struct hci_dev *hdev,
 		 */
 		snprintf(fwname, sizeof(fwname), "intel/ibt-hw-%x.%x.bseq",
 			 ver->hw_platform, ver->hw_variant);
-		if (request_firmware(&fw, fwname, &hdev->dev) < 0) {
+		if (firmware_request(&fw, fwname, &hdev->dev) < 0) {
 			BT_ERR("%s failed to open default Intel fw file: %s",
 			       hdev->name, fwname);
 			return NULL;
@@ -1774,7 +1774,7 @@ static int btusb_setup_intel(struct hci_dev *hdev)
 	 */
 	err = btintel_enter_mfg(hdev);
 	if (err) {
-		release_firmware(fw);
+		firmware_release(fw);
 		return err;
 	}
 
@@ -1809,7 +1809,7 @@ static int btusb_setup_intel(struct hci_dev *hdev)
 			goto exit_mfg_deactivate;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (disable_patch)
 		goto exit_mfg_disable;
@@ -1836,7 +1836,7 @@ exit_mfg_disable:
 	goto complete;
 
 exit_mfg_deactivate:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/* Patching failed. Disable the manufacturer mode with reset and
 	 * deactivate the downloaded firmware patches.
@@ -2175,7 +2175,7 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
 		return -EINVAL;
 	}
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err < 0) {
 		BT_ERR("%s: Failed to load Intel firmware file (%d)",
 		       hdev->name, err);
@@ -2262,7 +2262,7 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
 	bt_dev_info(hdev, "Firmware loaded in %llu usecs", duration);
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (err < 0)
 		return err;
@@ -2588,7 +2588,7 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
 
 	snprintf(fwname, sizeof(fwname), "qca/rampatch_usb_%08x.bin", ver_rom);
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err) {
 		bt_dev_err(hdev, "failed to request rampatch file: %s (%d)",
 			   fwname, err);
@@ -2614,7 +2614,7 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
 	err = btusb_setup_qca_download_fw(hdev, fw, info->rampatch_hdr);
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err;
 }
@@ -2630,7 +2630,7 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
 	snprintf(fwname, sizeof(fwname), "qca/nvm_usb_%08x.bin",
 		 le32_to_cpu(ver->rom_version));
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err) {
 		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
 			   fwname, err);
@@ -2641,7 +2641,7 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
 
 	err = btusb_setup_qca_download_fw(hdev, fw, info->nvm_hdr);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err;
 }

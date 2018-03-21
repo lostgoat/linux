@@ -1393,7 +1393,7 @@ static int load_firmware(struct pci_dev *pdev,
 		goto end;
 	}
 
-	retval = request_firmware(&fw, name, &pdev->dev);
+	retval = firmware_request(&fw, name, &pdev->dev);
 	if (retval)
 		goto end;
 
@@ -1524,7 +1524,7 @@ static int load_firmware(struct pci_dev *pdev,
 	retval = 0;
 
 errrelfw:
-	release_firmware(fw);
+	firmware_release(fw);
 end:
 	return retval;
 }

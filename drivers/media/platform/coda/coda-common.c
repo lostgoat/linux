@@ -2306,7 +2306,7 @@ static int coda_firmware_request(struct coda_dev *dev)
 	dev_dbg(&dev->plat_dev->dev, "requesting firmware '%s' for %s\n", fw,
 		coda_product_name(dev->devtype->product));
 
-	return request_firmware_nowait(THIS_MODULE, true, fw,
+	return firmware_request_nowait(THIS_MODULE, true, fw,
 				       &dev->plat_dev->dev, GFP_KERNEL, dev,
 				       coda_fw_callback);
 }
@@ -2343,7 +2343,7 @@ static void coda_fw_callback(const struct firmware *fw, void *context)
 		goto put_pm;
 
 	coda_copy_firmware(dev, fw->data, fw->size);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	ret = coda_hw_init(dev);
 	if (ret < 0) {

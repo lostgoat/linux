@@ -1754,7 +1754,7 @@ bfad_read_firmware(struct pci_dev *pdev, u32 **bfi_image,
 {
 	const struct firmware *fw;
 
-	if (request_firmware(&fw, fw_name, &pdev->dev)) {
+	if (firmware_request(&fw, fw_name, &pdev->dev)) {
 		printk(KERN_ALERT "Can't locate firmware %s\n", fw_name);
 		*bfi_image = NULL;
 		goto out;
@@ -1770,7 +1770,7 @@ bfad_read_firmware(struct pci_dev *pdev, u32 **bfi_image,
 	memcpy(*bfi_image, fw->data, fw->size);
 	*bfi_image_size = fw->size/sizeof(u32);
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 static u32 *

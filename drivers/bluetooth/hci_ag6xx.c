@@ -208,7 +208,7 @@ static int ag6xx_setup(struct hci_uart *hu)
 	snprintf(fwname, sizeof(fwname), "intel/ibt-hw-%x.%x.bddata",
 		 ver.hw_platform, ver.hw_variant);
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err < 0) {
 		bt_dev_err(hdev, "Failed to open Intel bddata file: %s (%d)",
 			   fwname, err);
@@ -222,12 +222,12 @@ static int ag6xx_setup(struct hci_uart *hu)
 				HCI_EV_CMD_STATUS, HCI_CMD_TIMEOUT);
 	if (IS_ERR(skb)) {
 		bt_dev_err(hdev, "Applying bddata failed (%ld)", PTR_ERR(skb));
-		release_firmware(fw);
+		firmware_release(fw);
 		return PTR_ERR(skb);
 	}
 	kfree_skb(skb);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 patch:
 	/* If there is no applied patch, fw_patch_num is always 0x00. In other
@@ -246,7 +246,7 @@ patch:
 		 ver.fw_variant,  ver.fw_revision, ver.fw_build_num,
 		 ver.fw_build_ww, ver.fw_build_yy);
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err < 0) {
 		bt_dev_err(hdev, "Failed to open Intel patch file: %s(%d)",
 			   fwname, err);
@@ -296,7 +296,7 @@ patch:
 		fw_ptr = pbn->data + plen;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 complete:
 	/* Exit manufacturing mode and reset */

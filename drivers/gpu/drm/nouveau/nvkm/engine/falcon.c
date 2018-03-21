@@ -190,13 +190,13 @@ nvkm_falcon_init(struct nvkm_engine *engine)
 		snprintf(name, sizeof(name), "nouveau/nv%02x_fuc%03x",
 			 device->chipset, falcon->addr >> 12);
 
-		ret = request_firmware(&fw, name, device->dev);
+		ret = firmware_request(&fw, name, device->dev);
 		if (ret == 0) {
 			falcon->code.data = vmemdup(fw->data, fw->size);
 			falcon->code.size = fw->size;
 			falcon->data.data = NULL;
 			falcon->data.size = 0;
-			release_firmware(fw);
+			firmware_release(fw);
 		}
 
 		falcon->external = true;
@@ -209,7 +209,7 @@ nvkm_falcon_init(struct nvkm_engine *engine)
 		snprintf(name, sizeof(name), "nouveau/nv%02x_fuc%03xd",
 			 device->chipset, falcon->addr >> 12);
 
-		ret = request_firmware(&fw, name, device->dev);
+		ret = firmware_request(&fw, name, device->dev);
 		if (ret) {
 			nvkm_error(subdev, "unable to load firmware data\n");
 			return -ENODEV;
@@ -217,14 +217,14 @@ nvkm_falcon_init(struct nvkm_engine *engine)
 
 		falcon->data.data = vmemdup(fw->data, fw->size);
 		falcon->data.size = fw->size;
-		release_firmware(fw);
+		firmware_release(fw);
 		if (!falcon->data.data)
 			return -ENOMEM;
 
 		snprintf(name, sizeof(name), "nouveau/nv%02x_fuc%03xc",
 			 device->chipset, falcon->addr >> 12);
 
-		ret = request_firmware(&fw, name, device->dev);
+		ret = firmware_request(&fw, name, device->dev);
 		if (ret) {
 			nvkm_error(subdev, "unable to load firmware code\n");
 			return -ENODEV;
@@ -232,7 +232,7 @@ nvkm_falcon_init(struct nvkm_engine *engine)
 
 		falcon->code.data = vmemdup(fw->data, fw->size);
 		falcon->code.size = fw->size;
-		release_firmware(fw);
+		firmware_release(fw);
 		if (!falcon->code.data)
 			return -ENOMEM;
 	}

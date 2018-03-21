@@ -107,7 +107,7 @@ nvkm_xtensa_init(struct nvkm_engine *engine)
 		snprintf(name, sizeof(name), "nouveau/nv84_xuc%03x",
 			 xtensa->addr >> 12);
 
-		ret = request_firmware(&fw, name, device->dev);
+		ret = firmware_request(&fw, name, device->dev);
 		if (ret) {
 			nvkm_warn(subdev, "unable to load firmware %s\n", name);
 			return ret;
@@ -115,7 +115,7 @@ nvkm_xtensa_init(struct nvkm_engine *engine)
 
 		if (fw->size > 0x40000) {
 			nvkm_warn(subdev, "firmware %s too large\n", name);
-			release_firmware(fw);
+			firmware_release(fw);
 			return -EINVAL;
 		}
 
@@ -123,7 +123,7 @@ nvkm_xtensa_init(struct nvkm_engine *engine)
 				      0x40000, 0x1000, false,
 				      &xtensa->gpu_fw);
 		if (ret) {
-			release_firmware(fw);
+			firmware_release(fw);
 			return ret;
 		}
 
@@ -131,7 +131,7 @@ nvkm_xtensa_init(struct nvkm_engine *engine)
 		for (i = 0; i < fw->size / 4; i++)
 			nvkm_wo32(xtensa->gpu_fw, i * 4, *((u32 *)fw->data + i));
 		nvkm_done(xtensa->gpu_fw);
-		release_firmware(fw);
+		firmware_release(fw);
 	}
 
 	addr = nvkm_memory_addr(xtensa->gpu_fw);

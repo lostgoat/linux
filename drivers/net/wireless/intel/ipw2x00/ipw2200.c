@@ -3416,7 +3416,7 @@ static int ipw_get_fw(struct ipw_priv *priv,
 	int rc;
 
 	/* ask firmware_class module to get the boot firmware off disk */
-	rc = request_firmware(raw, name, &priv->pci_dev->dev);
+	rc = firmware_request(raw, name, &priv->pci_dev->dev);
 	if (rc < 0) {
 		IPW_ERROR("%s request_firmware failed: Reason %d\n", name, rc);
 		return rc;
@@ -3484,7 +3484,7 @@ static const struct firmware *raw = NULL;
 static void free_firmware(void)
 {
 	if (fw_loaded) {
-		release_firmware(raw);
+		firmware_release(raw);
 		raw = NULL;
 		fw_loaded = 0;
 	}
@@ -3667,7 +3667,7 @@ static int ipw_load(struct ipw_priv *priv)
 	ipw_write32(priv, IPW_INTA_RW, IPW_INTA_MASK_ALL);
 
 #ifndef CONFIG_PM
-	release_firmware(raw);
+	firmware_release(raw);
 #endif
 	return 0;
 
@@ -3677,7 +3677,7 @@ static int ipw_load(struct ipw_priv *priv)
 		priv->rxq = NULL;
 	}
 	ipw_tx_queue_free(priv);
-	release_firmware(raw);
+	firmware_release(raw);
 #ifdef CONFIG_PM
 	fw_loaded = 0;
 	raw = NULL;

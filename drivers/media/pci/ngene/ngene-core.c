@@ -1252,7 +1252,7 @@ static int ngene_load_firm(struct ngene *dev)
 		break;
 	}
 
-	if (request_firmware(&fw, fw_name, &dev->pci_dev->dev) < 0) {
+	if (firmware_request(&fw, fw_name, &dev->pci_dev->dev) < 0) {
 		printk(KERN_ERR DEVICE_NAME
 			": Could not load firmware file %s.\n", fw_name);
 		printk(KERN_INFO DEVICE_NAME
@@ -1272,7 +1272,7 @@ static int ngene_load_firm(struct ngene *dev)
 		err = ngene_command_load_firmware(dev, ngene_fw, size);
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err;
 }

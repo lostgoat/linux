@@ -725,17 +725,17 @@ static int xc4000_fwupload(struct dvb_frontend *fe)
 		fname = firmware_name;
 
 		dprintk(1, "Reading custom firmware %s\n", fname);
-		rc = request_firmware(&fw, fname,
+		rc = firmware_request(&fw, fname,
 				      priv->i2c_props.adap->dev.parent);
 	} else {
 		fname = XC4000_DEFAULT_FIRMWARE_NEW;
 		dprintk(1, "Trying to read firmware %s\n", fname);
-		rc = request_firmware(&fw, fname,
+		rc = firmware_request(&fw, fname,
 				      priv->i2c_props.adap->dev.parent);
 		if (rc == -ENOENT) {
 			fname = XC4000_DEFAULT_FIRMWARE;
 			dprintk(1, "Trying to read firmware %s\n", fname);
-			rc = request_firmware(&fw, fname,
+			rc = firmware_request(&fw, fname,
 					      priv->i2c_props.adap->dev.parent);
 		}
 	}
@@ -858,7 +858,7 @@ corrupt:
 	printk(KERN_ERR "Error: firmware file is corrupted!\n");
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 	if (rc == 0)
 		dprintk(1, "Firmware files loaded.\n");
 

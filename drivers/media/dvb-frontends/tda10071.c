@@ -849,7 +849,7 @@ static int tda10071_init(struct dvb_frontend *fe)
 		/* cold state - try to download firmware */
 
 		/* request the firmware, this will block and timeout */
-		ret = request_firmware(&fw, fw_file, &client->dev);
+		ret = firmware_request(&fw, fw_file, &client->dev);
 		if (ret) {
 			dev_err(&client->dev,
 				"did not find the firmware file. (%s) Please see linux/Documentation/dvb/ for more details on firmware-problems. (%d)\n",
@@ -905,7 +905,7 @@ static int tda10071_init(struct dvb_frontend *fe)
 				goto error_release_firmware;
 			}
 		}
-		release_firmware(fw);
+		firmware_release(fw);
 
 		ret = regmap_write(dev->regmap, 0xf7, 0x0c);
 		if (ret)
@@ -1041,7 +1041,7 @@ static int tda10071_init(struct dvb_frontend *fe)
 
 	return ret;
 error_release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 error:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

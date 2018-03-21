@@ -1668,7 +1668,7 @@ static int ezusb_probe(struct usb_interface *interface,
 		goto error;
 	}
 
-	if (request_firmware(&fw_entry, "orinoco_ezusb_fw",
+	if (firmware_request(&fw_entry, "orinoco_ezusb_fw",
 			     &interface->dev) == 0) {
 		firmware.size = fw_entry->size;
 		firmware.code = fw_entry->data;
@@ -1724,7 +1724,7 @@ static int ezusb_probe(struct usb_interface *interface,
 	if (fw_entry) {
 		firmware.code = NULL;
 		firmware.size = 0;
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 	}
 	usb_set_intfdata(interface, upriv);
 	return retval;

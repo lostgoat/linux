@@ -2039,7 +2039,7 @@ static int snd_ymfpci_request_firmware(struct snd_ymfpci *chip)
 	int err, is_1e;
 	const char *name;
 
-	err = request_firmware(&chip->dsp_microcode, "yamaha/ds1_dsp.fw",
+	err = firmware_request(&chip->dsp_microcode, "yamaha/ds1_dsp.fw",
 			       &chip->pci->dev);
 	if (err >= 0) {
 		if (chip->dsp_microcode->size != YDSXG_DSPLENGTH) {
@@ -2055,7 +2055,7 @@ static int snd_ymfpci_request_firmware(struct snd_ymfpci *chip)
 		chip->device_id == PCI_DEVICE_ID_YAMAHA_744 ||
 		chip->device_id == PCI_DEVICE_ID_YAMAHA_754;
 	name = is_1e ? "yamaha/ds1e_ctrl.fw" : "yamaha/ds1_ctrl.fw";
-	err = request_firmware(&chip->controller_microcode, name,
+	err = firmware_request(&chip->controller_microcode, name,
 			       &chip->pci->dev);
 	if (err >= 0) {
 		if (chip->controller_microcode->size != YDSXG_CTRLLENGTH) {
@@ -2255,8 +2255,8 @@ static int snd_ymfpci_free(struct snd_ymfpci *chip)
 	pci_write_config_word(chip->pci, 0x40, chip->old_legacy_ctrl);
 	
 	pci_disable_device(chip->pci);
-	release_firmware(chip->dsp_microcode);
-	release_firmware(chip->controller_microcode);
+	firmware_release(chip->dsp_microcode);
+	firmware_release(chip->controller_microcode);
 	kfree(chip);
 	return 0;
 }

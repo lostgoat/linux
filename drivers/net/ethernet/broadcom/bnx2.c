@@ -3693,8 +3693,8 @@ check_mips_fw_entry(const struct firmware *fw,
 static void bnx2_release_firmware(struct bnx2 *bp)
 {
 	if (bp->rv2p_firmware) {
-		release_firmware(bp->mips_firmware);
-		release_firmware(bp->rv2p_firmware);
+		firmware_release(bp->mips_firmware);
+		firmware_release(bp->rv2p_firmware);
 		bp->rv2p_firmware = NULL;
 	}
 }
@@ -3718,13 +3718,13 @@ static int bnx2_request_uncached_firmware(struct bnx2 *bp)
 		rv2p_fw_file = FW_RV2P_FILE_06;
 	}
 
-	rc = request_firmware(&bp->mips_firmware, mips_fw_file, &bp->pdev->dev);
+	rc = firmware_request(&bp->mips_firmware, mips_fw_file, &bp->pdev->dev);
 	if (rc) {
 		pr_err("Can't load firmware file \"%s\"\n", mips_fw_file);
 		goto out;
 	}
 
-	rc = request_firmware(&bp->rv2p_firmware, rv2p_fw_file, &bp->pdev->dev);
+	rc = firmware_request(&bp->rv2p_firmware, rv2p_fw_file, &bp->pdev->dev);
 	if (rc) {
 		pr_err("Can't load firmware file \"%s\"\n", rv2p_fw_file);
 		goto err_release_mips_firmware;
@@ -3752,10 +3752,10 @@ out:
 	return rc;
 
 err_release_firmware:
-	release_firmware(bp->rv2p_firmware);
+	firmware_release(bp->rv2p_firmware);
 	bp->rv2p_firmware = NULL;
 err_release_mips_firmware:
-	release_firmware(bp->mips_firmware);
+	firmware_release(bp->mips_firmware);
 	goto out;
 }
 

@@ -82,7 +82,7 @@ static int skl_load_base_firmware(struct sst_dsp *ctx)
 	init_waitqueue_head(&skl->boot_wait);
 
 	if (ctx->fw == NULL) {
-		ret = request_firmware(&ctx->fw, ctx->fw_name, ctx->dev);
+		ret = firmware_request(&ctx->fw, ctx->fw_name, ctx->dev);
 		if (ret < 0) {
 			dev_err(ctx->dev, "Request firmware failed %d\n", ret);
 			return -EIO;
@@ -94,7 +94,7 @@ static int skl_load_base_firmware(struct sst_dsp *ctx)
 		ret = snd_skl_parse_uuids(ctx, ctx->fw, SKL_ADSP_FW_BIN_HDR_OFFSET, 0);
 		if (ret < 0) {
 			dev_err(ctx->dev, "UUID parsing err: %d\n", ret);
-			release_firmware(ctx->fw);
+			firmware_release(ctx->fw);
 			skl_dsp_disable_core(ctx, SKL_DSP_CORE0_MASK);
 			return ret;
 		}
@@ -160,7 +160,7 @@ transfer_firmware_failed:
 	ctx->cl_dev.ops.cl_cleanup_controller(ctx);
 skl_load_base_firmware_failed:
 	skl_dsp_disable_core(ctx, SKL_DSP_CORE0_MASK);
-	release_firmware(ctx->fw);
+	firmware_release(ctx->fw);
 	ctx->fw = NULL;
 	return ret;
 }
@@ -290,7 +290,7 @@ static struct skl_module_table *skl_fill_module_table(struct sst_dsp *ctx,
 	unsigned int size;
 	int ret;
 
-	ret = request_firmware(&fw, mod_name, ctx->dev);
+	ret = firmware_request(&fw, mod_name, ctx->dev);
 	if (ret < 0) {
 		dev_err(ctx->dev, "Request Module %s failed :%d\n",
 							mod_name, ret);
@@ -299,14 +299,14 @@ static struct skl_module_table *skl_fill_module_table(struct sst_dsp *ctx,
 
 	skl_module = devm_kzalloc(ctx->dev, sizeof(*skl_module), GFP_KERNEL);
 	if (skl_module == NULL) {
-		release_firmware(fw);
+		firmware_release(fw);
 		return NULL;
 	}
 
 	size = sizeof(*skl_module->mod_info);
 	skl_module->mod_info = devm_kzalloc(ctx->dev, size, GFP_KERNEL);
 	if (skl_module->mod_info == NULL) {
-		release_firmware(fw);
+		firmware_release(fw);
 		return NULL;
 	}
 
@@ -499,7 +499,7 @@ static void skl_clear_module_table(struct sst_dsp *ctx)
 
 	list_for_each_entry_safe(module, tmp, &ctx->module_list, list) {
 		list_del(&module->list);
-		release_firmware(module->mod_info->fw);
+		firmware_release(module->mod_info->fw);
 	}
 }
 
@@ -625,7 +625,7 @@ void skl_sst_dsp_cleanup(struct device *dev, struct skl_sst *ctx)
 {
 
 	if (ctx->dsp->fw)
-		release_firmware(ctx->dsp->fw);
+		firmware_release(ctx->dsp->fw);
 	skl_clear_module_table(ctx->dsp);
 	skl_freeup_uuid_list(ctx);
 	skl_ipc_free(&ctx->ipc);

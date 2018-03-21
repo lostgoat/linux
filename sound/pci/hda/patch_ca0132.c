@@ -4373,7 +4373,7 @@ static bool ca0132_download_dsp_images(struct hda_codec *codec)
 	const struct dsp_image_seg *dsp_os_image;
 	const struct firmware *fw_entry;
 
-	if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
+	if (firmware_request(&fw_entry, EFX_FILE, codec->card->dev) != 0)
 		return false;
 
 	dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
@@ -4385,7 +4385,7 @@ static bool ca0132_download_dsp_images(struct hda_codec *codec)
 	dsp_loaded = dspload_wait_loaded(codec);
 
 exit_download:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 
 	return dsp_loaded;
 }

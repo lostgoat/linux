@@ -122,7 +122,7 @@ static int nitrox_load_fw(struct nitrox_device *ndev, const char *fw_name)
 
 	dev_info(DEV(ndev), "Loading firmware \"%s\"\n", fw_name);
 
-	ret = request_firmware(&fw, fw_name, DEV(ndev));
+	ret = firmware_request(&fw, fw_name, DEV(ndev));
 	if (ret < 0) {
 		dev_err(DEV(ndev), "failed to get firmware %s\n", fw_name);
 		return ret;
@@ -134,7 +134,7 @@ static int nitrox_load_fw(struct nitrox_device *ndev, const char *fw_name)
 	ndev->hw.fw_name[VERSION_LEN - 1] = '\0';
 
 	write_to_ucd_unit(ndev, ucode);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	set_bit(NITROX_UCODE_LOADED, &ndev->status);
 	/* barrier to sync with other cpus */

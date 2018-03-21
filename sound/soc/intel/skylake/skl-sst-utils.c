@@ -412,7 +412,7 @@ int skl_prepare_lib_load(struct skl_sst *skl, struct skl_lib_info *linfo,
 	struct sst_dsp *dsp = skl->dsp;
 
 	if (linfo->fw == NULL) {
-		ret = request_firmware(&linfo->fw, linfo->name,
+		ret = firmware_request(&linfo->fw, linfo->name,
 					skl->dev);
 		if (ret < 0) {
 			dev_err(skl->dev, "Request lib %s failed:%d\n",
@@ -441,7 +441,7 @@ void skl_release_library(struct skl_lib_info *linfo, int lib_count)
 	/* library indices start from 1 to N. 0 represents base FW */
 	for (i = 1; i < lib_count; i++) {
 		if (linfo[i].fw) {
-			release_firmware(linfo[i].fw);
+			firmware_release(linfo[i].fw);
 			linfo[i].fw = NULL;
 		}
 	}

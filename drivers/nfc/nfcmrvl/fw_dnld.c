@@ -106,7 +106,7 @@ static struct sk_buff *alloc_lc_skb(struct nfcmrvl_private *priv, uint8_t plen)
 static void fw_dnld_over(struct nfcmrvl_private *priv, u32 error)
 {
 	if (priv->fw_dnld.fw) {
-		release_firmware(priv->fw_dnld.fw);
+		firmware_release(priv->fw_dnld.fw);
 		priv->fw_dnld.fw = NULL;
 		priv->fw_dnld.header = NULL;
 		priv->fw_dnld.binary_config = NULL;
@@ -510,7 +510,7 @@ int nfcmrvl_fw_dnld_start(struct nci_dev *ndev, const char *firmware_name)
 	 */
 
 	/* Retrieve FW binary */
-	res = request_firmware(&fw_dnld->fw, firmware_name,
+	res = firmware_request(&fw_dnld->fw, firmware_name,
 			       &ndev->nfc_dev->dev);
 	if (res < 0) {
 		nfc_err(priv->dev, "failed to retrieve FW %s", firmware_name);
@@ -524,7 +524,7 @@ int nfcmrvl_fw_dnld_start(struct nci_dev *ndev, const char *firmware_name)
 		nfc_err(priv->dev, "bad firmware binary %s magic=0x%x phy=%d",
 			firmware_name, fw_dnld->header->magic,
 			fw_dnld->header->phy);
-		release_firmware(fw_dnld->fw);
+		firmware_release(fw_dnld->fw);
 		fw_dnld->header = NULL;
 		return -EINVAL;
 	}

@@ -973,7 +973,7 @@ static int p54u_load_firmware(struct ieee80211_hw *dev,
 	       p54u_fwlist[i].fw);
 
 	usb_get_dev(udev);
-	err = request_firmware_nowait(THIS_MODULE, 1, p54u_fwlist[i].fw,
+	err = firmware_request_nowait(THIS_MODULE, 1, p54u_fwlist[i].fw,
 				      device, GFP_KERNEL, priv,
 				      p54u_load_firmware_cb);
 	if (err) {
@@ -1073,7 +1073,7 @@ static void p54u_disconnect(struct usb_interface *intf)
 	p54_unregister_common(dev);
 
 	usb_put_dev(interface_to_usbdev(intf));
-	release_firmware(priv->fw);
+	firmware_release(priv->fw);
 	p54_free_common(dev);
 }
 

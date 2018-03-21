@@ -762,7 +762,7 @@ static int raydium_i2c_fw_update(struct raydium_data *ts)
 
 	dev_dbg(&client->dev, "firmware name: %s\n", fw_file);
 
-	error = request_firmware(&fw, fw_file, &client->dev);
+	error = firmware_request(&fw, fw_file, &client->dev);
 	if (error) {
 		dev_err(&client->dev, "Unable to open firmware %s\n", fw_file);
 		goto out_free_fw_file;
@@ -792,7 +792,7 @@ out_enable_irq:
 	enable_irq(client->irq);
 	msleep(100);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 out_free_fw_file:
 	kfree(fw_file);

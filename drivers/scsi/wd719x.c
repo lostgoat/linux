@@ -310,18 +310,18 @@ static int wd719x_chip_init(struct wd719x *wd)
 	memset(wd->hash_virt, 0, WD719X_HASH_TABLE_SIZE);
 
 	/* WCS (sequencer) firmware */
-	ret = request_firmware(&fw_wcs, fwname_wcs, &wd->pdev->dev);
+	ret = firmware_request(&fw_wcs, fwname_wcs, &wd->pdev->dev);
 	if (ret) {
 		dev_err(&wd->pdev->dev, "Unable to load firmware %s: %d\n",
 			fwname_wcs, ret);
 		return ret;
 	}
 	/* RISC firmware */
-	ret = request_firmware(&fw_risc, fwname_risc, &wd->pdev->dev);
+	ret = firmware_request(&fw_risc, fwname_risc, &wd->pdev->dev);
 	if (ret) {
 		dev_err(&wd->pdev->dev, "Unable to load firmware %s: %d\n",
 			fwname_risc, ret);
-		release_firmware(fw_wcs);
+		firmware_release(fw_wcs);
 		return ret;
 	}
 	wd->fw_size = ALIGN(fw_wcs->size, 4) + fw_risc->size;
@@ -454,8 +454,8 @@ static int wd719x_chip_init(struct wd719x *wd)
 	wd719x_writeb(wd, WD719X_AMR_BIOS_SHARE_INT, 0);
 
 wd719x_init_end:
-	release_firmware(fw_wcs);
-	release_firmware(fw_risc);
+	firmware_release(fw_wcs);
+	firmware_release(fw_risc);
 
 	return ret;
 }

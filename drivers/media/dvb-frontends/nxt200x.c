@@ -884,7 +884,7 @@ static int nxt2002_init(struct dvb_frontend* fe)
 	/* request the firmware, this will block until someone uploads it */
 	pr_debug("%s: Waiting for firmware upload (%s)...\n",
 		 __func__, NXT2002_DEFAULT_FIRMWARE);
-	ret = request_firmware(&fw, NXT2002_DEFAULT_FIRMWARE,
+	ret = firmware_request(&fw, NXT2002_DEFAULT_FIRMWARE,
 			       state->i2c->dev.parent);
 	pr_debug("%s: Waiting for firmware upload(2)...\n", __func__);
 	if (ret) {
@@ -894,7 +894,7 @@ static int nxt2002_init(struct dvb_frontend* fe)
 	}
 
 	ret = nxt2002_load_firmware(fe, fw);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (ret) {
 		pr_err("%s: Writing firmware to device failed\n", __func__);
 		return ret;
@@ -951,7 +951,7 @@ static int nxt2004_init(struct dvb_frontend* fe)
 	/* request the firmware, this will block until someone uploads it */
 	pr_debug("%s: Waiting for firmware upload (%s)...\n",
 		 __func__, NXT2004_DEFAULT_FIRMWARE);
-	ret = request_firmware(&fw, NXT2004_DEFAULT_FIRMWARE,
+	ret = firmware_request(&fw, NXT2004_DEFAULT_FIRMWARE,
 			       state->i2c->dev.parent);
 	pr_debug("%s: Waiting for firmware upload(2)...\n", __func__);
 	if (ret) {
@@ -961,7 +961,7 @@ static int nxt2004_init(struct dvb_frontend* fe)
 	}
 
 	ret = nxt2004_load_firmware(fe, fw);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (ret) {
 		pr_err("%s: Writing firmware to device failed\n", __func__);
 		return ret;

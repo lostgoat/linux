@@ -125,7 +125,7 @@ static int ezusb_ihex_firmware_download(struct usb_device *dev,
 	}
 	ret = ezusb_set_reset(dev, fx.cpucs_reg, 0);
 out:
-	release_firmware(firmware);
+	firmware_release(firmware);
 	return ret;
 }
 

@@ -38,7 +38,7 @@ int vnt_download_firmware(struct vnt_private *priv)
 
 	dev_dbg(dev, "---->Download firmware\n");
 
-	rc = request_firmware(&fw, FIRMWARE_NAME, dev);
+	rc = firmware_request(&fw, FIRMWARE_NAME, dev);
 	if (rc) {
 		dev_err(dev, "firmware file %s request failed (%d)\n",
 			FIRMWARE_NAME, rc);
@@ -68,7 +68,7 @@ int vnt_download_firmware(struct vnt_private *priv)
 
 	result = true;
 free_fw:
-	release_firmware(fw);
+	firmware_release(fw);
 
 out:
 	kfree(buffer);

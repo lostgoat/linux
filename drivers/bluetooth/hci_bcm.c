@@ -497,7 +497,7 @@ static int bcm_setup(struct hci_uart *hu)
 	if (err)
 		return err;
 
-	err = request_firmware(&fw, fw_name, &hu->hdev->dev);
+	err = firmware_request(&fw, fw_name, &hu->hdev->dev);
 	if (err < 0) {
 		bt_dev_info(hu->hdev, "BCM: Patch %s not found", fw_name);
 		return 0;
@@ -535,7 +535,7 @@ static int bcm_setup(struct hci_uart *hu)
 	}
 
 finalize:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	err = btbcm_finalize(hu->hdev);
 	if (err)

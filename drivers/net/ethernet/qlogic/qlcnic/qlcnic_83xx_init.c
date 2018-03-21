@@ -1382,7 +1382,7 @@ static int qlcnic_83xx_copy_fw_file(struct qlcnic_adapter *adapter)
 
 	temp = vzalloc(fw->size);
 	if (!temp) {
-		release_firmware(fw);
+		firmware_release(fw);
 		fw_info->fw = NULL;
 		return -ENOMEM;
 	}
@@ -1424,7 +1424,7 @@ static int qlcnic_83xx_copy_fw_file(struct qlcnic_adapter *adapter)
 	}
 
 exit:
-	release_firmware(fw);
+	firmware_release(fw);
 	fw_info->fw = NULL;
 	vfree(temp);
 
@@ -2114,7 +2114,7 @@ static int qlcnic_83xx_run_post(struct qlcnic_adapter *adapter)
 	strncpy(fw_info->fw_file_name, QLC_83XX_POST_FW_FILE_NAME,
 		QLC_FW_FILE_NAME_LEN);
 
-	ret = request_firmware(&fw_info->fw, fw_info->fw_file_name, dev);
+	ret = firmware_request(&fw_info->fw, fw_info->fw_file_name, dev);
 	if (ret) {
 		dev_err(dev, "POST firmware can not be loaded, skipping POST\n");
 		return 0;
@@ -2190,7 +2190,7 @@ static int qlcnic_83xx_load_fw_image_from_host(struct qlcnic_adapter *adapter)
 	struct qlc_83xx_fw_info *fw_info = adapter->ahw->fw_info;
 	int err = -EIO;
 
-	if (request_firmware(&fw_info->fw, fw_info->fw_file_name,
+	if (firmware_request(&fw_info->fw, fw_info->fw_file_name,
 			     &(adapter->pdev->dev))) {
 		dev_err(&adapter->pdev->dev,
 			"No file FW image, loading flash FW image.\n");

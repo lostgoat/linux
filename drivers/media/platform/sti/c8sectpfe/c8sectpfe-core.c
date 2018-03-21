@@ -1133,7 +1133,7 @@ static int load_slim_core_fw(const struct firmware *fw, struct c8sectpfei *fei)
 		}
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 
@@ -1144,7 +1144,7 @@ static int load_c8sectpfe_fw(struct c8sectpfei *fei)
 
 	dev_info(fei->dev, "Loading firmware: %s\n", FIRMWARE_MEMDMA);
 
-	err = request_firmware(&fw, FIRMWARE_MEMDMA, fei->dev);
+	err = firmware_request(&fw, FIRMWARE_MEMDMA, fei->dev);
 	if (err)
 		return err;
 
@@ -1152,7 +1152,7 @@ static int load_c8sectpfe_fw(struct c8sectpfei *fei)
 	if (err) {
 		dev_err(fei->dev, "c8sectpfe_elf_sanity_check failed err=(%d)\n"
 			, err);
-		release_firmware(fw);
+		firmware_release(fw);
 		return err;
 	}
 

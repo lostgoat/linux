@@ -729,7 +729,7 @@ static int elants_i2c_fw_update(struct elants_data *ts)
 		return -ENOMEM;
 
 	dev_info(&client->dev, "requesting fw name = %s\n", fw_name);
-	error = request_firmware(&fw, fw_name, &client->dev);
+	error = firmware_request(&fw, fw_name, &client->dev);
 	kfree(fw_name);
 	if (error) {
 		dev_err(&client->dev, "failed to request firmware: %d\n",
@@ -773,7 +773,7 @@ out_enable_irq:
 	if (!error)
 		elants_i2c_calibrate(ts);
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return error;
 }
 

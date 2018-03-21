@@ -543,14 +543,14 @@ static int sscape_upload_bootblock(struct snd_card *card)
 	int data = 0;
 	int ret;
 
-	ret = request_firmware(&init_fw, "scope.cod", card->dev);
+	ret = firmware_request(&init_fw, "scope.cod", card->dev);
 	if (ret < 0) {
 		snd_printk(KERN_ERR "sscape: Error loading scope.cod");
 		return ret;
 	}
 	ret = upload_dma_data(sscape, init_fw->data, init_fw->size);
 
-	release_firmware(init_fw);
+	firmware_release(init_fw);
 
 	spin_lock_irqsave(&sscape->lock, flags);
 	if (ret == 0)
@@ -583,7 +583,7 @@ static int sscape_upload_microcode(struct snd_card *card, int version)
 
 	snprintf(name, sizeof(name), "sndscape.co%d", version);
 
-	err = request_firmware(&init_fw, name, card->dev);
+	err = firmware_request(&init_fw, name, card->dev);
 	if (err < 0) {
 		snd_printk(KERN_ERR "sscape: Error loading sndscape.co%d",
 				version);
@@ -594,7 +594,7 @@ static int sscape_upload_microcode(struct snd_card *card, int version)
 		snd_printk(KERN_INFO "sscape: MIDI firmware loaded %zu KBs\n",
 				init_fw->size >> 10);
 
-	release_firmware(init_fw);
+	firmware_release(init_fw);
 
 	return err;
 }

@@ -926,7 +926,7 @@ static int cx23885_load_firmware(struct cx23885_dev *dev)
 		return -1;
 	}
 
-	retval = request_firmware(&firmware, CX23885_FIRM_IMAGE_NAME,
+	retval = firmware_request(&firmware, CX23885_FIRM_IMAGE_NAME,
 				  &dev->pci->dev);
 
 	if (retval != 0) {
@@ -939,13 +939,13 @@ static int cx23885_load_firmware(struct cx23885_dev *dev)
 	if (firmware->size != CX23885_FIRM_IMAGE_SIZE) {
 		pr_err("ERROR: Firmware size mismatch (have %zu, expected %d)\n",
 		       firmware->size, CX23885_FIRM_IMAGE_SIZE);
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -1;
 	}
 
 	if (0 != memcmp(firmware->data, magic, 8)) {
 		pr_err("ERROR: Firmware magic mismatch, wrong file?\n");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -1;
 	}
 
@@ -957,7 +957,7 @@ static int cx23885_load_firmware(struct cx23885_dev *dev)
 		checksum += ~value;
 		if (mc417_memory_write(dev, i, value) != 0) {
 			pr_err("ERROR: Loading firmware failed!\n");
-			release_firmware(firmware);
+			firmware_release(firmware);
 			return -1;
 		}
 		dataptr++;
@@ -968,17 +968,17 @@ static int cx23885_load_firmware(struct cx23885_dev *dev)
 	for (i--; i >= 0; i--) {
 		if (mc417_memory_read(dev, i, &value) != 0) {
 			pr_err("ERROR: Reading firmware failed!\n");
-			release_firmware(firmware);
+			firmware_release(firmware);
 			return -1;
 		}
 		checksum -= ~value;
 	}
 	if (checksum) {
 		pr_err("ERROR: Firmware load failed (checksum mismatch).\n");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -1;
 	}
-	release_firmware(firmware);
+	firmware_release(firmware);
 	dprintk(1, "Firmware upload successful.\n");
 
 	retval |= mc417_register_write(dev, IVTV_REG_HW_BLOCKS,

@@ -491,7 +491,7 @@ static int load_requested_vpu(struct mtk_vpu *vpu,
 	void *dest;
 	int ret;
 
-	ret = request_firmware(&vpu_fw, fw_name, vpu->dev);
+	ret = firmware_request(&vpu_fw, fw_name, vpu->dev);
 	if (ret < 0) {
 		dev_err(vpu->dev, "Failed to load %s, %d\n", fw_name, ret);
 		return ret;
@@ -500,7 +500,7 @@ static int load_requested_vpu(struct mtk_vpu *vpu,
 	if (dl_size > fw_size) {
 		dev_err(vpu->dev, "fw %s size %zu is abnormal\n", fw_name,
 			dl_size);
-		release_firmware(vpu_fw);
+		firmware_release(vpu_fw);
 		return  -EFBIG;
 	}
 	dev_dbg(vpu->dev, "Downloaded fw %s size: %zu.\n",
@@ -529,7 +529,7 @@ static int load_requested_vpu(struct mtk_vpu *vpu,
 		memcpy(dest, vpu_fw->data + tcm_size, extra_fw_size);
 	}
 
-	release_firmware(vpu_fw);
+	firmware_release(vpu_fw);
 
 	return 0;
 }

@@ -565,7 +565,7 @@ static int bt3c_open(struct bt3c_info *info)
 	hdev->send  = bt3c_hci_send_frame;
 
 	/* Load firmware */
-	err = request_firmware(&firmware, "BT3CPCC.bin", &info->p_dev->dev);
+	err = firmware_request(&firmware, "BT3CPCC.bin", &info->p_dev->dev);
 	if (err < 0) {
 		BT_ERR("Firmware request failed");
 		goto error;
@@ -573,7 +573,7 @@ static int bt3c_open(struct bt3c_info *info)
 
 	err = bt3c_load_firmware(info, firmware->data, firmware->size);
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	if (err < 0) {
 		BT_ERR("Firmware loading failed");

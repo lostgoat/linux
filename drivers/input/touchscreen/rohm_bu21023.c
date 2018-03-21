@@ -657,7 +657,7 @@ static int rohm_ts_load_firmware(struct i2c_client *client,
 	unsigned int retry = 0;
 	int error, error2;
 
-	error = request_firmware(&fw, firmware_name, dev);
+	error = firmware_request(&fw, firmware_name, dev);
 	if (error) {
 		dev_err(dev, "unable to retrieve firmware %s: %d\n",
 			firmware_name, error);
@@ -730,7 +730,7 @@ static int rohm_ts_load_firmware(struct i2c_client *client,
 out:
 	error2 = i2c_smbus_write_byte_data(client, INT_MASK, INT_ALL);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return error ? error : error2;
 }

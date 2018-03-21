@@ -1513,7 +1513,7 @@ static int knav_queue_load_pdsp(struct knav_device *kdev,
 
 	for (i = 0; i < ARRAY_SIZE(knav_acc_firmwares); i++) {
 		if (knav_acc_firmwares[i]) {
-			ret = request_firmware_direct(&fw,
+			ret = firmware_request_direct(&fw,
 						      knav_acc_firmwares[i],
 						      kdev->dev);
 			if (!ret) {
@@ -1538,7 +1538,7 @@ static int knav_queue_load_pdsp(struct knav_device *kdev,
 	for (i = 0; i < fwlen; i++)
 		writel_relaxed(be32_to_cpu(fwdata[i]), pdsp->iram + i);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

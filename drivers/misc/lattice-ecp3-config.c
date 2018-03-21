@@ -183,7 +183,7 @@ static void firmware_load(const struct firmware *fw, void *context)
 	/*
 	 * Don't forget to release the firmware again
 	 */
-	release_firmware(fw);
+	firmware_release(fw);
 
 	kfree(buffer);
 
@@ -203,7 +203,7 @@ static int lattice_ecp3_probe(struct spi_device *spi)
 	spi_set_drvdata(spi, data);
 
 	init_completion(&data->fw_loaded);
-	err = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
+	err = firmware_request_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
 				      FIRMWARE_NAME, &spi->dev,
 				      GFP_KERNEL, spi, firmware_load);
 	if (err) {

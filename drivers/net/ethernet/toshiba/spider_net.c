@@ -1856,7 +1856,7 @@ spider_net_init_firmware(struct spider_net_card *card)
 	int err = -ENOENT;
 	int fw_size;
 
-	if (request_firmware((const struct firmware **)&firmware,
+	if (firmware_request((const struct firmware **)&firmware,
 			     SPIDER_NET_FIRMWARE_NAME, &card->pdev->dev) == 0) {
 		if ( (firmware->size != SPIDER_NET_FIRMWARE_LEN) &&
 		     netif_msg_probe(card) ) {
@@ -1867,7 +1867,7 @@ spider_net_init_firmware(struct spider_net_card *card)
 		}
 		err = spider_net_download_firmware(card, firmware->data);
 
-		release_firmware(firmware);
+		firmware_release(firmware);
 		if (err)
 			goto try_host_fw;
 

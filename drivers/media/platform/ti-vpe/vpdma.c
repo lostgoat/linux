@@ -1111,7 +1111,7 @@ free_buf:
 
 	vpdma_free_desc_buf(&fw_dma_buf);
 rel_fw:
-	release_firmware(f);
+	firmware_release(f);
 }
 
 static int vpdma_load_firmware(struct vpdma_data *vpdma)
@@ -1119,7 +1119,7 @@ static int vpdma_load_firmware(struct vpdma_data *vpdma)
 	int r;
 	struct device *dev = &vpdma->pdev->dev;
 
-	r = request_firmware_nowait(THIS_MODULE, 1,
+	r = firmware_request_nowait(THIS_MODULE, 1,
 		(const char *) VPDMA_FIRMWARE, dev, GFP_KERNEL, vpdma,
 		vpdma_firmware_cb);
 	if (r) {

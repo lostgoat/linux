@@ -2397,8 +2397,8 @@ static int snd_m3_free(struct snd_m3 *chip)
 	if (chip->iobase)
 		pci_release_regions(chip->pci);
 
-	release_firmware(chip->assp_kernel_image);
-	release_firmware(chip->assp_minisrc_image);
+	firmware_release(chip->assp_kernel_image);
+	firmware_release(chip->assp_minisrc_image);
 
 	pci_disable_device(chip->pci);
 	kfree(chip);
@@ -2620,12 +2620,12 @@ snd_m3_create(struct snd_card *card, struct pci_dev *pci,
 		return -ENOMEM;
 	}
 
-	err = request_firmware(&chip->assp_kernel_image,
+	err = firmware_request(&chip->assp_kernel_image,
 			       "ess/maestro3_assp_kernel.fw", &pci->dev);
 	if (err < 0)
 		goto free_chip;
 
-	err = request_firmware(&chip->assp_minisrc_image,
+	err = firmware_request(&chip->assp_minisrc_image,
 			       "ess/maestro3_assp_minisrc.fw", &pci->dev);
 	if (err < 0)
 		goto free_chip;

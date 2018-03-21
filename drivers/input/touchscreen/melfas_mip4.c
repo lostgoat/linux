@@ -1302,7 +1302,7 @@ static ssize_t mip4_sysfs_fw_update(struct device *dev,
 	const struct firmware *fw;
 	int error;
 
-	error = request_firmware(&fw, ts->fw_name, dev);
+	error = firmware_request(&fw, ts->fw_name, dev);
 	if (error) {
 		dev_err(&ts->client->dev,
 			"Failed to retrieve firmware %s: %d\n",
@@ -1321,7 +1321,7 @@ static ssize_t mip4_sysfs_fw_update(struct device *dev,
 
 	mutex_unlock(&ts->input->mutex);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (error) {
 		dev_err(&ts->client->dev,

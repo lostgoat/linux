@@ -359,7 +359,7 @@ static void load_code(struct icom_port *icom_port)
 	memset_io(dram_ptr, 0, 512);
 
 	/* Load Call Setup into Adapter */
-	if (request_firmware(&fw, "icom_call_setup.bin", &dev->dev) < 0) {
+	if (firmware_request(&fw, "icom_call_setup.bin", &dev->dev) < 0) {
 		dev_err(&dev->dev,"Unable to load icom_call_setup.bin firmware image\n");
 		status = -1;
 		goto load_code_exit;
@@ -367,7 +367,7 @@ static void load_code(struct icom_port *icom_port)
 
 	if (fw->size > ICOM_DCE_IRAM_OFFSET) {
 		dev_err(&dev->dev, "Invalid firmware image for icom_call_setup.bin found.\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		status = -1;
 		goto load_code_exit;
 	}
@@ -376,10 +376,10 @@ static void load_code(struct icom_port *icom_port)
 	for (index = 0; index < fw->size; index++)
 		writeb(fw->data[index], &iram_ptr[index]);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/* Load Resident DCE portion of Adapter */
-	if (request_firmware(&fw, "icom_res_dce.bin", &dev->dev) < 0) {
+	if (firmware_request(&fw, "icom_res_dce.bin", &dev->dev) < 0) {
 		dev_err(&dev->dev,"Unable to load icom_res_dce.bin firmware image\n");
 		status = -1;
 		goto load_code_exit;
@@ -387,7 +387,7 @@ static void load_code(struct icom_port *icom_port)
 
 	if (fw->size > ICOM_IRAM_SIZE) {
 		dev_err(&dev->dev, "Invalid firmware image for icom_res_dce.bin found.\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		status = -1;
 		goto load_code_exit;
 	}
@@ -396,7 +396,7 @@ static void load_code(struct icom_port *icom_port)
 	for (index = ICOM_DCE_IRAM_OFFSET; index < fw->size; index++)
 		writeb(fw->data[index], &iram_ptr[index]);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/* Set Hardware level */
 	if (icom_port->adapter->version == ADAPTER_V2)
@@ -424,7 +424,7 @@ static void load_code(struct icom_port *icom_port)
 		goto load_code_exit;
 	}
 
-	if (request_firmware(&fw, "icom_asc.bin", &dev->dev) < 0) {
+	if (firmware_request(&fw, "icom_asc.bin", &dev->dev) < 0) {
 		dev_err(&dev->dev,"Unable to load icom_asc.bin firmware image\n");
 		status = -1;
 		goto load_code_exit;
@@ -432,7 +432,7 @@ static void load_code(struct icom_port *icom_port)
 
 	if (fw->size > ICOM_DCE_IRAM_OFFSET) {
 		dev_err(&dev->dev, "Invalid firmware image for icom_asc.bin found.\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		status = -1;
 		goto load_code_exit;
 	}
@@ -443,7 +443,7 @@ static void load_code(struct icom_port *icom_port)
 	writeb((char) ((fw->size + 16)/16), &icom_port->dram->mac_length);
 	writel(temp_pci, &icom_port->dram->mac_load_addr);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/*Setting the syncReg to 0x80 causes adapter to start downloading
 	   the personality code into adapter instruction RAM.

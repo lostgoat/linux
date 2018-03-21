@@ -260,7 +260,7 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 	IWL_DEBUG_INFO(drv, "attempting to load firmware '%s'\n",
 		       drv->firmware_name);
 
-	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
+	return firmware_request_nowait(THIS_MODULE, 1, drv->firmware_name,
 				       drv->trans->dev,
 				       GFP_KERNEL, drv, iwl_req_fw_callback);
 }
@@ -1515,7 +1515,7 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 			IWL_MAX_STANDARD_PHY_CALIBRATE_TBL_SIZE;
 
 	/* We have our copies now, allow OS release its copies */
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 
 	mutex_lock(&iwlwifi_opmode_table_mtx);
 	switch (fw->type) {
@@ -1572,14 +1572,14 @@ static void iwl_req_fw_callback(const struct firmware *ucode_raw, void *context)
 
  try_again:
 	/* try next, if any */
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 	if (iwl_request_firmware(drv, false))
 		goto out_unbind;
 	goto free;
 
  out_free_fw:
 	iwl_dealloc_ucode(drv);
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
  out_unbind:
 	complete(&drv->request_firmware_complete);
 	device_release_driver(drv->trans->dev);

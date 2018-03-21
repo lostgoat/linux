@@ -163,7 +163,7 @@ int rtl88eu_download_fw(struct adapter *adapt)
 	size_t download_size;
 	unsigned int trailing_zeros_length;
 
-	if (request_firmware(&fw, fw_name, device)) {
+	if (firmware_request(&fw, fw_name, device)) {
 		dev_err(device, "Firmware %s not available\n", fw_name);
 		return -ENOENT;
 	}
@@ -171,7 +171,7 @@ int rtl88eu_download_fw(struct adapter *adapt)
 	if (fw->size > FW_8188E_SIZE) {
 		dev_err(device, "Firmware size exceed 0x%X. Check it.\n",
 			FW_8188E_SIZE);
-		release_firmware(fw);
+		firmware_release(fw);
 		return -1;
 	}
 
@@ -179,7 +179,7 @@ int rtl88eu_download_fw(struct adapter *adapt)
 
 	fw_data = kmalloc(fw->size + trailing_zeros_length, GFP_KERNEL);
 	if (!fw_data) {
-		release_firmware(fw);
+		firmware_release(fw);
 		return -ENOMEM;
 	}
 
@@ -196,7 +196,7 @@ int rtl88eu_download_fw(struct adapter *adapt)
 		download_size = fw->size + trailing_zeros_length;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (usb_read8(adapt, REG_MCUFWDL) & RAM_DL_SEL) {
 		usb_write8(adapt, REG_MCUFWDL, 0);

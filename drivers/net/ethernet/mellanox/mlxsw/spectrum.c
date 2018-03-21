@@ -355,7 +355,7 @@ static int mlxsw_sp_fw_rev_validate(struct mlxsw_sp *mlxsw_sp)
 	dev_info(mlxsw_sp->bus_info->dev, "Flashing firmware using file %s\n",
 		 MLXSW_SP_FW_FILENAME);
 
-	err = request_firmware_direct(&firmware, MLXSW_SP_FW_FILENAME,
+	err = firmware_request_direct(&firmware, MLXSW_SP_FW_FILENAME,
 				      mlxsw_sp->bus_info->dev);
 	if (err) {
 		dev_err(mlxsw_sp->bus_info->dev, "Could not request firmware file %s\n",
@@ -364,7 +364,7 @@ static int mlxsw_sp_fw_rev_validate(struct mlxsw_sp *mlxsw_sp)
 	}
 
 	err = mlxsw_sp_firmware_flash(mlxsw_sp, firmware);
-	release_firmware(firmware);
+	firmware_release(firmware);
 	return err;
 }
 
@@ -2790,11 +2790,11 @@ static int mlxsw_sp_flash_device(struct net_device *dev,
 	dev_hold(dev);
 	rtnl_unlock();
 
-	err = request_firmware_direct(&firmware, flash->data, &dev->dev);
+	err = firmware_request_direct(&firmware, flash->data, &dev->dev);
 	if (err)
 		goto out;
 	err = mlxsw_sp_firmware_flash(mlxsw_sp, firmware);
-	release_firmware(firmware);
+	firmware_release(firmware);
 out:
 	rtnl_lock();
 	dev_put(dev);

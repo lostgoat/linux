@@ -720,7 +720,7 @@ static void rp2_fw_cb(const struct firmware *fw, void *context)
 		card->initialized_ports++;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 no_fw:
 	/*
 	 * rp2_fw_cb() is called from a workqueue long after rp2_probe()
@@ -790,7 +790,7 @@ static int rp2_probe(struct pci_dev *pdev,
 	 * If the FW image is missing, we'll find out in rp2_fw_cb()
 	 * and print an error message.
 	 */
-	rc = request_firmware_nowait(THIS_MODULE, 1, RP2_FW_NAME, &pdev->dev,
+	rc = firmware_request_nowait(THIS_MODULE, 1, RP2_FW_NAME, &pdev->dev,
 				     GFP_KERNEL, card, rp2_fw_cb);
 	if (rc)
 		return rc;

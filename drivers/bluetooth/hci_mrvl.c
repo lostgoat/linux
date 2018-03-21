@@ -265,7 +265,7 @@ static int mrvl_load_firmware(struct hci_dev *hdev, const char *name)
 	const u8 *fw_ptr, *fw_max;
 	int err;
 
-	err = request_firmware(&fw, name, &hdev->dev);
+	err = firmware_request(&fw, name, &hdev->dev);
 	if (err < 0) {
 		bt_dev_err(hdev, "Failed to load firmware file %s", name);
 		return err;
@@ -337,7 +337,7 @@ static int mrvl_load_firmware(struct hci_dev *hdev, const char *name)
 		hci_uart_tx_wakeup(hu);
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 

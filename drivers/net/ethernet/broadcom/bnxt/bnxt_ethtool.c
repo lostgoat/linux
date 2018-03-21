@@ -1578,7 +1578,7 @@ static int bnxt_flash_firmware_from_file(struct net_device *dev,
 	const struct firmware  *fw;
 	int			rc;
 
-	rc = request_firmware(&fw, filename, &dev->dev);
+	rc = firmware_request(&fw, filename, &dev->dev);
 	if (rc != 0) {
 		netdev_err(dev, "Error %d requesting firmware file: %s\n",
 			   rc, filename);
@@ -1591,7 +1591,7 @@ static int bnxt_flash_firmware_from_file(struct net_device *dev,
 	else
 		rc = bnxt_flash_nvram(dev, dir_type, BNX_DIR_ORDINAL_FIRST,
 				      0, 0, fw->data, fw->size);
-	release_firmware(fw);
+	firmware_release(fw);
 	return rc;
 }
 
@@ -1615,7 +1615,7 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
 		return -ENOBUFS;
 	}
 
-	rc = request_firmware(&fw, filename, &dev->dev);
+	rc = firmware_request(&fw, filename, &dev->dev);
 	if (rc != 0) {
 		netdev_err(dev, "PKG error %d requesting file: %s\n",
 			   rc, filename);
@@ -1653,7 +1653,7 @@ static int bnxt_flash_package_from_file(struct net_device *dev,
 					  dma_handle);
 		}
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	if (rc)
 		return rc;
 

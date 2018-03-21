@@ -243,7 +243,7 @@ int intel_gvt_load_firmware(struct intel_gvt *gvt)
 
 	gvt_dbg_core("request hw state firmware %s...\n", path);
 
-	ret = request_firmware(&fw, path, &dev_priv->drm.pdev->dev);
+	ret = firmware_request(&fw, path, &dev_priv->drm.pdev->dev);
 	kfree(path);
 
 	if (ret)
@@ -264,12 +264,12 @@ int intel_gvt_load_firmware(struct intel_gvt *gvt)
 	memcpy(firmware->mmio, fw->data + h->mmio_offset,
 	       h->mmio_size);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	firmware->firmware_loaded = true;
 	return 0;
 
 out_free_fw:
-	release_firmware(fw);
+	firmware_release(fw);
 expose_firmware:
 	expose_firmware_sysfs(gvt);
 	return 0;

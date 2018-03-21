@@ -328,7 +328,7 @@ static int bdx_fw_load(struct bdx_priv *priv)
 	ENTER;
 	master = READ_REG(priv, regINIT_SEMAPHORE);
 	if (!READ_REG(priv, regINIT_STATUS) && master) {
-		rc = request_firmware(&fw, "tehuti/bdx.bin", &priv->pdev->dev);
+		rc = firmware_request(&fw, "tehuti/bdx.bin", &priv->pdev->dev);
 		if (rc)
 			goto out;
 		bdx_tx_push_desc_safe(priv, (char *)fw->data, fw->size);
@@ -346,7 +346,7 @@ out:
 	if (master)
 		WRITE_REG(priv, regINIT_SEMAPHORE, 1);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (rc) {
 		netdev_err(priv->ndev, "firmware loading failed\n");

@@ -173,7 +173,7 @@ void get_platform_config(struct hfi1_devdata *dd)
 		   "%s: Failed to get platform config, falling back to sub-optimal default file\n",
 		   __func__);
 
-	ret = request_firmware(&platform_config_file,
+	ret = firmware_request(&platform_config_file,
 			       DEFAULT_PLATFORM_CONFIG_NAME,
 			       &dd->pcidev->dev);
 	if (ret) {
@@ -192,7 +192,7 @@ void get_platform_config(struct hfi1_devdata *dd)
 					   platform_config_file->size,
 					   GFP_KERNEL);
 	dd->platform_config.size = platform_config_file->size;
-	release_firmware(platform_config_file);
+	firmware_release(platform_config_file);
 }
 
 void free_platform_config(struct hfi1_devdata *dd)

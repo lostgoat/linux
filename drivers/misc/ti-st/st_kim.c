@@ -299,7 +299,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 		return err;
 	}
 	err =
-	    request_firmware(&kim_gdata->fw_entry, bts_scr_name,
+	    firmware_request(&kim_gdata->fw_entry, bts_scr_name,
 			     &kim_gdata->kim_pdev->dev);
 	if (unlikely((err != 0) || (kim_gdata->fw_entry->data == NULL) ||
 		     (kim_gdata->fw_entry->size == 0))) {
@@ -346,7 +346,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 				if (wr_room_space < 0) {
 					pr_err("Unable to get free "
 							"space info from uart tx buffer");
-					release_firmware(kim_gdata->fw_entry);
+					firmware_release(kim_gdata->fw_entry);
 					return wr_room_space;
 				}
 				mdelay(1); /* wait 1ms before checking room */
@@ -357,7 +357,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 			if (time_after_eq(jiffies, timeout)) {
 				pr_err("Timeout while waiting for free "
 						"free space in uart tx buffer");
-				release_firmware(kim_gdata->fw_entry);
+				firmware_release(kim_gdata->fw_entry);
 				return -ETIMEDOUT;
 			}
 			/* reinit completion before sending for the
@@ -374,7 +374,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 			((struct bts_action_send *)action_ptr)->data,
 					   ((struct bts_action *)ptr)->size);
 			if (unlikely(err < 0)) {
-				release_firmware(kim_gdata->fw_entry);
+				firmware_release(kim_gdata->fw_entry);
 				return err;
 			}
 			/*
@@ -385,7 +385,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 				pr_err("Number of bytes written to uart "
 						"tx buffer are not matching with "
 						"requested cmd write size");
-				release_firmware(kim_gdata->fw_entry);
+				firmware_release(kim_gdata->fw_entry);
 				return -EIO;
 			}
 			break;
@@ -397,7 +397,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 			if (err <= 0) {
 				pr_err("response timeout/signaled during fw download ");
 				/* timed out */
-				release_firmware(kim_gdata->fw_entry);
+				firmware_release(kim_gdata->fw_entry);
 				return err ? -ERESTARTSYS : -ETIMEDOUT;
 			}
 			reinit_completion(&kim_gdata->kim_rcvd);
@@ -416,7 +416,7 @@ static long download_firmware(struct kim_data_s *kim_gdata)
 		    ((struct bts_action *)ptr)->size;
 	}
 	/* fw download complete */
-	release_firmware(kim_gdata->fw_entry);
+	firmware_release(kim_gdata->fw_entry);
 	return 0;
 }
 

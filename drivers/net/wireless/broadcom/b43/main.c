@@ -2166,7 +2166,7 @@ static void b43_sdio_interrupt_handler(struct b43_wldev *dev)
 
 void b43_do_release_fw(struct b43_firmware_file *fw)
 {
-	release_firmware(fw->data);
+	firmware_release(fw->data);
 	fw->data = NULL;
 	fw->filename = NULL;
 }
@@ -2247,7 +2247,7 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 	if (async) {
 		/* do this part asynchronously */
 		init_completion(&ctx->dev->fw_load_complete);
-		err = request_firmware_nowait(THIS_MODULE, 1, ctx->fwname,
+		err = firmware_request_nowait(THIS_MODULE, 1, ctx->fwname,
 					      ctx->dev->dev->dev, GFP_KERNEL,
 					      ctx, b43_fw_cb);
 		if (err < 0) {
@@ -2261,7 +2261,7 @@ int b43_do_request_fw(struct b43_request_fw_context *ctx,
 	 * request works. For this reason, we fall through here
 	 */
 	}
-	err = request_firmware(&ctx->blob, ctx->fwname,
+	err = firmware_request(&ctx->blob, ctx->fwname,
 			       ctx->dev->dev->dev);
 	if (err == -ENOENT) {
 		snprintf(ctx->errors[ctx->req_type],
@@ -2305,7 +2305,7 @@ err_format:
 	snprintf(ctx->errors[ctx->req_type],
 		 sizeof(ctx->errors[ctx->req_type]),
 		 "Firmware file \"%s\" format error.\n", ctx->fwname);
-	release_firmware(ctx->blob);
+	firmware_release(ctx->blob);
 
 	return -EPROTO;
 }

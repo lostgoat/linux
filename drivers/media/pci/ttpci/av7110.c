@@ -1514,7 +1514,7 @@ static int get_firmware(struct av7110* av7110)
 	const struct firmware *fw;
 
 	/* request the av7110 firmware, this will block until someone uploads it */
-	ret = request_firmware(&fw, "dvb-ttpci-01.fw", &av7110->dev->pci->dev);
+	ret = firmware_request(&fw, "dvb-ttpci-01.fw", &av7110->dev->pci->dev);
 	if (ret) {
 		if (ret == -ENOENT) {
 			printk(KERN_ERR "dvb-ttpci: could not load firmware, file not found: dvb-ttpci-01.fw\n");
@@ -1528,7 +1528,7 @@ static int get_firmware(struct av7110* av7110)
 
 	if (fw->size <= 200000) {
 		printk("dvb-ttpci: this firmware is way too small.\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		return -EINVAL;
 	}
 
@@ -1536,7 +1536,7 @@ static int get_firmware(struct av7110* av7110)
 	av7110->bin_fw = vmalloc(fw->size);
 	if (NULL == av7110->bin_fw) {
 		dprintk(1, "out of memory\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		return -ENOMEM;
 	}
 
@@ -1545,7 +1545,7 @@ static int get_firmware(struct av7110* av7110)
 	if ((ret = check_firmware(av7110)))
 		vfree(av7110->bin_fw);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 
@@ -1715,7 +1715,7 @@ static int alps_tdlb7_request_firmware(struct dvb_frontend* fe, const struct fir
 #if IS_ENABLED(CONFIG_DVB_SP8870)
 	struct av7110* av7110 = fe->dvb->priv;
 
-	return request_firmware(fw, name, &av7110->dev->pci->dev);
+	return firmware_request(fw, name, &av7110->dev->pci->dev);
 #else
 	return -EINVAL;
 #endif

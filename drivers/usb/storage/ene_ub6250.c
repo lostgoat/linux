@@ -1912,7 +1912,7 @@ static int ene_load_bincode(struct us_data *us, unsigned char flag)
 		goto nofw;
 	}
 
-	err = request_firmware(&sd_fw, fw_name, &us->pusb_dev->dev);
+	err = firmware_request(&sd_fw, fw_name, &us->pusb_dev->dev);
 	if (err) {
 		usb_stor_dbg(us, "load firmware %s failed\n", fw_name);
 		goto nofw;
@@ -1934,7 +1934,7 @@ static int ene_load_bincode(struct us_data *us, unsigned char flag)
 	kfree(buf);
 
 nofw:
-	release_firmware(sd_fw);
+	firmware_release(sd_fw);
 	return result;
 }
 

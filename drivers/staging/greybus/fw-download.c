@@ -48,7 +48,7 @@ static void fw_req_release(struct kref *kref)
 	dev_dbg(fw_req->fw_download->parent, "firmware %s released\n",
 		fw_req->name);
 
-	release_firmware(fw_req->fw);
+	firmware_release(fw_req->fw);
 
 	/*
 	 * The request timed out and the module may send a fetch-fw or
@@ -187,7 +187,7 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
 	dev_info(fw_download->parent, "Requested firmware package '%s'\n",
 		 fw_req->name);
 
-	ret = request_firmware(&fw_req->fw, fw_req->name, fw_download->parent);
+	ret = firmware_request(&fw_req->fw, fw_req->name, fw_download->parent);
 	if (ret) {
 		dev_err(fw_download->parent,
 			"firmware request failed for %s (%d)\n", fw_req->name,

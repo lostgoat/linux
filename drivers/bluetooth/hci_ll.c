@@ -601,7 +601,7 @@ static int download_firmware(struct ll_device *lldev)
 		 "ti-connectivity/TIInit_%d.%d.%d.bts",
 		 chip, maj_ver, min_ver);
 
-	err = request_firmware(&fw, bts_scr_name, &lldev->serdev->dev);
+	err = firmware_request(&fw, bts_scr_name, &lldev->serdev->dev);
 	if (err || !fw->data || !fw->size) {
 		bt_dev_err(lldev->hu.hdev, "request_firmware failed(errno %d) for %s",
 			   err, bts_scr_name);
@@ -661,7 +661,7 @@ static int download_firmware(struct ll_device *lldev)
 
 out_rel_fw:
 	/* fw download complete */
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 

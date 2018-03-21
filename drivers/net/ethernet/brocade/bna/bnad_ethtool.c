@@ -1089,7 +1089,7 @@ bnad_flash_device(struct net_device *netdev, struct ethtool_flash *eflash)
 	const struct firmware *fw;
 	int ret = 0;
 
-	ret = request_firmware(&fw, eflash->data, &bnad->pcidev->dev);
+	ret = firmware_request(&fw, eflash->data, &bnad->pcidev->dev);
 	if (ret) {
 		netdev_err(netdev, "can't load firmware %s\n", eflash->data);
 		goto out;
@@ -1119,7 +1119,7 @@ bnad_flash_device(struct net_device *netdev, struct ethtool_flash *eflash)
 			    fcomp.comp_status);
 	}
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

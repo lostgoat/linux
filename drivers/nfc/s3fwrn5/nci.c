@@ -97,7 +97,7 @@ int s3fwrn5_nci_rf_configure(struct s3fwrn5_info *info, const char *fw_name)
 	int i, len;
 	int ret;
 
-	ret = request_firmware(&fw, fw_name, &info->ndev->nfc_dev->dev);
+	ret = firmware_request(&fw, fw_name, &info->ndev->nfc_dev->dev);
 	if (ret < 0)
 		return ret;
 
@@ -160,6 +160,6 @@ int s3fwrn5_nci_rf_configure(struct s3fwrn5_info *info, const char *fw_name)
 	dev_info(&info->ndev->nfc_dev->dev,
 		"rfreg configuration update: success\n");
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }

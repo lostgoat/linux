@@ -121,7 +121,7 @@ static int cnl_load_base_firmware(struct sst_dsp *ctx)
 	int ret;
 
 	if (!ctx->fw) {
-		ret = request_firmware(&ctx->fw, ctx->fw_name, ctx->dev);
+		ret = firmware_request(&ctx->fw, ctx->fw_name, ctx->dev);
 		if (ret < 0) {
 			dev_err(ctx->dev, "request firmware failed: %d\n", ret);
 			goto cnl_load_base_firmware_failed;
@@ -167,7 +167,7 @@ static int cnl_load_base_firmware(struct sst_dsp *ctx)
 	return 0;
 
 cnl_load_base_firmware_failed:
-	release_firmware(ctx->fw);
+	firmware_release(ctx->fw);
 	ctx->fw = NULL;
 
 	return ret;
@@ -484,7 +484,7 @@ EXPORT_SYMBOL_GPL(cnl_sst_init_fw);
 void cnl_sst_dsp_cleanup(struct device *dev, struct skl_sst *ctx)
 {
 	if (ctx->dsp->fw)
-		release_firmware(ctx->dsp->fw);
+		firmware_release(ctx->dsp->fw);
 
 	skl_freeup_uuid_list(ctx);
 	cnl_ipc_free(&ctx->ipc);

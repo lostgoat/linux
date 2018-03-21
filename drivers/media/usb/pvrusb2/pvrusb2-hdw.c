@@ -1363,7 +1363,7 @@ static int pvr2_locate_firmware(struct pvr2_hdw *hdw,
 	unsigned int idx;
 	int ret = -EINVAL;
 	for (idx = 0; idx < fwcount; idx++) {
-		ret = request_firmware(fw_entry,
+		ret = firmware_request(fw_entry,
 				       fwnames[idx],
 				       &hdw->usb_dev->dev);
 		if (!ret) {
@@ -1454,13 +1454,13 @@ static int pvr2_upload_firmware1(struct pvr2_hdw *hdw)
 				   "Wrong fx2 firmware size (expected 8192, got %u)",
 				   fwsize);
 		}
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		return -ENOMEM;
 	}
 
 	fw_ptr = kmalloc(0x800, GFP_KERNEL);
 	if (fw_ptr == NULL){
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		return -ENOMEM;
 	}
 
@@ -1483,7 +1483,7 @@ static int pvr2_upload_firmware1(struct pvr2_hdw *hdw)
 	pvr2_hdw_cpureset_assert(hdw,0);
 
 	kfree(fw_ptr);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 
 	trace_firmware("Upload done (%d bytes sent)",ret);
 
@@ -1563,7 +1563,7 @@ int pvr2_upload_firmware2(struct pvr2_hdw *hdw)
 	if (ret) {
 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
 			   "firmware2 upload prep failed, ret=%d",ret);
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		goto done;
 	}
 
@@ -1575,14 +1575,14 @@ int pvr2_upload_firmware2(struct pvr2_hdw *hdw)
 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
 			   "size of %s firmware must be a multiple of %zu bytes",
 			   fw_files[fwidx],sizeof(u32));
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		ret = -EINVAL;
 		goto done;
 	}
 
 	fw_ptr = kmalloc(FIRMWARE_CHUNK_SIZE, GFP_KERNEL);
 	if (fw_ptr == NULL){
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
 			   "failed to allocate memory for firmware2 upload");
 		ret = -ENOMEM;
@@ -1622,7 +1622,7 @@ int pvr2_upload_firmware2(struct pvr2_hdw *hdw)
 		       fw_files[fwidx],fw_done,fw_len);
 
 	kfree(fw_ptr);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 
 	if (ret) {
 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,

@@ -125,7 +125,7 @@ int xc_request_firmware(struct xc *x)
 
 	sprintf(name, "xc%d.bin", x->no);
 
-	ret = request_firmware(&fw, name, x->dev);
+	ret = firmware_request(&fw, name, x->dev);
 
 	if (ret < 0) {
 		dev_err(x->dev, "request_firmware failed\n");
@@ -172,7 +172,7 @@ int xc_request_firmware(struct xc *x)
 	ret = 0;
 
       exit_release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

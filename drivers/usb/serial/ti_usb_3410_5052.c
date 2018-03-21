@@ -1649,7 +1649,7 @@ static int ti_download_firmware(struct ti_device *tdev)
 			"moxa/moxa-%04x.fw",
 			le16_to_cpu(dev->descriptor.idProduct));
 
-		status = request_firmware(&fw_p, buf, &dev->dev);
+		status = firmware_request(&fw_p, buf, &dev->dev);
 		goto check_firmware;
 	}
 
@@ -1657,7 +1657,7 @@ static int ti_download_firmware(struct ti_device *tdev)
 	sprintf(buf, "ti_usb-v%04x-p%04x.fw",
 			le16_to_cpu(dev->descriptor.idVendor),
 			le16_to_cpu(dev->descriptor.idProduct));
-	status = request_firmware(&fw_p, buf, &dev->dev);
+	status = firmware_request(&fw_p, buf, &dev->dev);
 
 	if (status != 0) {
 		buf[0] = '\0';
@@ -1688,7 +1688,7 @@ static int ti_download_firmware(struct ti_device *tdev)
 			else
 				strcpy(buf, "ti_5052.fw");
 		}
-		status = request_firmware(&fw_p, buf, &dev->dev);
+		status = firmware_request(&fw_p, buf, &dev->dev);
 	}
 
 check_firmware:
@@ -1698,7 +1698,7 @@ check_firmware:
 	}
 	if (fw_p->size > TI_FIRMWARE_BUF_SIZE) {
 		dev_err(&dev->dev, "%s - firmware too large %zu\n", __func__, fw_p->size);
-		release_firmware(fw_p);
+		firmware_release(fw_p);
 		return -ENOENT;
 	}
 
@@ -1712,7 +1712,7 @@ check_firmware:
 	} else {
 		status = -ENOMEM;
 	}
-	release_firmware(fw_p);
+	firmware_release(fw_p);
 	if (status) {
 		dev_err(&dev->dev, "%s - error downloading firmware, %d\n",
 							__func__, status);

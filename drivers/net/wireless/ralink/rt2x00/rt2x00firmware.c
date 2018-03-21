@@ -48,7 +48,7 @@ static int rt2x00lib_request_firmware(struct rt2x00_dev *rt2x00dev)
 
 	rt2x00_info(rt2x00dev, "Loading firmware file '%s'\n", fw_name);
 
-	retval = request_firmware(&fw, fw_name, device);
+	retval = firmware_request(&fw, fw_name, device);
 	if (retval) {
 		rt2x00_err(rt2x00dev, "Failed to request Firmware\n");
 		return retval;
@@ -56,7 +56,7 @@ static int rt2x00lib_request_firmware(struct rt2x00_dev *rt2x00dev)
 
 	if (!fw || !fw->size || !fw->data) {
 		rt2x00_err(rt2x00dev, "Failed to read Firmware\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		return -ENOENT;
 	}
 
@@ -87,7 +87,7 @@ static int rt2x00lib_request_firmware(struct rt2x00_dev *rt2x00dev)
 	return 0;
 
 exit:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return -ENOENT;
 }
@@ -124,6 +124,6 @@ int rt2x00lib_load_firmware(struct rt2x00_dev *rt2x00dev)
 
 void rt2x00lib_free_firmware(struct rt2x00_dev *rt2x00dev)
 {
-	release_firmware(rt2x00dev->fw);
+	firmware_release(rt2x00dev->fw);
 	rt2x00dev->fw = NULL;
 }

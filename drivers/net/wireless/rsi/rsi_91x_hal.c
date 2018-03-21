@@ -828,7 +828,7 @@ static int rsi_load_firmware(struct rsi_hw *adapter)
 	rsi_dbg(INIT_ZONE, "%s: Loading file %s\n", __func__, metadata_p->name);
 	adapter->fw_file_name = metadata_p->name;
 
-	status = request_firmware(&fw_entry, metadata_p->name, adapter->device);
+	status = firmware_request(&fw_entry, metadata_p->name, adapter->device);
 	if (status < 0) {
 		rsi_dbg(ERR_ZONE, "%s: Failed to open file %s\n",
 			__func__, metadata_p->name);
@@ -912,13 +912,13 @@ fw_upgrade:
 success:
 	rsi_dbg(ERR_ZONE, "***** Firmware Loading successful *****\n");
 	kfree(flash_content);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return 0;
 
 fail:
 	rsi_dbg(ERR_ZONE, "##### Firmware loading failed #####\n");
 	kfree(flash_content);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return status;
 }
 

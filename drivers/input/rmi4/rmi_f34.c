@@ -476,7 +476,7 @@ static ssize_t rmi_driver_update_fw_store(struct device *dev,
 	strncpy(fw_name, buf, copy_count);
 	fw_name[copy_count] = '\0';
 
-	ret = request_firmware(&fw, fw_name, dev);
+	ret = firmware_request(&fw, fw_name, dev);
 	if (ret)
 		return ret;
 
@@ -484,7 +484,7 @@ static ssize_t rmi_driver_update_fw_store(struct device *dev,
 
 	ret = rmi_firmware_update(data, fw);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret ?: count;
 }

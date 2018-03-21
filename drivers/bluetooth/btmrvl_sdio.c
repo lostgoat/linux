@@ -452,7 +452,7 @@ static int btmrvl_sdio_download_helper(struct btmrvl_sdio_card *card)
 	u8 *helperbuf;
 	u32 tx_len;
 
-	ret = request_firmware(&fw_helper, card->helper,
+	ret = firmware_request(&fw_helper, card->helper,
 						&card->func->dev);
 	if ((ret < 0) || !fw_helper) {
 		BT_ERR("request_firmware(helper) failed, error code = %d",
@@ -536,7 +536,7 @@ static int btmrvl_sdio_download_helper(struct btmrvl_sdio_card *card)
 
 done:
 	kfree(tmphlprbuf);
-	release_firmware(fw_helper);
+	firmware_release(fw_helper);
 	return ret;
 }
 
@@ -552,7 +552,7 @@ static int btmrvl_sdio_download_fw_w_helper(struct btmrvl_sdio_card *card)
 	u16 len, blksz_dl = card->sd_blksz_fw_dl;
 	int txlen = 0, tx_blocks = 0, count = 0;
 
-	ret = request_firmware(&fw_firmware, card->firmware,
+	ret = firmware_request(&fw_firmware, card->firmware,
 							&card->func->dev);
 	if ((ret < 0) || !fw_firmware) {
 		BT_ERR("request_firmware(firmware) failed, error code = %d",
@@ -679,7 +679,7 @@ static int btmrvl_sdio_download_fw_w_helper(struct btmrvl_sdio_card *card)
 
 done:
 	kfree(tmpfwbuf);
-	release_firmware(fw_firmware);
+	firmware_release(fw_firmware);
 	return ret;
 }
 

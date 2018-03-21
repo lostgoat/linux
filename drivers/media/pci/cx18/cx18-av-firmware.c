@@ -79,7 +79,7 @@ int cx18_av_loadfw(struct cx18 *cx)
 	int i;
 	int retries1 = 0;
 
-	if (request_firmware(&fw, FWFILE, &cx->pci_dev->dev) != 0) {
+	if (firmware_request(&fw, FWFILE, &cx->pci_dev->dev) != 0) {
 		CX18_ERR_DEV(sd, "unable to open firmware %s\n", FWFILE);
 		return -EINVAL;
 	}
@@ -132,7 +132,7 @@ int cx18_av_loadfw(struct cx18 *cx)
 	}
 	if (retries1 >= 5) {
 		CX18_ERR_DEV(sd, "unable to load firmware %s\n", FWFILE);
-		release_firmware(fw);
+		firmware_release(fw);
 		return -EIO;
 	}
 
@@ -212,7 +212,7 @@ int cx18_av_loadfw(struct cx18 *cx)
 	v |= 0x14000000;
 	cx18_av_write4_expect(cx, CXADEC_STD_DET_CTL, v, v, 0x3F00FFFF);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

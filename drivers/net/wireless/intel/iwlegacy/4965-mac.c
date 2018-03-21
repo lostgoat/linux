@@ -4710,7 +4710,7 @@ il4965_request_firmware(struct il_priv *il, bool first)
 
 	D_INFO("attempting to load firmware '%s'\n", il->firmware_name);
 
-	return request_firmware_nowait(THIS_MODULE, 1, il->firmware_name,
+	return firmware_request_nowait(THIS_MODULE, 1, il->firmware_name,
 				       &il->pci_dev->dev, GFP_KERNEL, il,
 				       il4965_ucode_callback);
 }
@@ -5006,7 +5006,7 @@ il4965_ucode_callback(const struct firmware *ucode_raw, void *context)
 	}
 
 	/* We have our copies now, allow OS release its copies */
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 	complete(&il->_4965.firmware_loading_complete);
 	return;
 
@@ -5014,7 +5014,7 @@ try_again:
 	/* try next, if any */
 	if (il4965_request_firmware(il, false))
 		goto out_unbind;
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 	return;
 
 err_pci_alloc:
@@ -5023,7 +5023,7 @@ err_pci_alloc:
 out_unbind:
 	complete(&il->_4965.firmware_loading_complete);
 	device_release_driver(&il->pci_dev->dev);
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 }
 
 static const char *const desc_lookup_text[] = {

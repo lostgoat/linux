@@ -874,19 +874,19 @@ err1:
 
 static void gfx_v8_0_free_microcode(struct amdgpu_device *adev)
 {
-	release_firmware(adev->gfx.pfp_fw);
+	firmware_release(adev->gfx.pfp_fw);
 	adev->gfx.pfp_fw = NULL;
-	release_firmware(adev->gfx.me_fw);
+	firmware_release(adev->gfx.me_fw);
 	adev->gfx.me_fw = NULL;
-	release_firmware(adev->gfx.ce_fw);
+	firmware_release(adev->gfx.ce_fw);
 	adev->gfx.ce_fw = NULL;
-	release_firmware(adev->gfx.rlc_fw);
+	firmware_release(adev->gfx.rlc_fw);
 	adev->gfx.rlc_fw = NULL;
-	release_firmware(adev->gfx.mec_fw);
+	firmware_release(adev->gfx.mec_fw);
 	adev->gfx.mec_fw = NULL;
 	if ((adev->asic_type != CHIP_STONEY) &&
 	    (adev->asic_type != CHIP_TOPAZ))
-		release_firmware(adev->gfx.mec2_fw);
+		firmware_release(adev->gfx.mec2_fw);
 	adev->gfx.mec2_fw = NULL;
 
 	kfree(adev->gfx.rlc.register_list_format);
@@ -936,14 +936,14 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 
 	if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= CHIP_POLARIS12) {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_pfp_2.bin", chip_name);
-		err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.pfp_fw, fw_name, adev->dev);
 		if (err == -ENOENT) {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_pfp.bin", chip_name);
-			err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.pfp_fw, fw_name, adev->dev);
 		}
 	} else {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_pfp.bin", chip_name);
-		err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.pfp_fw, fw_name, adev->dev);
 	}
 	if (err)
 		goto out;
@@ -956,14 +956,14 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 
 	if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= CHIP_POLARIS12) {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me_2.bin", chip_name);
-		err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.me_fw, fw_name, adev->dev);
 		if (err == -ENOENT) {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", chip_name);
-			err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.me_fw, fw_name, adev->dev);
 		}
 	} else {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", chip_name);
-		err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.me_fw, fw_name, adev->dev);
 	}
 	if (err)
 		goto out;
@@ -977,14 +977,14 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 
 	if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= CHIP_POLARIS12) {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_ce_2.bin", chip_name);
-		err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.ce_fw, fw_name, adev->dev);
 		if (err == -ENOENT) {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_ce.bin", chip_name);
-			err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.ce_fw, fw_name, adev->dev);
 		}
 	} else {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_ce.bin", chip_name);
-		err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.ce_fw, fw_name, adev->dev);
 	}
 	if (err)
 		goto out;
@@ -1007,7 +1007,7 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 		adev->virt.chained_ib_support = false;
 
 	snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_rlc.bin", chip_name);
-	err = request_firmware(&adev->gfx.rlc_fw, fw_name, adev->dev);
+	err = firmware_request(&adev->gfx.rlc_fw, fw_name, adev->dev);
 	if (err)
 		goto out;
 	err = amdgpu_ucode_validate(adev->gfx.rlc_fw);
@@ -1057,14 +1057,14 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 
 	if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= CHIP_POLARIS12) {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec_2.bin", chip_name);
-		err = request_firmware(&adev->gfx.mec_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.mec_fw, fw_name, adev->dev);
 		if (err == -ENOENT) {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec.bin", chip_name);
-			err = request_firmware(&adev->gfx.mec_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.mec_fw, fw_name, adev->dev);
 		}
 	} else {
 		snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec.bin", chip_name);
-		err = request_firmware(&adev->gfx.mec_fw, fw_name, adev->dev);
+		err = firmware_request(&adev->gfx.mec_fw, fw_name, adev->dev);
 	}
 	if (err)
 		goto out;
@@ -1079,14 +1079,14 @@ static int gfx_v8_0_init_microcode(struct amdgpu_device *adev)
 	    (adev->asic_type != CHIP_TOPAZ)) {
 		if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= CHIP_POLARIS12) {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec2_2.bin", chip_name);
-			err = request_firmware(&adev->gfx.mec2_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.mec2_fw, fw_name, adev->dev);
 			if (err == -ENOENT) {
 				snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec2.bin", chip_name);
-				err = request_firmware(&adev->gfx.mec2_fw, fw_name, adev->dev);
+				err = firmware_request(&adev->gfx.mec2_fw, fw_name, adev->dev);
 			}
 		} else {
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec2.bin", chip_name);
-			err = request_firmware(&adev->gfx.mec2_fw, fw_name, adev->dev);
+			err = firmware_request(&adev->gfx.mec2_fw, fw_name, adev->dev);
 		}
 		if (!err) {
 			err = amdgpu_ucode_validate(adev->gfx.mec2_fw);
@@ -1169,17 +1169,17 @@ out:
 		dev_err(adev->dev,
 			"gfx8: Failed to load firmware \"%s\"\n",
 			fw_name);
-		release_firmware(adev->gfx.pfp_fw);
+		firmware_release(adev->gfx.pfp_fw);
 		adev->gfx.pfp_fw = NULL;
-		release_firmware(adev->gfx.me_fw);
+		firmware_release(adev->gfx.me_fw);
 		adev->gfx.me_fw = NULL;
-		release_firmware(adev->gfx.ce_fw);
+		firmware_release(adev->gfx.ce_fw);
 		adev->gfx.ce_fw = NULL;
-		release_firmware(adev->gfx.rlc_fw);
+		firmware_release(adev->gfx.rlc_fw);
 		adev->gfx.rlc_fw = NULL;
-		release_firmware(adev->gfx.mec_fw);
+		firmware_release(adev->gfx.mec_fw);
 		adev->gfx.mec_fw = NULL;
-		release_firmware(adev->gfx.mec2_fw);
+		firmware_release(adev->gfx.mec2_fw);
 		adev->gfx.mec2_fw = NULL;
 	}
 	return err;

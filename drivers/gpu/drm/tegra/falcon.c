@@ -124,7 +124,7 @@ int falcon_read_firmware(struct falcon *falcon, const char *name)
 	int err;
 
 	/* request_firmware prints error if it fails */
-	err = request_firmware(&falcon->firmware.firmware, name, falcon->dev);
+	err = firmware_request(&falcon->firmware.firmware, name, falcon->dev);
 	if (err < 0)
 		return err;
 
@@ -156,7 +156,7 @@ int falcon_load_firmware(struct falcon *falcon)
 		goto err_setup_firmware_image;
 	}
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 	falcon->firmware.firmware = NULL;
 
 	return 0;
@@ -182,7 +182,7 @@ int falcon_init(struct falcon *falcon)
 void falcon_exit(struct falcon *falcon)
 {
 	if (falcon->firmware.firmware) {
-		release_firmware(falcon->firmware.firmware);
+		firmware_release(falcon->firmware.firmware);
 		falcon->firmware.firmware = NULL;
 	}
 

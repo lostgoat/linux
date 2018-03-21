@@ -336,7 +336,7 @@ static int s5k4ecgx_load_firmware(struct v4l2_subdev *sd)
 	u32 addr, crc, crc_file, addr_inc = 0;
 	u16 val;
 
-	err = request_firmware(&fw, S5K4ECGX_FIRMWARE, sd->v4l2_dev->dev);
+	err = firmware_request(&fw, S5K4ECGX_FIRMWARE, sd->v4l2_dev->dev);
 	if (err) {
 		v4l2_err(sd, "Failed to read firmware %s\n", S5K4ECGX_FIRMWARE);
 		return err;
@@ -373,7 +373,7 @@ static int s5k4ecgx_load_firmware(struct v4l2_subdev *sd)
 		addr_inc = addr;
 	}
 fw_out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 

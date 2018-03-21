@@ -6495,7 +6495,7 @@ qla2x00_request_firmware(scsi_qla_host_t *vha)
 	if (blob->fw)
 		goto out;
 
-	if (request_firmware(&blob->fw, blob->name, &ha->pdev->dev)) {
+	if (firmware_request(&blob->fw, blob->name, &ha->pdev->dev)) {
 		ql_log(ql_log_warn, vha, 0x0063,
 		    "Failed to load firmware image (%s).\n", blob->name);
 		blob->fw = NULL;
@@ -6515,7 +6515,7 @@ qla2x00_release_firmware(void)
 
 	mutex_lock(&qla_fw_lock);
 	for (idx = 0; idx < FW_BLOBS; idx++)
-		release_firmware(qla_fw_blobs[idx].fw);
+		firmware_release(qla_fw_blobs[idx].fw);
 	mutex_unlock(&qla_fw_lock);
 }
 

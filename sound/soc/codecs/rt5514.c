@@ -369,7 +369,7 @@ static int rt5514_dsp_voice_wake_up_put(struct snd_kcontrol *kcontrol,
 
 			rt5514_enable_dsp_prepare(rt5514);
 
-			request_firmware(&fw, RT5514_FIRMWARE1, codec->dev);
+			firmware_request(&fw, RT5514_FIRMWARE1, codec->dev);
 			if (fw) {
 #if IS_ENABLED(CONFIG_SND_SOC_RT5514_SPI)
 				rt5514_spi_burst_write(0x4ff60000, fw->data,
@@ -378,11 +378,11 @@ static int rt5514_dsp_voice_wake_up_put(struct snd_kcontrol *kcontrol,
 				dev_err(codec->dev, "There is no SPI driver for"
 					" loading the firmware\n");
 #endif
-				release_firmware(fw);
+				firmware_release(fw);
 				fw = NULL;
 			}
 
-			request_firmware(&fw, RT5514_FIRMWARE2, codec->dev);
+			firmware_request(&fw, RT5514_FIRMWARE2, codec->dev);
 			if (fw) {
 #if IS_ENABLED(CONFIG_SND_SOC_RT5514_SPI)
 				rt5514_spi_burst_write(0x4ffc0000, fw->data,
@@ -391,7 +391,7 @@ static int rt5514_dsp_voice_wake_up_put(struct snd_kcontrol *kcontrol,
 				dev_err(codec->dev, "There is no SPI driver for"
 					" loading the firmware\n");
 #endif
-				release_firmware(fw);
+				firmware_release(fw);
 				fw = NULL;
 			}
 

@@ -138,7 +138,7 @@ int amdgpu_vce_sw_init(struct amdgpu_device *adev, unsigned long size)
 		return -EINVAL;
 	}
 
-	r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
+	r = firmware_request(&adev->vce.fw, fw_name, adev->dev);
 	if (r) {
 		dev_err(adev->dev, "amdgpu_vce: Can't load firmware \"%s\"\n",
 			fw_name);
@@ -149,7 +149,7 @@ int amdgpu_vce_sw_init(struct amdgpu_device *adev, unsigned long size)
 	if (r) {
 		dev_err(adev->dev, "amdgpu_vce: Can't validate firmware \"%s\"\n",
 			fw_name);
-		release_firmware(adev->vce.fw);
+		firmware_release(adev->vce.fw);
 		adev->vce.fw = NULL;
 		return r;
 	}
@@ -215,7 +215,7 @@ int amdgpu_vce_sw_fini(struct amdgpu_device *adev)
 	for (i = 0; i < adev->vce.num_rings; i++)
 		amdgpu_ring_fini(&adev->vce.ring[i]);
 
-	release_firmware(adev->vce.fw);
+	firmware_release(adev->vce.fw);
 	mutex_destroy(&adev->vce.idle_mutex);
 
 	return 0;

@@ -1032,7 +1032,7 @@ static int s5k5baf_load_setfile(struct s5k5baf *state)
 	const struct firmware *fw;
 	int ret;
 
-	ret = request_firmware(&fw, S5K5BAF_FW_FILENAME, &c->dev);
+	ret = firmware_request(&fw, S5K5BAF_FW_FILENAME, &c->dev);
 	if (ret < 0) {
 		dev_warn(&c->dev, "firmware file (%s) not loaded\n",
 			 S5K5BAF_FW_FILENAME);
@@ -1042,7 +1042,7 @@ static int s5k5baf_load_setfile(struct s5k5baf *state)
 	ret = s5k5baf_fw_parse(&c->dev, &state->fw, fw->size / 2,
 			       (__le16 *)fw->data);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

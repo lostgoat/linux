@@ -1079,7 +1079,7 @@ static int mxuport_probe(struct usb_serial *serial,
 
 	snprintf(buf, sizeof(buf) - 1, "moxa/moxa-%04x.fw", productid);
 
-	err = request_firmware(&fw_p, buf, &serial->interface->dev);
+	err = firmware_request(&fw_p, buf, &serial->interface->dev);
 	if (err) {
 		dev_warn(&serial->interface->dev, "Firmware %s not found\n",
 			 buf);
@@ -1117,7 +1117,7 @@ static int mxuport_probe(struct usb_serial *serial,
 	usb_set_serial_data(serial, (void *)id->driver_info);
 out:
 	if (fw_p)
-		release_firmware(fw_p);
+		firmware_release(fw_p);
 	return err;
 }
 

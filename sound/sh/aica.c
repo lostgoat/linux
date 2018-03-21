@@ -558,14 +558,14 @@ static int load_aica_firmware(void)
 	int err;
 	const struct firmware *fw_entry;
 	spu_reset();
-	err = request_firmware(&fw_entry, "aica_firmware.bin", &pd->dev);
+	err = firmware_request(&fw_entry, "aica_firmware.bin", &pd->dev);
 	if (unlikely(err))
 		return err;
 	/* write firmware into memory */
 	spu_disable();
 	spu_memload(0, fw_entry->data, fw_entry->size);
 	spu_enable();
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return err;
 }
 

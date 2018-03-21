@@ -1525,7 +1525,7 @@ static void s2255_destroy(struct s2255_dev *dev)
 		usb_free_urb(dev->fw_data->fw_urb);
 		dev->fw_data->fw_urb = NULL;
 	}
-	release_firmware(dev->fw_data->fw);
+	firmware_release(dev->fw_data->fw);
 	kfree(dev->fw_data->pfw_data);
 	kfree(dev->fw_data);
 	/* reset the DSP so firmware can be reloaded next time */
@@ -2305,7 +2305,7 @@ static int s2255_probe(struct usb_interface *interface,
 		goto errorFWDATA2;
 	}
 	/* load the first chunk */
-	if (request_firmware(&dev->fw_data->fw,
+	if (firmware_request(&dev->fw_data->fw,
 			     FIRMWARE_FILE_NAME, &dev->udev->dev)) {
 		dev_err(&interface->dev, "sensoray 2255 failed to get firmware\n");
 		goto errorREQFW;
@@ -2346,7 +2346,7 @@ static int s2255_probe(struct usb_interface *interface,
 errorBOARDINIT:
 	s2255_board_shutdown(dev);
 errorFWMARKER:
-	release_firmware(dev->fw_data->fw);
+	firmware_release(dev->fw_data->fw);
 errorREQFW:
 	kfree(dev->fw_data->pfw_data);
 errorFWDATA2:

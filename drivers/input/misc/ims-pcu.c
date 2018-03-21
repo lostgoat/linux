@@ -937,7 +937,7 @@ static void ims_pcu_process_async_firmware(const struct firmware *fw,
 	ims_pcu_handle_firmware_update(pcu, fw);
 	mutex_unlock(&pcu->cmd_mutex);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 out:
 	complete(&pcu->async_firmware_done);
@@ -1202,7 +1202,7 @@ static ssize_t ims_pcu_update_firmware_store(struct device *dev,
 	else
 		error = ims_pcu_switch_to_bootloader(pcu);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 out:
 	mutex_unlock(&pcu->cmd_mutex);
@@ -1977,7 +1977,7 @@ static int ims_pcu_init_bootloader_mode(struct ims_pcu *pcu)
 		 "Device is in bootloader mode (addr 0x%08x-0x%08x), requesting firmware\n",
 		 pcu->fw_start_addr, pcu->fw_end_addr);
 
-	error = request_firmware_nowait(THIS_MODULE, true,
+	error = firmware_request_nowait(THIS_MODULE, true,
 					IMS_PCU_FIRMWARE_NAME,
 					pcu->dev, GFP_KERNEL, pcu,
 					ims_pcu_process_async_firmware);

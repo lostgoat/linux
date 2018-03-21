@@ -468,7 +468,7 @@ static int blackbird_load_firmware(struct cx8802_dev *dev)
 	if (retval < 0)
 		dprintk(0, "Error with register_write\n");
 
-	retval = request_firmware(&firmware, CX2341X_FIRM_ENC_FILENAME,
+	retval = firmware_request(&firmware, CX2341X_FIRM_ENC_FILENAME,
 				  &dev->pci->dev);
 
 	if (retval != 0) {
@@ -481,13 +481,13 @@ static int blackbird_load_firmware(struct cx8802_dev *dev)
 	if (firmware->size != BLACKBIRD_FIRM_IMAGE_SIZE) {
 		pr_err("Firmware size mismatch (have %zd, expected %d)\n",
 		       firmware->size, BLACKBIRD_FIRM_IMAGE_SIZE);
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -EINVAL;
 	}
 
 	if (memcmp(firmware->data, magic, 8) != 0) {
 		pr_err("Firmware magic mismatch, wrong file?\n");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -EINVAL;
 	}
 
@@ -506,7 +506,7 @@ static int blackbird_load_firmware(struct cx8802_dev *dev)
 		memory_read(dev->core, i, &value);
 		checksum -= ~value;
 	}
-	release_firmware(firmware);
+	firmware_release(firmware);
 	if (checksum) {
 		pr_err("Firmware load might have failed (checksum mismatch).\n");
 		return -EIO;

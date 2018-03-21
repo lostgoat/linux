@@ -218,7 +218,7 @@ nfp_net_fw_request(struct pci_dev *pdev, struct nfp_pf *pf, const char *name)
 	const struct firmware *fw = NULL;
 	int err;
 
-	err = request_firmware_direct(&fw, name, &pdev->dev);
+	err = firmware_request_direct(&fw, name, &pdev->dev);
 	nfp_info(pf->cpp, "  %s: %s\n",
 		 name, err ? "not found" : "found, loading...");
 	if (err)
@@ -342,7 +342,7 @@ nfp_fw_load(struct pci_dev *pdev, struct nfp_pf *pf, struct nfp_nsp *nsp)
 	dev_info(&pdev->dev, "Finished loading FW image\n");
 
 exit_release_fw:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err < 0 ? err : 1;
 }

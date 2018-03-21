@@ -1859,7 +1859,7 @@ il3945_read_ucode(struct il_priv *il)
 	 * request_firmware() is synchronous, file is in memory on return. */
 	for (idx = api_max; idx >= api_min; idx--) {
 		sprintf(buf, "%s%u%s", name_pre, idx, ".ucode");
-		ret = request_firmware(&ucode_raw, buf, &il->pci_dev->dev);
+		ret = firmware_request(&ucode_raw, buf, &il->pci_dev->dev);
 		if (ret < 0) {
 			IL_ERR("%s firmware file req failed: %d\n", buf, ret);
 			if (ret == -ENOENT)
@@ -2056,7 +2056,7 @@ il3945_read_ucode(struct il_priv *il)
 	memcpy(il->ucode_boot.v_addr, src, len);
 
 	/* We have our copies now, allow OS release its copies */
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 	return 0;
 
 err_pci_alloc:
@@ -2065,7 +2065,7 @@ err_pci_alloc:
 	il3945_dealloc_ucode_pci(il);
 
 err_release:
-	release_firmware(ucode_raw);
+	firmware_release(ucode_raw);
 
 error:
 	return ret;

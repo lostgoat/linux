@@ -920,7 +920,7 @@ static int apply_vp_patch(struct camera_data *cam)
 	int i, ret;
 	struct cpia2_command cmd;
 
-	ret = request_firmware(&fw, fw_name, &cam->dev->dev);
+	ret = firmware_request(&fw, fw_name, &cam->dev->dev);
 	if (ret) {
 		printk(KERN_ERR "cpia2: failed to load VP patch \"%s\"\n",
 		       fw_name);
@@ -949,7 +949,7 @@ static int apply_vp_patch(struct camera_data *cam)
 	/* ... followed by the 'goto' command */
 	cpia2_send_onebyte_command(cam, &cmd, 0x0D, 1);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

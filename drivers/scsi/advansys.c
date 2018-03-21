@@ -4105,7 +4105,7 @@ static int AscInitAsc1000Driver(ASC_DVC_VAR *asc_dvc)
 	AscDisableInterrupt(iop_base);
 	AscInitLram(asc_dvc);
 
-	err = request_firmware(&fw, fwname, asc_dvc->drv_ptr->dev);
+	err = firmware_request(&fw, fwname, asc_dvc->drv_ptr->dev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
 		       fwname, err);
@@ -4115,7 +4115,7 @@ static int AscInitAsc1000Driver(ASC_DVC_VAR *asc_dvc)
 	if (fw->size < 4) {
 		printk(KERN_ERR "Bogus length %zu in image \"%s\"\n",
 		       fw->size, fwname);
-		release_firmware(fw);
+		firmware_release(fw);
 		asc_dvc->err_code |= ASC_IERR_MCODE_CHKSUM;
 		return -EINVAL;
 	}
@@ -4125,10 +4125,10 @@ static int AscInitAsc1000Driver(ASC_DVC_VAR *asc_dvc)
 	if (AscLoadMicroCode(iop_base, 0, &fw->data[4],
 			     fw->size - 4) != chksum) {
 		asc_dvc->err_code |= ASC_IERR_MCODE_CHKSUM;
-		release_firmware(fw);
+		firmware_release(fw);
 		return warn_code;
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	warn_code |= AscInitMicroCodeVar(asc_dvc);
 	if (!asc_dvc->overrun_dma)
 		return warn_code;
@@ -4471,7 +4471,7 @@ static int AdvInitAsc3550Driver(ADV_DVC_VAR *asc_dvc)
 				max_cmd[tid]);
 	}
 
-	err = request_firmware(&fw, fwname, asc_dvc->drv_ptr->dev);
+	err = firmware_request(&fw, fwname, asc_dvc->drv_ptr->dev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
 		       fwname, err);
@@ -4481,7 +4481,7 @@ static int AdvInitAsc3550Driver(ADV_DVC_VAR *asc_dvc)
 	if (fw->size < 4) {
 		printk(KERN_ERR "Bogus length %zu in image \"%s\"\n",
 		       fw->size, fwname);
-		release_firmware(fw);
+		firmware_release(fw);
 		asc_dvc->err_code = ASC_IERR_MCODE_CHKSUM;
 		return -EINVAL;
 	}
@@ -4490,7 +4490,7 @@ static int AdvInitAsc3550Driver(ADV_DVC_VAR *asc_dvc)
 	asc_dvc->err_code = AdvLoadMicrocode(iop_base, &fw->data[4],
 					     fw->size - 4, ADV_3550_MEMSIZE,
 					     chksum);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (asc_dvc->err_code)
 		return ADV_ERROR;
 
@@ -4971,7 +4971,7 @@ static int AdvInitAsc38C0800Driver(ADV_DVC_VAR *asc_dvc)
 	/* We need to reset back to normal mode after LRAM test passes. */
 	AdvWriteByteRegister(iop_base, IOPB_RAM_BIST, NORMAL_MODE);
 
-	err = request_firmware(&fw, fwname, asc_dvc->drv_ptr->dev);
+	err = firmware_request(&fw, fwname, asc_dvc->drv_ptr->dev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
 		       fwname, err);
@@ -4981,7 +4981,7 @@ static int AdvInitAsc38C0800Driver(ADV_DVC_VAR *asc_dvc)
 	if (fw->size < 4) {
 		printk(KERN_ERR "Bogus length %zu in image \"%s\"\n",
 		       fw->size, fwname);
-		release_firmware(fw);
+		firmware_release(fw);
 		asc_dvc->err_code = ASC_IERR_MCODE_CHKSUM;
 		return -EINVAL;
 	}
@@ -4990,7 +4990,7 @@ static int AdvInitAsc38C0800Driver(ADV_DVC_VAR *asc_dvc)
 	asc_dvc->err_code = AdvLoadMicrocode(iop_base, &fw->data[4],
 					     fw->size - 4, ADV_38C0800_MEMSIZE,
 					     chksum);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (asc_dvc->err_code)
 		return ADV_ERROR;
 
@@ -5459,7 +5459,7 @@ static int AdvInitAsc38C1600Driver(ADV_DVC_VAR *asc_dvc)
 	/* We need to reset back to normal mode after LRAM test passes. */
 	AdvWriteByteRegister(iop_base, IOPB_RAM_BIST, NORMAL_MODE);
 
-	err = request_firmware(&fw, fwname, asc_dvc->drv_ptr->dev);
+	err = firmware_request(&fw, fwname, asc_dvc->drv_ptr->dev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
 		       fwname, err);
@@ -5469,7 +5469,7 @@ static int AdvInitAsc38C1600Driver(ADV_DVC_VAR *asc_dvc)
 	if (fw->size < 4) {
 		printk(KERN_ERR "Bogus length %zu in image \"%s\"\n",
 		       fw->size, fwname);
-		release_firmware(fw);
+		firmware_release(fw);
 		asc_dvc->err_code = ASC_IERR_MCODE_CHKSUM;
 		return -EINVAL;
 	}
@@ -5478,7 +5478,7 @@ static int AdvInitAsc38C1600Driver(ADV_DVC_VAR *asc_dvc)
 	asc_dvc->err_code = AdvLoadMicrocode(iop_base, &fw->data[4],
 					     fw->size - 4, ADV_38C1600_MEMSIZE,
 					     chksum);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (asc_dvc->err_code)
 		return ADV_ERROR;
 

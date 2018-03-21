@@ -1378,7 +1378,7 @@ static int azx_free(struct azx *chip)
 
 	pci_disable_device(chip->pci);
 #ifdef CONFIG_SND_HDA_PATCH_LOADER
-	release_firmware(chip->fw);
+	firmware_release(chip->fw);
 #endif
 
 	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL) {
@@ -2159,7 +2159,7 @@ static int azx_probe(struct pci_dev *pci,
 	if (patch[dev] && *patch[dev]) {
 		dev_info(card->dev, "Applying patch firmware '%s'\n",
 			 patch[dev]);
-		err = request_firmware_nowait(THIS_MODULE, true, patch[dev],
+		err = firmware_request_nowait(THIS_MODULE, true, patch[dev],
 					      &pci->dev, GFP_KERNEL, card,
 					      azx_firmware_cb);
 		if (err < 0)
@@ -2280,7 +2280,7 @@ static int azx_probe_continue(struct azx *chip)
 		if (err < 0)
 			goto out_free;
 #ifndef CONFIG_PM
-		release_firmware(chip->fw); /* no longer needed */
+		firmware_release(chip->fw); /* no longer needed */
 		chip->fw = NULL;
 #endif
 	}

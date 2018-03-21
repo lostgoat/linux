@@ -1375,7 +1375,7 @@ static void load_firmware_cb(const struct firmware *fw,
 
 	rc = load_all_firmwares(fe, fw);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (rc < 0)
 		return;
@@ -1419,7 +1419,7 @@ static int xc2028_set_config(struct dvb_frontend *fe, void *priv_cfg)
 			goto unlock;
 		}
 
-		rc = request_firmware_nowait(THIS_MODULE, 1,
+		rc = firmware_request_nowait(THIS_MODULE, 1,
 					     priv->fname,
 					     priv->i2c_props.adap->dev.parent,
 					     GFP_KERNEL,

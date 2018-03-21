@@ -1062,7 +1062,7 @@ static int slic_load_rcvseq_firmware(struct slic_device *sdev)
 
 	file = (sdev->model == SLIC_MODEL_OASIS) ?  SLIC_RCV_FIRMWARE_OASIS :
 						    SLIC_RCV_FIRMWARE_MOJAVE;
-	err = request_firmware(&fw, file, &sdev->pdev->dev);
+	err = firmware_request(&fw, file, &sdev->pdev->dev);
 	if (err) {
 		dev_err(&sdev->pdev->dev,
 			"failed to load receive sequencer firmware %s\n", file);
@@ -1110,7 +1110,7 @@ static int slic_load_rcvseq_firmware(struct slic_device *sdev)
 	slic_write(sdev, SLIC_REG_RCV_WCS, SLIC_RCVWCS_FINISH);
 	slic_flush_write(sdev);
 release:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err;
 }
@@ -1137,7 +1137,7 @@ static int slic_load_firmware(struct slic_device *sdev)
 
 	file = (sdev->model == SLIC_MODEL_OASIS) ?  SLIC_FIRMWARE_OASIS :
 						    SLIC_FIRMWARE_MOJAVE;
-	err = request_firmware(&fw, file, &sdev->pdev->dev);
+	err = firmware_request(&fw, file, &sdev->pdev->dev);
 	if (err) {
 		dev_err(&sdev->pdev->dev, "failed to load firmware %s\n", file);
 		return err;
@@ -1229,7 +1229,7 @@ static int slic_load_firmware(struct slic_device *sdev)
 	/* wait long enough for ucode to init card and reach the mainloop */
 	mdelay(20);
 release:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err;
 }

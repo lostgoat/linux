@@ -295,7 +295,7 @@ static int fdp_nci_request_firmware(struct nci_dev *ndev)
 	u8 *data;
 	int r;
 
-	r = request_firmware(&info->ram_patch, FDP_RAM_PATCH_NAME, dev);
+	r = firmware_request(&info->ram_patch, FDP_RAM_PATCH_NAME, dev);
 	if (r < 0) {
 		nfc_err(dev, "RAM patch request error\n");
 		goto error;
@@ -312,7 +312,7 @@ static int fdp_nci_request_firmware(struct nci_dev *ndev)
 		  info->ram_patch_version, (int) info->ram_patch->size);
 
 
-	r = request_firmware(&info->otp_patch, FDP_OTP_PATCH_NAME, dev);
+	r = firmware_request(&info->otp_patch, FDP_OTP_PATCH_NAME, dev);
 	if (r < 0) {
 		nfc_err(dev, "OTP patch request error\n");
 		goto out;
@@ -338,12 +338,12 @@ static void fdp_nci_release_firmware(struct nci_dev *ndev)
 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
 
 	if (info->otp_patch) {
-		release_firmware(info->otp_patch);
+		firmware_release(info->otp_patch);
 		info->otp_patch = NULL;
 	}
 
 	if (info->ram_patch) {
-		release_firmware(info->ram_patch);
+		firmware_release(info->ram_patch);
 		info->ram_patch = NULL;
 	}
 }

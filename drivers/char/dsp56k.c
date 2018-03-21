@@ -138,7 +138,7 @@ static int dsp56k_upload(u_char __user *bin, int len)
 		       fw_name);
 		return -EINVAL;
 	}
-	err = request_firmware(&fw, fw_name, &pdev->dev);
+	err = firmware_request(&fw, fw_name, &pdev->dev);
 	platform_device_unregister(pdev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
@@ -148,7 +148,7 @@ static int dsp56k_upload(u_char __user *bin, int len)
 	if (fw->size % 3) {
 		printk(KERN_ERR "Bogus length %d in image \"%s\"\n",
 		       fw->size, fw_name);
-		release_firmware(fw);
+		firmware_release(fw);
 		return -EINVAL;
 	}
 	for (i = 0; i < fw->size; i = i + 3) {
@@ -157,7 +157,7 @@ static int dsp56k_upload(u_char __user *bin, int len)
 		dsp56k_host_interface.data.b[2] = fw->data[i + 1];
 		dsp56k_host_interface.data.b[3] = fw->data[i + 2];
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	for (; i < 512; i++) {
 		/* tx_wait(10); */
 		dsp56k_host_interface.data.b[1] = 0;

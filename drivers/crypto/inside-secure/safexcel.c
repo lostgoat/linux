@@ -135,7 +135,7 @@ static int eip197_load_firmwares(struct safexcel_crypto_priv *priv)
 	u32 val;
 
 	for (i = 0; i < FW_NB; i++) {
-		ret = request_firmware(&fw[i], fw_name[i], priv->dev);
+		ret = firmware_request(&fw[i], fw_name[i], priv->dev);
 		if (ret) {
 			dev_err(priv->dev,
 				"Failed to request firmware %s (%d)\n",
@@ -163,7 +163,7 @@ static int eip197_load_firmwares(struct safexcel_crypto_priv *priv)
 
 release_fw:
 	for (j = 0; j < i; j++)
-		release_firmware(fw[j]);
+		firmware_release(fw[j]);
 
 	return ret;
 }

@@ -720,7 +720,7 @@ static int intel_setup(struct hci_uart *hu)
 		return -EINVAL;
 	}
 
-	err = request_firmware(&fw, fwname, &hdev->dev);
+	err = firmware_request(&fw, fwname, &hdev->dev);
 	if (err < 0) {
 		bt_dev_err(hdev, "Failed to load Intel firmware file (%d)",
 			   err);
@@ -806,7 +806,7 @@ static int intel_setup(struct hci_uart *hu)
 	bt_dev_info(hdev, "Firmware loaded in %llu usecs", duration);
 
 done:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (err < 0)
 		return err;

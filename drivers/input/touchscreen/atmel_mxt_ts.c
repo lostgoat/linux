@@ -2029,7 +2029,7 @@ static int mxt_configure_objects(struct mxt_data *data,
 static void mxt_config_cb(const struct firmware *cfg, void *ctx)
 {
 	mxt_configure_objects(ctx, cfg);
-	release_firmware(cfg);
+	firmware_release(cfg);
 }
 
 static int mxt_initialize(struct mxt_data *data)
@@ -2081,7 +2081,7 @@ static int mxt_initialize(struct mxt_data *data)
 	if (error)
 		goto err_free_object_table;
 
-	error = request_firmware_nowait(THIS_MODULE, true, MXT_CFG_NAME,
+	error = firmware_request_nowait(THIS_MODULE, true, MXT_CFG_NAME,
 					&client->dev, GFP_KERNEL, data,
 					mxt_config_cb);
 	if (error) {
@@ -2716,7 +2716,7 @@ static int mxt_load_fw(struct device *dev, const char *fn)
 	unsigned int frame = 0;
 	int ret;
 
-	ret = request_firmware(&fw, fn, dev);
+	ret = firmware_request(&fw, fn, dev);
 	if (ret) {
 		dev_err(dev, "Unable to open firmware %s\n", fn);
 		return ret;
@@ -2823,7 +2823,7 @@ static int mxt_load_fw(struct device *dev, const char *fn)
 disable_irq:
 	disable_irq(data->irq);
 release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

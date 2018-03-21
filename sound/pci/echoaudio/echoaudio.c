@@ -59,7 +59,7 @@ static int get_firmware(const struct firmware **fw_entry,
 	dev_dbg(chip->card->dev,
 		"firmware requested: %s\n", card_fw[fw_index].data);
 	snprintf(name, sizeof(name), "ea/%s", card_fw[fw_index].data);
-	err = request_firmware(fw_entry, name, pci_device(chip));
+	err = firmware_request(fw_entry, name, pci_device(chip));
 	if (err < 0)
 		dev_err(chip->card->dev,
 			"get_firmware(): Firmware not available (%d)\n", err);
@@ -78,7 +78,7 @@ static void free_firmware(const struct firmware *fw_entry,
 #ifdef CONFIG_PM_SLEEP
 	dev_dbg(chip->card->dev, "firmware not released (kept in cache)\n");
 #else
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 #endif
 }
 
@@ -91,7 +91,7 @@ static void free_firmware_cache(struct echoaudio *chip)
 
 	for (i = 0; i < 8 ; i++)
 		if (chip->fw_cache[i]) {
-			release_firmware(chip->fw_cache[i]);
+			firmware_release(chip->fw_cache[i]);
 			dev_dbg(chip->card->dev, "release_firmware(%d)\n", i);
 		}
 

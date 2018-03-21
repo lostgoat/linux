@@ -82,7 +82,7 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
 	if ((adreno_gpu->fwloc == FW_LOCATION_UNKNOWN) ||
 	    (adreno_gpu->fwloc == FW_LOCATION_NEW)) {
 
-		ret = request_firmware_direct(&fw, newname, drm->dev);
+		ret = firmware_request_direct(&fw, newname, drm->dev);
 		if (!ret) {
 			dev_info(drm->dev, "loaded %s from new location\n",
 				newname);
@@ -101,7 +101,7 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
 	if ((adreno_gpu->fwloc == FW_LOCATION_UNKNOWN) ||
 	    (adreno_gpu->fwloc == FW_LOCATION_LEGACY)) {
 
-		ret = request_firmware_direct(&fw, fwname, drm->dev);
+		ret = firmware_request_direct(&fw, fwname, drm->dev);
 		if (!ret) {
 			dev_info(drm->dev, "loaded %s from legacy location\n",
 				newname);
@@ -121,7 +121,7 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
 	if ((adreno_gpu->fwloc == FW_LOCATION_UNKNOWN) ||
 	    (adreno_gpu->fwloc == FW_LOCATION_HELPER)) {
 
-		ret = request_firmware(&fw, newname, drm->dev);
+		ret = firmware_request(&fw, newname, drm->dev);
 		if (!ret) {
 			dev_info(drm->dev, "loaded %s with helper\n",
 				newname);
@@ -152,7 +152,7 @@ static int adreno_load_fw(struct adreno_gpu *adreno_gpu)
 
 	fw = adreno_request_fw(adreno_gpu, adreno_gpu->info->pfpfw);
 	if (IS_ERR(fw)) {
-		release_firmware(adreno_gpu->pm4);
+		firmware_release(adreno_gpu->pm4);
 		adreno_gpu->pm4 = NULL;
 		return PTR_ERR(fw);
 	}
@@ -569,8 +569,8 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
 
 void adreno_gpu_cleanup(struct adreno_gpu *adreno_gpu)
 {
-	release_firmware(adreno_gpu->pm4);
-	release_firmware(adreno_gpu->pfp);
+	firmware_release(adreno_gpu->pm4);
+	firmware_release(adreno_gpu->pfp);
 
 	msm_gpu_cleanup(&adreno_gpu->base);
 }

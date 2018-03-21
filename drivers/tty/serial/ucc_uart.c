@@ -1185,7 +1185,7 @@ static void uart_firmware_cont(const struct firmware *fw, void *context)
 
 	firmware_loaded = 1;
  out:
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 static int ucc_uart_probe(struct platform_device *ofdev)
@@ -1241,7 +1241,7 @@ static int ucc_uart_probe(struct platform_device *ofdev)
 			 * the kernel.  If hotplug support is enabled in the
 			 * kernel, then we use it.
 			 */
-			ret = request_firmware_nowait(THIS_MODULE,
+			ret = firmware_request_nowait(THIS_MODULE,
 				FW_ACTION_HOTPLUG, filename, &ofdev->dev,
 				GFP_KERNEL, &ofdev->dev, uart_firmware_cont);
 			if (ret) {

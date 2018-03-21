@@ -624,7 +624,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
 	int ret;
 	int i;
 
-	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
+	ret = firmware_request(&fw, "modem.mdt", qproc->dev);
 	if (ret < 0) {
 		dev_err(qproc->dev, "unable to load modem.mdt\n");
 		return ret;
@@ -675,7 +675,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
 
 		if (phdr->p_filesz) {
 			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
-			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
+			ret = firmware_request(&seg_fw, seg_name, qproc->dev);
 			if (ret) {
 				dev_err(qproc->dev, "failed to load %s\n", seg_name);
 				goto release_firmware;
@@ -683,7 +683,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
 
 			memcpy(ptr, seg_fw->data, seg_fw->size);
 
-			release_firmware(seg_fw);
+			firmware_release(seg_fw);
 		}
 
 		if (phdr->p_memsz > phdr->p_filesz) {
@@ -715,7 +715,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
 		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
 
 release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret < 0 ? ret : 0;
 }

@@ -1638,7 +1638,7 @@ int mlx5e_ethtool_flash_device(struct mlx5e_priv *priv,
 	if (flash->region != ETHTOOL_FLASH_ALL_REGIONS)
 		return -EOPNOTSUPP;
 
-	err = request_firmware_direct(&fw, flash->data, &dev->dev);
+	err = firmware_request_direct(&fw, flash->data, &dev->dev);
 	if (err)
 		return err;
 
@@ -1646,7 +1646,7 @@ int mlx5e_ethtool_flash_device(struct mlx5e_priv *priv,
 	rtnl_unlock();
 
 	err = mlx5_firmware_flash(mdev, fw);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	rtnl_lock();
 	dev_put(dev);

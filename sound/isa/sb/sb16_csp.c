@@ -173,7 +173,7 @@ static void snd_sb_csp_free(struct snd_hwdep *hwdep)
 		if (p->running & SNDRV_SB_CSP_ST_RUNNING)
 			snd_sb_csp_stop(p);
 		for (i = 0; i < ARRAY_SIZE(p->csp_programs); ++i)
-			release_firmware(p->csp_programs[i]);
+			firmware_release(p->csp_programs[i]);
 		kfree(p);
 	}
 }
@@ -713,7 +713,7 @@ static int snd_sb_csp_firmware_load(struct snd_sb_csp *p, int index, int flags)
 	BUILD_BUG_ON(ARRAY_SIZE(names) != CSP_PROGRAM_COUNT);
 	program = p->csp_programs[index];
 	if (!program) {
-		int err = request_firmware(&program, names[index],
+		int err = firmware_request(&program, names[index],
 				       p->chip->card->dev);
 		if (err < 0)
 			return err;

@@ -423,7 +423,7 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
 	if (firmware_running(dev))
 		return firmware_request_cache(dev->dev, MT7601U_FIRMWARE);
 
-	ret = request_firmware(&fw, MT7601U_FIRMWARE, dev->dev);
+	ret = firmware_request(&fw, MT7601U_FIRMWARE, dev->dev);
 	if (ret)
 		return ret;
 
@@ -485,13 +485,13 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
 
 	ret = mt7601u_upload_firmware(dev, (const struct mt76_fw *)fw->data);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 
 err_inv_fw:
 	dev_err(dev->dev, "Invalid firmware image\n");
-	release_firmware(fw);
+	firmware_release(fw);
 	return -ENOENT;
 }
 

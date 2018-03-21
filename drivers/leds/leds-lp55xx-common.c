@@ -216,7 +216,7 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
 
 out:
 	/* firmware should be released for other channel use */
-	release_firmware(chip->fw);
+	firmware_release(chip->fw);
 }
 
 static int lp55xx_request_firmware(struct lp55xx_chip *chip)
@@ -224,7 +224,7 @@ static int lp55xx_request_firmware(struct lp55xx_chip *chip)
 	const char *name = chip->cl->name;
 	struct device *dev = &chip->cl->dev;
 
-	return request_firmware_nowait(THIS_MODULE, false, name, dev,
+	return firmware_request_nowait(THIS_MODULE, false, name, dev,
 				GFP_KERNEL, chip, lp55xx_firmware_loaded);
 }
 

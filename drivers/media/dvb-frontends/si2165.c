@@ -392,7 +392,7 @@ static int si2165_upload_firmware(struct si2165_state *state)
 	}
 
 	/* request the firmware, this will block and timeout */
-	ret = request_firmware(&fw, fw_file, &state->client->dev);
+	ret = firmware_request(&fw, fw_file, &state->client->dev);
 	if (ret) {
 		dev_warn(&state->client->dev, "firmware file '%s' not found\n",
 			 fw_file);
@@ -521,7 +521,7 @@ static int si2165_upload_firmware(struct si2165_state *state)
 	state->firmware_loaded = true;
 error:
 	if (fw) {
-		release_firmware(fw);
+		firmware_release(fw);
 		fw = NULL;
 	}
 

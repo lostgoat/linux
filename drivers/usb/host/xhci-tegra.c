@@ -774,7 +774,7 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
 	u32 value;
 	int err;
 
-	err = request_firmware(&fw, tegra->soc->firmware, tegra->dev);
+	err = firmware_request(&fw, tegra->soc->firmware, tegra->dev);
 	if (err < 0) {
 		dev_err(tegra->dev, "failed to request firmware: %d\n", err);
 		return err;
@@ -788,13 +788,13 @@ static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
 					    &tegra->fw.phys, GFP_KERNEL);
 	if (!tegra->fw.virt) {
 		dev_err(tegra->dev, "failed to allocate memory for firmware\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		return -ENOMEM;
 	}
 
 	header = (struct tegra_xusb_fw_header *)tegra->fw.virt;
 	memcpy(tegra->fw.virt, fw->data, tegra->fw.size);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (csb_readl(tegra, XUSB_CSB_MP_ILOAD_BASE_LO) != 0) {
 		dev_info(dev, "Firmware already loaded, Falcon state %#x\n",

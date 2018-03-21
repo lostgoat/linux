@@ -178,14 +178,14 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
 
 		if (phdr->p_filesz) {
 			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
-			ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
+			ret = firmware_request_into_buf(&seg_fw, fw_name, dev,
 							ptr, phdr->p_filesz);
 			if (ret) {
 				dev_err(dev, "failed to load %s\n", fw_name);
 				break;
 			}
 
-			release_firmware(seg_fw);
+			firmware_release(seg_fw);
 		}
 
 		if (phdr->p_memsz > phdr->p_filesz)

@@ -2990,7 +2990,7 @@ static void rtl_phy_write_fw(struct rtl8169_private *tp, struct rtl_fw *rtl_fw)
 static void rtl_release_firmware(struct rtl8169_private *tp)
 {
 	if (!IS_ERR_OR_NULL(tp->rtl_fw)) {
-		release_firmware(tp->rtl_fw->fw);
+		firmware_release(tp->rtl_fw->fw);
 		kfree(tp->rtl_fw);
 	}
 	tp->rtl_fw = RTL_FIRMWARE_UNKNOWN;
@@ -5400,7 +5400,7 @@ static void rtl_request_uncached_firmware(struct rtl8169_private *tp)
 	if (!rtl_fw)
 		goto err_warn;
 
-	rc = request_firmware(&rtl_fw->fw, name, &tp->pci_dev->dev);
+	rc = firmware_request(&rtl_fw->fw, name, &tp->pci_dev->dev);
 	if (rc < 0)
 		goto err_free;
 
@@ -5413,7 +5413,7 @@ out:
 	return;
 
 err_release_firmware:
-	release_firmware(rtl_fw->fw);
+	firmware_release(rtl_fw->fw);
 err_free:
 	kfree(rtl_fw);
 err_warn:

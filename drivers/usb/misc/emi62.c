@@ -205,9 +205,9 @@ static int emi62_load_firmware (struct usb_device *dev)
 		goto wraperr;
 	msleep(250);	/* let device settle */
 
-	release_firmware(loader_fw);
-	release_firmware(bitstream_fw);
-	release_firmware(firmware_fw);
+	firmware_release(loader_fw);
+	firmware_release(bitstream_fw);
+	firmware_release(firmware_fw);
 
 	kfree(buf);
 
@@ -219,9 +219,9 @@ wraperr:
 	if (err < 0)
 		dev_err(&dev->dev,"%s - error loading firmware: error = %d\n",
 			__func__, err);
-	release_firmware(loader_fw);
-	release_firmware(bitstream_fw);
-	release_firmware(firmware_fw);
+	firmware_release(loader_fw);
+	firmware_release(bitstream_fw);
+	firmware_release(firmware_fw);
 
 	kfree(buf);
 	dev_err(&dev->dev, "Error\n");

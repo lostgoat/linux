@@ -5849,7 +5849,7 @@ static int ci_dpm_init_microcode(struct amdgpu_device *adev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
-	err = request_firmware(&adev->pm.fw, fw_name, adev->dev);
+	err = firmware_request(&adev->pm.fw, fw_name, adev->dev);
 	if (err)
 		goto out;
 	err = amdgpu_ucode_validate(adev->pm.fw);
@@ -5857,7 +5857,7 @@ static int ci_dpm_init_microcode(struct amdgpu_device *adev)
 out:
 	if (err) {
 		pr_err("cik_smc: Failed to load firmware \"%s\"\n", fw_name);
-		release_firmware(adev->pm.fw);
+		firmware_release(adev->pm.fw);
 		adev->pm.fw = NULL;
 	}
 	return err;
@@ -6364,7 +6364,7 @@ static int ci_dpm_sw_fini(void *handle)
 	ci_dpm_fini(adev);
 	mutex_unlock(&adev->pm.mutex);
 
-	release_firmware(adev->pm.fw);
+	firmware_release(adev->pm.fw);
 	adev->pm.fw = NULL;
 
 	return 0;

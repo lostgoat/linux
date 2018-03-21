@@ -45,7 +45,7 @@ static void free_firmware(struct gb_bootrom *bootrom)
 	if (!bootrom->fw)
 		return;
 
-	release_firmware(bootrom->fw);
+	firmware_release(bootrom->fw);
 	bootrom->fw = NULL;
 }
 
@@ -174,7 +174,7 @@ static int find_firmware(struct gb_bootrom *bootrom, u8 stage)
 	dev_info(&connection->bundle->dev, "Firmware file '%s' requested\n",
 		 firmware_name);
 
-	rc = request_firmware(&bootrom->fw, firmware_name,
+	rc = firmware_request(&bootrom->fw, firmware_name,
 		&connection->bundle->dev);
 	if (rc) {
 		dev_err(&connection->bundle->dev,

@@ -817,7 +817,7 @@ static void cas_saturn_firmware_init(struct cas *cp)
 	if (PHY_NS_DP83065 != cp->phy_id)
 		return;
 
-	err = request_firmware(&fw, fw_name, &cp->pdev->dev);
+	err = firmware_request(&fw, fw_name, &cp->pdev->dev);
 	if (err) {
 		pr_err("Failed to load firmware \"%s\"\n",
 		       fw_name);
@@ -835,7 +835,7 @@ static void cas_saturn_firmware_init(struct cas *cp)
 		goto out;
 	memcpy(cp->fw_data, &fw->data[2], cp->fw_size);
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 static void cas_saturn_firmware_load(struct cas *cp)

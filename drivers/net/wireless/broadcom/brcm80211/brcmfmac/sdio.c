@@ -3299,7 +3299,7 @@ static int brcmf_sdio_download_firmware(struct brcmf_sdio *bus,
 	brcmf_dbg(SDIO, "firmware rstvec: %x\n", rstvec);
 
 	bcmerror = brcmf_sdio_download_code_file(bus, fw);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (bcmerror) {
 		brcmf_err("dongle image file download failed\n");
 		brcmf_fw_nvram_free(nvram);

@@ -742,18 +742,18 @@ static int rt5677_set_dsp_vad(struct snd_soc_codec *codec, bool on)
 		regmap_write(rt5677->regmap, RT5677_PWR_DSP1, 0x07fd);
 		rt5677_set_dsp_mode(codec, true);
 
-		ret = request_firmware(&rt5677->fw1, RT5677_FIRMWARE1,
+		ret = firmware_request(&rt5677->fw1, RT5677_FIRMWARE1,
 			codec->dev);
 		if (ret == 0) {
 			rt5677_spi_write_firmware(0x50000000, rt5677->fw1);
-			release_firmware(rt5677->fw1);
+			firmware_release(rt5677->fw1);
 		}
 
-		ret = request_firmware(&rt5677->fw2, RT5677_FIRMWARE2,
+		ret = firmware_request(&rt5677->fw2, RT5677_FIRMWARE2,
 			codec->dev);
 		if (ret == 0) {
 			rt5677_spi_write_firmware(0x60000000, rt5677->fw2);
-			release_firmware(rt5677->fw2);
+			firmware_release(rt5677->fw2);
 		}
 
 		regmap_update_bits(rt5677->regmap, RT5677_PWR_DSP1, 0x1, 0x0);

@@ -176,7 +176,7 @@ static int sdma_v4_0_init_microcode(struct amdgpu_device *adev)
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_sdma.bin", chip_name);
 		else
 			snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_sdma1.bin", chip_name);
-		err = request_firmware(&adev->sdma.instance[i].fw, fw_name, adev->dev);
+		err = firmware_request(&adev->sdma.instance[i].fw, fw_name, adev->dev);
 		if (err)
 			goto out;
 		err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
@@ -203,7 +203,7 @@ out:
 	if (err) {
 		DRM_ERROR("sdma_v4_0: Failed to load firmware \"%s\"\n", fw_name);
 		for (i = 0; i < adev->sdma.num_instances; i++) {
-			release_firmware(adev->sdma.instance[i].fw);
+			firmware_release(adev->sdma.instance[i].fw);
 			adev->sdma.instance[i].fw = NULL;
 		}
 	}
@@ -1243,7 +1243,7 @@ static int sdma_v4_0_sw_fini(void *handle)
 		amdgpu_ring_fini(&adev->sdma.instance[i].ring);
 
 	for (i = 0; i < adev->sdma.num_instances; i++) {
-		release_firmware(adev->sdma.instance[i].fw);
+		firmware_release(adev->sdma.instance[i].fw);
 		adev->sdma.instance[i].fw = NULL;
 	}
 

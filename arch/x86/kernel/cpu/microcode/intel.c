@@ -946,7 +946,7 @@ static enum ucode_state request_microcode_fw(int cpu, struct device *device,
 	sprintf(name, "intel-ucode/%02x-%02x-%02x",
 		c->x86, c->x86_model, c->x86_stepping);
 
-	if (request_firmware_direct(&firmware, name, device)) {
+	if (firmware_request_direct(&firmware, name, device)) {
 		pr_debug("data file %s load failed\n", name);
 		return UCODE_NFOUND;
 	}
@@ -954,7 +954,7 @@ static enum ucode_state request_microcode_fw(int cpu, struct device *device,
 	ret = generic_load_microcode(cpu, (void *)firmware->data,
 				     firmware->size, &get_ucode_fw);
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	return ret;
 }

@@ -312,7 +312,7 @@ static int sst_cache_and_parse_fw(struct intel_sst_drv *sst,
 	}
 
 end_release:
-	release_firmware(fw);
+	firmware_release(fw);
 	return retval;
 
 }
@@ -332,7 +332,7 @@ void sst_firmware_load_cb(const struct firmware *fw, void *context)
 
 	if (ctx->sst_state != SST_RESET ||
 			ctx->fw_in_mem != NULL) {
-		release_firmware(fw);
+		firmware_release(fw);
 		mutex_unlock(&ctx->sst_lock);
 		return;
 	}
@@ -353,7 +353,7 @@ static int sst_request_fw(struct intel_sst_drv *sst)
 	int retval = 0;
 	const struct firmware *fw;
 
-	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+	retval = firmware_request(&fw, sst->firmware_name, sst->dev);
 	if (fw == NULL) {
 		dev_err(sst->dev, "fw is returning as null\n");
 		return -EINVAL;

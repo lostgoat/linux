@@ -1549,7 +1549,7 @@ qla1280_request_firmware(struct scsi_qla_host *ha)
 		goto out;
 
 	fwname = qla1280_fw_tbl[index].fwname;
-	err = request_firmware(&fw, fwname, &ha->pdev->dev);
+	err = firmware_request(&fw, fwname, &ha->pdev->dev);
 
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
@@ -1560,7 +1560,7 @@ qla1280_request_firmware(struct scsi_qla_host *ha)
 	if ((fw->size % 2) || (fw->size < 6)) {
 		printk(KERN_ERR "Invalid firmware length %zu in image \"%s\"\n",
 		       fw->size, fwname);
-		release_firmware(fw);
+		firmware_release(fw);
 		fw = ERR_PTR(-EINVAL);
 		goto unlock;
 	}
@@ -4460,7 +4460,7 @@ qla1280_exit(void)
 	pci_unregister_driver(&qla1280_pci_driver);
 	/* release any allocated firmware images */
 	for (i = 0; i < QL_NUM_FW_IMAGES; i++) {
-		release_firmware(qla1280_fw_tbl[i].fw);
+		firmware_release(qla1280_fw_tbl[i].fw);
 		qla1280_fw_tbl[i].fw = NULL;
 	}
 }

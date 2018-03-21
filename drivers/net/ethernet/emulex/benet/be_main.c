@@ -4847,7 +4847,7 @@ int be_load_fw(struct be_adapter *adapter, u8 *fw_file)
 		return -ENETDOWN;
 	}
 
-	status = request_firmware(&fw, fw_file, &adapter->pdev->dev);
+	status = firmware_request(&fw, fw_file, &adapter->pdev->dev);
 	if (status)
 		goto fw_exit;
 
@@ -4862,7 +4862,7 @@ int be_load_fw(struct be_adapter *adapter, u8 *fw_file)
 		be_cmd_get_fw_ver(adapter);
 
 fw_exit:
-	release_firmware(fw);
+	firmware_release(fw);
 	return status;
 }
 

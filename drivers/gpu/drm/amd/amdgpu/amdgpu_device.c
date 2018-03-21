@@ -696,7 +696,7 @@ bool amdgpu_device_need_post(struct amdgpu_device *adev)
 		if (adev->asic_type == CHIP_FIJI) {
 			int err;
 			uint32_t fw_ver;
-			err = request_firmware(&adev->pm.fw, "amdgpu/fiji_smc.bin", adev->dev);
+			err = firmware_request(&adev->pm.fw, "amdgpu/fiji_smc.bin", adev->dev);
 			/* force vPost if error occured */
 			if (err)
 				return true;
@@ -1133,7 +1133,7 @@ static int amdgpu_device_parse_gpu_info_fw(struct amdgpu_device *adev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_gpu_info.bin", chip_name);
-	err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
+	err = firmware_request(&adev->firmware.gpu_info_fw, fw_name, adev->dev);
 	if (err) {
 		dev_err(adev->dev,
 			"Failed to load gpu_info firmware \"%s\"\n",
@@ -2071,7 +2071,7 @@ void amdgpu_device_fini(struct amdgpu_device *adev)
 	amdgpu_fbdev_fini(adev);
 	r = amdgpu_device_ip_fini(adev);
 	if (adev->firmware.gpu_info_fw) {
-		release_firmware(adev->firmware.gpu_info_fw);
+		firmware_release(adev->firmware.gpu_info_fw);
 		adev->firmware.gpu_info_fw = NULL;
 	}
 	adev->accel_working = false;

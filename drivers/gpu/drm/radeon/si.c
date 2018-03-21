@@ -1779,10 +1779,10 @@ static int si_init_microcode(struct radeon_device *rdev)
 	DRM_INFO("Loading %s Microcode\n", new_chip_name);
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", new_chip_name);
-	err = request_firmware(&rdev->pfp_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->pfp_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", chip_name);
-		err = request_firmware(&rdev->pfp_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->pfp_fw, fw_name, rdev->dev);
 		if (err)
 			goto out;
 		if (rdev->pfp_fw->size != pfp_req_size) {
@@ -1803,10 +1803,10 @@ static int si_init_microcode(struct radeon_device *rdev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_me.bin", new_chip_name);
-	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->me_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_me.bin", chip_name);
-		err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->me_fw, fw_name, rdev->dev);
 		if (err)
 			goto out;
 		if (rdev->me_fw->size != me_req_size) {
@@ -1826,10 +1826,10 @@ static int si_init_microcode(struct radeon_device *rdev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_ce.bin", new_chip_name);
-	err = request_firmware(&rdev->ce_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->ce_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_ce.bin", chip_name);
-		err = request_firmware(&rdev->ce_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->ce_fw, fw_name, rdev->dev);
 		if (err)
 			goto out;
 		if (rdev->ce_fw->size != ce_req_size) {
@@ -1849,10 +1849,10 @@ static int si_init_microcode(struct radeon_device *rdev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_rlc.bin", new_chip_name);
-	err = request_firmware(&rdev->rlc_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->rlc_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_rlc.bin", chip_name);
-		err = request_firmware(&rdev->rlc_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->rlc_fw, fw_name, rdev->dev);
 		if (err)
 			goto out;
 		if (rdev->rlc_fw->size != rlc_req_size) {
@@ -1875,13 +1875,13 @@ static int si_init_microcode(struct radeon_device *rdev)
 		snprintf(fw_name, sizeof(fw_name), "radeon/si58_mc.bin");
 	else
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", new_chip_name);
-	err = request_firmware(&rdev->mc_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->mc_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc2.bin", chip_name);
-		err = request_firmware(&rdev->mc_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->mc_fw, fw_name, rdev->dev);
 		if (err) {
 			snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", chip_name);
-			err = request_firmware(&rdev->mc_fw, fw_name, rdev->dev);
+			err = firmware_request(&rdev->mc_fw, fw_name, rdev->dev);
 			if (err)
 				goto out;
 		}
@@ -1909,13 +1909,13 @@ static int si_init_microcode(struct radeon_device *rdev)
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_k_smc.bin", new_chip_name);
 	else
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", new_chip_name);
-	err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->smc_fw, fw_name, rdev->dev);
 	if (err) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", chip_name);
-		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->smc_fw, fw_name, rdev->dev);
 		if (err) {
 			pr_err("smc: error loading firmware \"%s\"\n", fw_name);
-			release_firmware(rdev->smc_fw);
+			firmware_release(rdev->smc_fw);
 			rdev->smc_fw = NULL;
 			err = 0;
 		} else if (rdev->smc_fw->size != smc_req_size) {
@@ -1947,17 +1947,17 @@ out:
 		if (err != -EINVAL)
 			pr_err("si_cp: Failed to load firmware \"%s\"\n",
 			       fw_name);
-		release_firmware(rdev->pfp_fw);
+		firmware_release(rdev->pfp_fw);
 		rdev->pfp_fw = NULL;
-		release_firmware(rdev->me_fw);
+		firmware_release(rdev->me_fw);
 		rdev->me_fw = NULL;
-		release_firmware(rdev->ce_fw);
+		firmware_release(rdev->ce_fw);
 		rdev->ce_fw = NULL;
-		release_firmware(rdev->rlc_fw);
+		firmware_release(rdev->rlc_fw);
 		rdev->rlc_fw = NULL;
-		release_firmware(rdev->mc_fw);
+		firmware_release(rdev->mc_fw);
 		rdev->mc_fw = NULL;
-		release_firmware(rdev->smc_fw);
+		firmware_release(rdev->smc_fw);
 		rdev->smc_fw = NULL;
 	}
 	return err;

@@ -44,7 +44,7 @@ static int isight_firmware_load(struct usb_interface *intf,
 	if (!buf)
 		return -ENOMEM;
 
-	if (request_firmware(&firmware, "isight.fw", &dev->dev) != 0) {
+	if (firmware_request(&firmware, "isight.fw", &dev->dev) != 0) {
 		printk(KERN_ERR "Unable to load isight firmware\n");
 		ret = -ENODEV;
 		goto out;
@@ -108,7 +108,7 @@ static int isight_firmware_load(struct usb_interface *intf,
 
 out:
 	kfree(buf);
-	release_firmware(firmware);
+	firmware_release(firmware);
 	return ret;
 }
 

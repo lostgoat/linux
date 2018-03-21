@@ -389,7 +389,7 @@ static int kaweth_download_firmware(struct kaweth_device *kaweth,
 	int data_len;
 	int ret;
 
-	ret = request_firmware(&fw, fwname, &kaweth->dev->dev);
+	ret = firmware_request(&fw, fwname, &kaweth->dev->dev);
 	if (ret) {
 		dev_err(&kaweth->intf->dev, "Firmware request failed\n");
 		return ret;
@@ -398,13 +398,13 @@ static int kaweth_download_firmware(struct kaweth_device *kaweth,
 	if (fw->size > KAWETH_FIRMWARE_BUF_SIZE) {
 		dev_err(&kaweth->intf->dev, "Firmware too big: %zu\n",
 			fw->size);
-		release_firmware(fw);
+		firmware_release(fw);
 		return -ENOSPC;
 	}
 	data_len = fw->size;
 	memcpy(kaweth->firmware_buf, fw->data, fw->size);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	kaweth->firmware_buf[2] = (data_len & 0xFF) - 7;
 	kaweth->firmware_buf[3] = data_len >> 8;

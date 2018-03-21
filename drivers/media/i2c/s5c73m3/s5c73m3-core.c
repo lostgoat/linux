@@ -357,7 +357,7 @@ static int s5c73m3_load_fw(struct v4l2_subdev *sd)
 
 	snprintf(fw_name, sizeof(fw_name), "SlimISP_%.2s.bin",
 							state->fw_file_version);
-	ret = request_firmware(&fw, fw_name, &client->dev);
+	ret = firmware_request(&fw, fw_name, &client->dev);
 	if (ret < 0) {
 		v4l2_err(sd, "Firmware request failed (%s)\n", fw_name);
 		return -EINVAL;
@@ -372,7 +372,7 @@ static int s5c73m3_load_fw(struct v4l2_subdev *sd)
 	else
 		v4l2_err(sd, "SPI write failed\n");
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

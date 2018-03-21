@@ -742,7 +742,7 @@ static ssize_t broadsheet_loadstore_waveform(struct device *dev,
 	if (len < 1)
 		return -EINVAL;
 
-	err = request_firmware(&fw_entry, "broadsheet.wbf", dev);
+	err = firmware_request(&fw_entry, "broadsheet.wbf", dev);
 	if (err < 0) {
 		dev_err(dev, "Failed to get broadsheet waveform\n");
 		goto err_failed;
@@ -770,7 +770,7 @@ static ssize_t broadsheet_loadstore_waveform(struct device *dev,
 	err = len;
 
 err_fw:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 err_failed:
 	return err;
 }

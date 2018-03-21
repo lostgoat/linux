@@ -410,7 +410,7 @@ s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
 
 	pr_info("rtl8723bs: acquire FW from file:%s\n", fwfilepath);
 
-	rtStatus = request_firmware(&fw, fwfilepath, device);
+	rtStatus = firmware_request(&fw, fwfilepath, device);
 	if (rtStatus) {
 		pr_err("Request firmware failed with error 0x%x\n", rtStatus);
 		rtStatus = _FAIL;
@@ -441,7 +441,7 @@ s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
 
 	memcpy(pFirmware->szFwBuffer, fw->data, fw->size);
 	pFirmware->ulFwLength = fw->size;
-	release_firmware(fw);
+	firmware_release(fw);
 	if (pFirmware->ulFwLength > FW_8723B_SIZE) {
 		rtStatus = _FAIL;
 		DBG_871X_LEVEL(_drv_emerg_, "Firmware size:%u exceed %u\n", pFirmware->ulFwLength, FW_8723B_SIZE);

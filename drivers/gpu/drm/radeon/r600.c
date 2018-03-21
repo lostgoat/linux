@@ -2546,7 +2546,7 @@ int r600_init_microcode(struct radeon_device *rdev)
 	DRM_INFO("Loading %s Microcode\n", chip_name);
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", chip_name);
-	err = request_firmware(&rdev->pfp_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->pfp_fw, fw_name, rdev->dev);
 	if (err)
 		goto out;
 	if (rdev->pfp_fw->size != pfp_req_size) {
@@ -2557,7 +2557,7 @@ int r600_init_microcode(struct radeon_device *rdev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_me.bin", chip_name);
-	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->me_fw, fw_name, rdev->dev);
 	if (err)
 		goto out;
 	if (rdev->me_fw->size != me_req_size) {
@@ -2567,7 +2567,7 @@ int r600_init_microcode(struct radeon_device *rdev)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "radeon/%s_rlc.bin", rlc_chip_name);
-	err = request_firmware(&rdev->rlc_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->rlc_fw, fw_name, rdev->dev);
 	if (err)
 		goto out;
 	if (rdev->rlc_fw->size != rlc_req_size) {
@@ -2578,10 +2578,10 @@ int r600_init_microcode(struct radeon_device *rdev)
 
 	if ((rdev->family >= CHIP_RV770) && (rdev->family <= CHIP_HEMLOCK)) {
 		snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", smc_chip_name);
-		err = request_firmware(&rdev->smc_fw, fw_name, rdev->dev);
+		err = firmware_request(&rdev->smc_fw, fw_name, rdev->dev);
 		if (err) {
 			pr_err("smc: error loading firmware \"%s\"\n", fw_name);
-			release_firmware(rdev->smc_fw);
+			firmware_release(rdev->smc_fw);
 			rdev->smc_fw = NULL;
 			err = 0;
 		} else if (rdev->smc_fw->size != smc_req_size) {
@@ -2596,13 +2596,13 @@ out:
 		if (err != -EINVAL)
 			pr_err("r600_cp: Failed to load firmware \"%s\"\n",
 			       fw_name);
-		release_firmware(rdev->pfp_fw);
+		firmware_release(rdev->pfp_fw);
 		rdev->pfp_fw = NULL;
-		release_firmware(rdev->me_fw);
+		firmware_release(rdev->me_fw);
 		rdev->me_fw = NULL;
-		release_firmware(rdev->rlc_fw);
+		firmware_release(rdev->rlc_fw);
 		rdev->rlc_fw = NULL;
-		release_firmware(rdev->smc_fw);
+		firmware_release(rdev->smc_fw);
 		rdev->smc_fw = NULL;
 	}
 	return err;

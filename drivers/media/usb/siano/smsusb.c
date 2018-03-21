@@ -275,13 +275,13 @@ static int smsusb1_load_firmware(struct usb_device *udev, int id, int board_id)
 
 	fw_filename = sms_get_fw_name(id, board_id);
 
-	rc = request_firmware(&fw, fw_filename, &udev->dev);
+	rc = firmware_request(&fw, fw_filename, &udev->dev);
 	if (rc < 0) {
 		pr_warn("failed to open '%s' mode %d, trying again with default firmware\n",
 			fw_filename, id);
 
 		fw_filename = smsusb1_fw_lkup[id];
-		rc = request_firmware(&fw, fw_filename, &udev->dev);
+		rc = firmware_request(&fw, fw_filename, &udev->dev);
 		if (rc < 0) {
 			pr_warn("failed to open '%s' mode %d\n",
 				 fw_filename, id);
@@ -306,7 +306,7 @@ static int smsusb1_load_firmware(struct usb_device *udev, int id, int board_id)
 	}
 	pr_debug("read FW %s, size=%zu\n", fw_filename, fw->size);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return rc;
 }

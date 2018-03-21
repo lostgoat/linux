@@ -124,7 +124,7 @@ static int request_fw_file(
 
 	dev_dbg_f(device, "fw name %s\n", name);
 
-	r = request_firmware(fw, name, device);
+	r = firmware_request(fw, name, device);
 	if (r)
 		dev_err(device,
 		       "Could not load firmware file %s. Error number %d\n",
@@ -263,7 +263,7 @@ static int handle_version_mismatch(struct zd_usb *usb,
 	 * it is not required on any tested devices, and it is suspected to
 	 * cause problems. */
 error:
-	release_firmware(ur_fw);
+	firmware_release(ur_fw);
 	return r;
 }
 
@@ -320,8 +320,8 @@ static int upload_firmware(struct zd_usb *usb)
 
 	/* FALL-THROUGH */
 error:
-	release_firmware(ub_fw);
-	release_firmware(uph_fw);
+	firmware_release(ub_fw);
+	firmware_release(uph_fw);
 	return r;
 }
 

@@ -3513,7 +3513,7 @@ static int adap_init0_phy(struct adapter *adap)
 	 * where we can load a PHY firmware file from the host if we want to
 	 * override the PHY firmware File in flash.
 	 */
-	ret = request_firmware_direct(&phyf, phy_info->phy_fw_file,
+	ret = firmware_request_direct(&phyf, phy_info->phy_fw_file,
 				      adap->pdev_dev);
 	if (ret < 0) {
 		/* For adapters without FLASH attached to PHY for their
@@ -3556,7 +3556,7 @@ static int adap_init0_phy(struct adapter *adap)
 			 phy_info->phy_fw_file, new_phy_fw_ver);
 	}
 
-	release_firmware(phyf);
+	firmware_release(phyf);
 
 	return ret;
 }
@@ -3617,7 +3617,7 @@ static int adap_init0_config(struct adapter *adapter, int reset)
 		goto bye;
 	}
 
-	ret = request_firmware(&cf, fw_config_file, adapter->pdev_dev);
+	ret = firmware_request(&cf, fw_config_file, adapter->pdev_dev);
 	if (ret < 0) {
 		config_name = "On FLASH";
 		mtype = FW_MEMTYPE_CF_FLASH;
@@ -3676,7 +3676,7 @@ static int adap_init0_config(struct adapter *adapter, int reset)
 			}
 		}
 
-		release_firmware(cf);
+		firmware_release(cf);
 		if (ret)
 			goto bye;
 	}
@@ -3904,7 +3904,7 @@ static int adap_init0(struct adapter *adap)
 		card_fw = kvzalloc(sizeof(*card_fw), GFP_KERNEL);
 
 		/* Get FW from from /lib/firmware/ */
-		ret = request_firmware(&fw, fw_info->fw_mod_name,
+		ret = firmware_request(&fw, fw_info->fw_mod_name,
 				       adap->pdev_dev);
 		if (ret < 0) {
 			dev_err(adap->pdev_dev,
@@ -3920,7 +3920,7 @@ static int adap_init0(struct adapter *adap)
 				 state, &reset);
 
 		/* Cleaning up */
-		release_firmware(fw);
+		firmware_release(fw);
 		kvfree(card_fw);
 
 		if (ret < 0)

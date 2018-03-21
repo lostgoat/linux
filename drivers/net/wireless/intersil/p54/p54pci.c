@@ -620,7 +620,7 @@ static int p54p_probe(struct pci_dev *pdev,
 	spin_lock_init(&priv->lock);
 	tasklet_init(&priv->tasklet, p54p_tasklet, (unsigned long)dev);
 
-	err = request_firmware_nowait(THIS_MODULE, 1, "isl3886pci",
+	err = firmware_request_nowait(THIS_MODULE, 1, "isl3886pci",
 				      &priv->pdev->dev, GFP_KERNEL,
 				      priv, p54p_firmware_step2);
 	if (!err)
@@ -654,7 +654,7 @@ static void p54p_remove(struct pci_dev *pdev)
 	priv = dev->priv;
 	wait_for_completion(&priv->fw_loaded);
 	p54_unregister_common(dev);
-	release_firmware(priv->firmware);
+	firmware_release(priv->firmware);
 	pci_free_consistent(pdev, sizeof(*priv->ring_control),
 			    priv->ring_control, priv->ring_control_dma);
 	iounmap(priv->map);

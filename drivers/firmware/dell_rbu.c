@@ -573,7 +573,7 @@ static void callbackfn_rbu(const struct firmware *fw, void *context)
 		pr_debug("invalid image type specified.\n");
 	spin_unlock(&rbu_data.lock);
  out:
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 static ssize_t read_rbu_image_type(struct file *filp, struct kobject *kobj,
@@ -619,7 +619,7 @@ static ssize_t write_rbu_image_type(struct file *filp, struct kobject *kobj,
 		 */
 		if (!rbu_data.entry_created) {
 			spin_unlock(&rbu_data.lock);
-			req_firm_rc = request_firmware_nowait(THIS_MODULE,
+			req_firm_rc = firmware_request_nowait(THIS_MODULE,
 				FW_ACTION_NOHOTPLUG, "dell_rbu",
 				&rbu_device->dev, GFP_KERNEL, &context,
 				callbackfn_rbu);

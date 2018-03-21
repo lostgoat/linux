@@ -101,7 +101,7 @@ static int load_cpu_fw_direct(const char *fn, u8 __iomem *mem, struct cx18 *cx)
 	u32 __iomem *dst = (u32 __iomem *)mem;
 	const u32 *src;
 
-	if (request_firmware(&fw, fn, &cx->pci_dev->dev)) {
+	if (firmware_request(&fw, fn, &cx->pci_dev->dev)) {
 		CX18_ERR("Unable to open firmware %s\n", fn);
 		CX18_ERR("Did you put the firmware in the hotplug firmware directory?\n");
 		return -ENOMEM;
@@ -116,7 +116,7 @@ static int load_cpu_fw_direct(const char *fn, u8 __iomem *mem, struct cx18 *cx)
 			cx18_raw_writel(cx, *src, dst);
 			if (cx18_raw_readl(cx, dst) != *src) {
 				CX18_ERR("Mismatch at offset %x\n", i);
-				release_firmware(fw);
+				firmware_release(fw);
 				cx18_setup_page(cx, 0);
 				return -EIO;
 			}
@@ -127,7 +127,7 @@ static int load_cpu_fw_direct(const char *fn, u8 __iomem *mem, struct cx18 *cx)
 	if (!test_bit(CX18_F_I_LOADED_FW, &cx->i_flags))
 		CX18_INFO("loaded %s firmware (%zu bytes)\n", fn, fw->size);
 	size = fw->size;
-	release_firmware(fw);
+	firmware_release(fw);
 	cx18_setup_page(cx, SCB_OFFSET);
 	return size;
 }
@@ -145,7 +145,7 @@ static int load_apu_fw_direct(const char *fn, u8 __iomem *dst, struct cx18 *cx,
 	u32 apu_version = 0;
 	int sz;
 
-	if (request_firmware(&fw, fn, &cx->pci_dev->dev)) {
+	if (firmware_request(&fw, fn, &cx->pci_dev->dev)) {
 		CX18_ERR("unable to open firmware %s\n", fn);
 		CX18_ERR("did you put the firmware in the hotplug firmware directory?\n");
 		cx18_setup_page(cx, 0);
@@ -188,7 +188,7 @@ static int load_apu_fw_direct(const char *fn, u8 __iomem *dst, struct cx18 *cx,
 				    != src[(offset + j) / 4]) {
 					CX18_ERR("Mismatch at offset %x\n",
 						 offset + j);
-					release_firmware(fw);
+					firmware_release(fw);
 					cx18_setup_page(cx, 0);
 					return -EIO;
 				}
@@ -200,7 +200,7 @@ static int load_apu_fw_direct(const char *fn, u8 __iomem *dst, struct cx18 *cx,
 		CX18_INFO("loaded %s firmware V%08x (%zu bytes)\n",
 				fn, apu_version, fw->size);
 	size = fw->size;
-	release_firmware(fw);
+	firmware_release(fw);
 	cx18_setup_page(cx, 0);
 	return size;
 }

@@ -322,10 +322,10 @@ static int sp8870_init (struct dvb_frontend* fe)
 
 	if (sp8870_firmware_upload(state, fw)) {
 		printk("sp8870: writing firmware to device failed\n");
-		release_firmware(fw);
+		firmware_release(fw);
 		return -EIO;
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	printk("sp8870: firmware upload complete\n");
 
 	/* enable TS output and interface pins */

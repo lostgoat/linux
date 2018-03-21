@@ -1295,7 +1295,7 @@ nfp_net_flash_device(struct net_device *netdev, struct ethtool_flash *flash)
 		return err;
 	}
 
-	err = request_firmware_direct(&fw, flash->data, dev);
+	err = firmware_request_direct(&fw, flash->data, dev);
 	if (err)
 		goto exit_close_nsp;
 
@@ -1314,7 +1314,7 @@ nfp_net_flash_device(struct net_device *netdev, struct ethtool_flash *flash)
 exit_rtnl_lock:
 	rtnl_lock();
 	dev_put(netdev);
-	release_firmware(fw);
+	firmware_release(fw);
 
 exit_close_nsp:
 	nfp_nsp_close(nsp);

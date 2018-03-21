@@ -863,7 +863,7 @@ static int wdt87xx_update_firmware(struct device *dev,
 	const struct firmware *fw;
 	int error;
 
-	error = request_firmware(&fw, fw_name, dev);
+	error = firmware_request(&fw, fw_name, dev);
 	if (error) {
 		dev_err(&client->dev, "unable to retrieve firmware %s: %d\n",
 			fw_name, error);
@@ -872,7 +872,7 @@ static int wdt87xx_update_firmware(struct device *dev,
 
 	error = wdt87xx_do_update_firmware(client, fw, chunk_id);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return error ? error : 0;
 }

@@ -669,7 +669,7 @@ static int m88ds3103_init(struct dvb_frontend *fe)
 	else
 		name = M88DS3103_FIRMWARE;
 	/* request the firmware, this will block and timeout */
-	ret = request_firmware(&firmware, name, &client->dev);
+	ret = firmware_request(&firmware, name, &client->dev);
 	if (ret) {
 		dev_err(&client->dev, "firmware file '%s' not found\n", name);
 		goto err;
@@ -697,7 +697,7 @@ static int m88ds3103_init(struct dvb_frontend *fe)
 	if (ret)
 		goto err_release_firmware;
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	ret = regmap_read(dev->regmap, 0xb9, &utmp);
 	if (ret)
@@ -728,7 +728,7 @@ warm:
 
 	return 0;
 err_release_firmware:
-	release_firmware(firmware);
+	firmware_release(firmware);
 err:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

@@ -452,7 +452,7 @@ mic_x100_load_firmware(struct mic_device *mdev, const char *buf)
 	if (rc)
 		return rc;
 	/* load OS */
-	rc = request_firmware(&fw, mdev->cosm_dev->firmware, &mdev->pdev->dev);
+	rc = firmware_request(&fw, mdev->cosm_dev->firmware, &mdev->pdev->dev);
 	if (rc < 0) {
 		dev_err(&mdev->pdev->dev,
 			"ramdisk request_firmware failed: %d %s\n",
@@ -480,7 +480,7 @@ mic_x100_load_firmware(struct mic_device *mdev, const char *buf)
 			__func__, __LINE__, rc);
 		goto error;
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	/* load ramdisk */
 	if (mdev->cosm_dev->ramdisk)
 		rc = mic_x100_load_ramdisk(mdev);
@@ -488,7 +488,7 @@ mic_x100_load_firmware(struct mic_device *mdev, const char *buf)
 	return rc;
 
 error:
-	release_firmware(fw);
+	firmware_release(fw);
 	return rc;
 }
 

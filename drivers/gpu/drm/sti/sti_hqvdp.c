@@ -908,7 +908,7 @@ static void sti_hqvdp_start_xp70(struct sti_hqvdp *hqvdp)
 	}
 
 	/* Request firmware */
-	if (request_firmware(&firmware, HQVDP_FMW_NAME, hqvdp->dev)) {
+	if (firmware_request(&firmware, HQVDP_FMW_NAME, hqvdp->dev)) {
 		DRM_ERROR("Can't get HQVDP firmware\n");
 		return;
 	}
@@ -1007,7 +1007,7 @@ static void sti_hqvdp_start_xp70(struct sti_hqvdp *hqvdp)
 	hqvdp->xp70_initialized = true;
 
 out:
-	release_firmware(firmware);
+	firmware_release(firmware);
 }
 
 static int sti_hqvdp_atomic_check(struct drm_plane *drm_plane,

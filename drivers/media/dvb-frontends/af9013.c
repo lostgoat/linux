@@ -1139,7 +1139,7 @@ static int af9013_download_firmware(struct af9013_state *state)
 		 af9013_ops.info.name);
 
 	/* Request the firmware, will block and timeout */
-	ret = request_firmware(&firmware, name, &client->dev);
+	ret = firmware_request(&firmware, name, &client->dev);
 	if (ret) {
 		dev_info(&client->dev, "firmware file '%s' not found %d\n",
 			 name, ret);
@@ -1176,7 +1176,7 @@ static int af9013_download_firmware(struct af9013_state *state)
 		}
 	}
 
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	/* Boot firmware */
 	ret = regmap_write(state->regmap, 0xe205, 0x01);
@@ -1207,7 +1207,7 @@ static int af9013_download_firmware(struct af9013_state *state)
 
 	return 0;
 err_release_firmware:
-	release_firmware(firmware);
+	firmware_release(firmware);
 err:
 	dev_dbg(&client->dev, "failed %d\n", ret);
 	return ret;

@@ -103,7 +103,7 @@ static void rtl_fw_do_work(const struct firmware *firmware, void *context,
 	complete(&rtlpriv->firmware_loading_complete);
 	if (!firmware) {
 		if (rtlpriv->cfg->alt_fw_name) {
-			err = request_firmware(&firmware,
+			err = firmware_request(&firmware,
 					       rtlpriv->cfg->alt_fw_name,
 					       rtlpriv->io.dev);
 			pr_info("Loading alternative firmware %s\n",
@@ -118,7 +118,7 @@ static void rtl_fw_do_work(const struct firmware *firmware, void *context,
 found_alt:
 	if (firmware->size > rtlpriv->max_fw_size) {
 		pr_err("Firmware is too big!\n");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return;
 	}
 	if (!is_wow) {
@@ -131,7 +131,7 @@ found_alt:
 		rtlpriv->rtlhal.wowlan_fwsize = firmware->size;
 	}
 	rtlpriv->rtlhal.fwsize = firmware->size;
-	release_firmware(firmware);
+	firmware_release(firmware);
 }
 
 void rtl_fw_cb(const struct firmware *firmware, void *context)

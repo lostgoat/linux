@@ -136,7 +136,7 @@ static int yuan_mpc718_mt352_reqfw(struct cx18_stream *stream,
 	const char *fn = FWFILE;
 	int ret;
 
-	ret = request_firmware(fw, fn, &cx->pci_dev->dev);
+	ret = firmware_request(fw, fn, &cx->pci_dev->dev);
 	if (ret)
 		CX18_ERR("Unable to open firmware file %s\n", fn);
 	else {
@@ -145,7 +145,7 @@ static int yuan_mpc718_mt352_reqfw(struct cx18_stream *stream,
 			CX18_ERR("Firmware %s has a bad size: %lu bytes\n",
 				 fn, (unsigned long) sz);
 			ret = -EILSEQ;
-			release_firmware(*fw);
+			firmware_release(*fw);
 			*fw = NULL;
 		}
 	}
@@ -207,7 +207,7 @@ static int yuan_mpc718_mt352_init(struct dvb_frontend *fe)
 	buf[0] = (u8) TUNER_GO;
 	buf[1] = 0x01; /* Go */
 	mt352_write(fe, buf, 2);
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

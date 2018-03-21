@@ -1797,7 +1797,7 @@ static int dw2102_load_firmware(struct usb_device *dev,
 
 	switch (le16_to_cpu(dev->descriptor.idProduct)) {
 	case 0x2101:
-		ret = request_firmware(&fw, DW2101_FIRMWARE, &dev->dev);
+		ret = firmware_request(&fw, DW2101_FIRMWARE, &dev->dev);
 		if (ret != 0) {
 			err(err_str, DW2101_FIRMWARE);
 			return ret;
@@ -1897,7 +1897,7 @@ static int dw2102_load_firmware(struct usb_device *dev,
 	}
 
 	if (le16_to_cpu(dev->descriptor.idProduct) == 0x2101)
-		release_firmware(fw);
+		firmware_release(fw);
 	return ret;
 }
 

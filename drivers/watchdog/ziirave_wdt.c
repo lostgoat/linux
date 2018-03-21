@@ -589,7 +589,7 @@ unlock_mutex:
 	mutex_unlock(&w_priv->sysfs_mutex);
 
 release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return err ? err : count;
 }

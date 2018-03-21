@@ -122,7 +122,7 @@ int cx25840_loadfw(struct i2c_client *client)
 	if (is_cx231xx(state) && max_buf_size > 16)
 		max_buf_size = 16;
 
-	if (request_firmware(&fw, fwname, FWDEV(client)) != 0) {
+	if (firmware_request(&fw, fwname, FWDEV(client)) != 0) {
 		v4l_err(client, "unable to open firmware %s\n", fwname);
 		return -EINVAL;
 	}
@@ -142,7 +142,7 @@ int cx25840_loadfw(struct i2c_client *client)
 		retval = fw_write(client, buffer, len + 2);
 
 		if (retval < 0) {
-			release_firmware(fw);
+			firmware_release(fw);
 			return retval;
 		}
 
@@ -153,7 +153,7 @@ int cx25840_loadfw(struct i2c_client *client)
 	end_fw_load(client);
 
 	size = fw->size;
-	release_firmware(fw);
+	firmware_release(fw);
 
 	if (is_cx2388x(state)) {
 		/* Restore GPIO configuration after f/w load */

@@ -967,7 +967,7 @@ int sas_request_addr(struct Scsi_Host *shost, u8 *addr)
 	int res;
 	const struct firmware *fw;
 
-	res = request_firmware(&fw, "sas_addr", &shost->shost_gendev);
+	res = firmware_request(&fw, "sas_addr", &shost->shost_gendev);
 	if (res)
 		return res;
 
@@ -981,7 +981,7 @@ int sas_request_addr(struct Scsi_Host *shost, u8 *addr)
 		goto out;
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return res;
 }
 EXPORT_SYMBOL_GPL(sas_request_addr);

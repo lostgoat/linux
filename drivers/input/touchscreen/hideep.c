@@ -874,7 +874,7 @@ static ssize_t hideep_update_fw(struct device *dev,
 	if (!fw_name)
 		return -ENOMEM;
 
-	error = request_firmware(&fw_entry, fw_name, dev);
+	error = firmware_request(&fw_entry, fw_name, dev);
 	if (error) {
 		dev_err(dev, "failed to request firmware %s: %d",
 			fw_name, error);
@@ -904,7 +904,7 @@ static ssize_t hideep_update_fw(struct device *dev,
 	mutex_unlock(&ts->dev_mutex);
 
 out_release_fw:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 out_free_fw_name:
 	kfree(fw_name);
 

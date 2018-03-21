@@ -49,7 +49,7 @@ nvkm_firmware_get(struct nvkm_device *device, const char *fwname,
 	}
 
 	snprintf(f, sizeof(f), "nvidia/%s/%s.bin", cname, fwname);
-	return request_firmware(fw, f, device->dev);
+	return firmware_request(fw, f, device->dev);
 }
 
 /**
@@ -58,5 +58,5 @@ nvkm_firmware_get(struct nvkm_device *device, const char *fwname,
 void
 nvkm_firmware_put(const struct firmware *fw)
 {
-	release_firmware(fw);
+	firmware_release(fw);
 }

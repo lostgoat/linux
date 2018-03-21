@@ -473,7 +473,7 @@ static void brcmf_fw_request_nvram_done(const struct firmware *fw, void *ctx)
 
 	if (raw_nvram)
 		bcm47xx_nvram_release_contents(data);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (!nvram && !(fwctx->flags & BRCMF_FW_REQ_NV_OPTIONAL))
 		goto fail;
 
@@ -483,7 +483,7 @@ static void brcmf_fw_request_nvram_done(const struct firmware *fw, void *ctx)
 
 fail:
 	brcmf_dbg(TRACE, "failed: dev=%s\n", dev_name(fwctx->dev));
-	release_firmware(fwctx->code);
+	firmware_release(fwctx->code);
 	fwctx->done(fwctx->dev, -ENOENT, NULL, NULL, 0);
 	kfree(fwctx);
 }
@@ -503,7 +503,7 @@ static void brcmf_fw_request_code_done(const struct firmware *fw, void *ctx)
 		goto done;
 
 	fwctx->code = fw;
-	ret = request_firmware_nowait(THIS_MODULE, true, fwctx->nvram_name,
+	ret = firmware_request_nowait(THIS_MODULE, true, fwctx->nvram_name,
 				      fwctx->dev, GFP_KERNEL, fwctx,
 				      brcmf_fw_request_nvram_done);
 
@@ -547,7 +547,7 @@ int brcmf_fw_get_firmwares_pcie(struct device *dev, u16 flags,
 	fwctx->domain_nr = domain_nr;
 	fwctx->bus_nr = bus_nr;
 
-	return request_firmware_nowait(THIS_MODULE, true, code, dev,
+	return firmware_request_nowait(THIS_MODULE, true, code, dev,
 				       GFP_KERNEL, fwctx,
 				       brcmf_fw_request_code_done);
 }

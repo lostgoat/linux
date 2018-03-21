@@ -590,7 +590,7 @@ static int lgs8g75_init_data(struct lgs8gxx_state *priv)
 	int rc;
 	int i;
 
-	rc = request_firmware(&fw, LGS8GXX_FIRMWARE, &priv->i2c->dev);
+	rc = firmware_request(&fw, LGS8GXX_FIRMWARE, &priv->i2c->dev);
 	if (rc)
 		return rc;
 
@@ -613,7 +613,7 @@ static int lgs8g75_init_data(struct lgs8gxx_state *priv)
 
 	lgs8gxx_write_reg(priv, 0x38, 0x00);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

@@ -111,7 +111,7 @@ int psp_v3_1_init_microcode(struct psp_context *psp)
 	}
 
 	snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_sos.bin", chip_name);
-	err = request_firmware(&adev->psp.sos_fw, fw_name, adev->dev);
+	err = firmware_request(&adev->psp.sos_fw, fw_name, adev->dev);
 	if (err)
 		goto out;
 
@@ -131,7 +131,7 @@ int psp_v3_1_init_microcode(struct psp_context *psp)
 				le32_to_cpu(hdr->sos_offset_bytes);
 
 	snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_asd.bin", chip_name);
-	err = request_firmware(&adev->psp.asd_fw, fw_name, adev->dev);
+	err = firmware_request(&adev->psp.asd_fw, fw_name, adev->dev);
 	if (err)
 		goto out;
 
@@ -152,9 +152,9 @@ out:
 		dev_err(adev->dev,
 			"psp v3.1: Failed to load firmware \"%s\"\n",
 			fw_name);
-		release_firmware(adev->psp.sos_fw);
+		firmware_release(adev->psp.sos_fw);
 		adev->psp.sos_fw = NULL;
-		release_firmware(adev->psp.asd_fw);
+		firmware_release(adev->psp.asd_fw);
 		adev->psp.asd_fw = NULL;
 	}
 

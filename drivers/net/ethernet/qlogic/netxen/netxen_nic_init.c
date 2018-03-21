@@ -1235,14 +1235,14 @@ next:
 	if (adapter->fw_type == NX_FLASH_ROMIMAGE) {
 		adapter->fw = NULL;
 	} else {
-		rc = request_firmware(&adapter->fw,
+		rc = firmware_request(&adapter->fw,
 				fw_name[adapter->fw_type], &pdev->dev);
 		if (rc != 0)
 			goto next;
 
 		rc = netxen_validate_firmware(adapter);
 		if (rc != 0) {
-			release_firmware(adapter->fw);
+			firmware_release(adapter->fw);
 			msleep(1);
 			goto next;
 		}
@@ -1253,7 +1253,7 @@ next:
 void
 netxen_release_firmware(struct netxen_adapter *adapter)
 {
-	release_firmware(adapter->fw);
+	firmware_release(adapter->fw);
 	adapter->fw = NULL;
 }
 

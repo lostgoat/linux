@@ -1228,7 +1228,7 @@ static int asd_seq_start_lseq(struct asd_ha_struct *asd_ha, int lseq)
 
 int asd_release_firmware(void)
 {
-	release_firmware(sequencer_fw);
+	firmware_release(sequencer_fw);
 	return 0;
 }
 
@@ -1244,7 +1244,7 @@ static int asd_request_firmware(struct asd_ha_struct *asd_ha)
 		/* already loaded */
 		return 0;
 
-	err = request_firmware(&sequencer_fw,
+	err = firmware_request(&sequencer_fw,
 			       SAS_RAZOR_SEQUENCER_FW_FILE,
 			       &asd_ha->pcidev->dev);
 	if (err)

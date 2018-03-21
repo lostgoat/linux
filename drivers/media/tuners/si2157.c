@@ -173,7 +173,7 @@ static int si2157_init(struct dvb_frontend *fe)
 		goto skip_fw_download;
 
 	/* request the firmware, this will block and timeout */
-	ret = request_firmware(&fw, fw_name, &client->dev);
+	ret = firmware_request(&fw, fw_name, &client->dev);
 	if (ret) {
 		dev_err(&client->dev, "firmware file '%s' not found\n",
 				fw_name);
@@ -209,7 +209,7 @@ static int si2157_init(struct dvb_frontend *fe)
 		}
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 skip_fw_download:
 	/* reboot the tuner with new firmware? */
@@ -240,7 +240,7 @@ warm:
 	dev->active = true;
 	return 0;
 err_release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 err:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

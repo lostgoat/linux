@@ -237,7 +237,7 @@ static int fimc_is_load_setfile(struct fimc_is *is, char *file_name)
 	void *buf;
 	int ret;
 
-	ret = request_firmware(&fw, file_name, &is->pdev->dev);
+	ret = firmware_request(&fw, file_name, &is->pdev->dev);
 	if (ret < 0) {
 		dev_err(&is->pdev->dev, "firmware request failed (%d)\n", ret);
 		return ret;
@@ -259,7 +259,7 @@ static int fimc_is_load_setfile(struct fimc_is *is, char *file_name)
 	pr_debug("FIMC-IS setfile loaded: base: %#x, size: %zu B\n",
 		 is->setfile.base, fw->size);
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 
@@ -432,7 +432,7 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
 	 * needed around for copying to the IS working memory every
 	 * time before the Cortex-A5 is restarted.
 	 */
-	release_firmware(is->fw.f_w);
+	firmware_release(is->fw.f_w);
 	is->fw.f_w = fw;
 done:
 	mutex_unlock(&is->lock);
@@ -440,7 +440,7 @@ done:
 
 static int fimc_is_request_firmware(struct fimc_is *is, const char *fw_name)
 {
-	return request_firmware_nowait(THIS_MODULE,
+	return firmware_request_nowait(THIS_MODULE,
 				FW_ACTION_HOTPLUG, fw_name, &is->pdev->dev,
 				GFP_KERNEL, is, fimc_is_load_firmware);
 }
@@ -949,7 +949,7 @@ static int fimc_is_remove(struct platform_device *pdev)
 	fimc_is_put_clocks(is);
 	iounmap(is->pmu_regs);
 	fimc_is_debugfs_remove(is);
-	release_firmware(is->fw.f_w);
+	firmware_release(is->fw.f_w);
 	fimc_is_free_cpu_memory(is);
 
 	return 0;

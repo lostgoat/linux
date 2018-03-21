@@ -1155,7 +1155,7 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
 	    !(coredev->device_flags & SMS_DEVICE_FAMILY2))
 		return -EINVAL;
 
-	rc = request_firmware(&fw, fw_filename, coredev->device);
+	rc = firmware_request(&fw, fw_filename, coredev->device);
 	if (rc < 0) {
 		pr_err("failed to open firmware file '%s'\n", fw_filename);
 		return rc;
@@ -1177,7 +1177,7 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
 	}
 
 	kfree(fw_buf);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return rc;
 }

@@ -961,7 +961,7 @@ static int qed_slowpath_start(struct qed_dev *cdev,
 		goto err;
 
 	if (IS_PF(cdev)) {
-		rc = request_firmware(&cdev->firmware, QED_FW_FILE_NAME,
+		rc = firmware_request(&cdev->firmware, QED_FW_FILE_NAME,
 				      &cdev->pdev->dev);
 		if (rc) {
 			DP_NOTICE(cdev,
@@ -1085,7 +1085,7 @@ err1:
 	qed_resc_free(cdev);
 err:
 	if (IS_PF(cdev))
-		release_firmware(cdev->firmware);
+		firmware_release(cdev->firmware);
 
 	if (IS_PF(cdev) && (cdev->num_hwfns == 1) &&
 	    QED_LEADING_HWFN(cdev)->p_arfs_ptt)
@@ -1125,7 +1125,7 @@ static int qed_slowpath_stop(struct qed_dev *cdev)
 	qed_iov_wq_stop(cdev, true);
 
 	if (IS_PF(cdev))
-		release_firmware(cdev->firmware);
+		firmware_release(cdev->firmware);
 
 	return 0;
 }

@@ -677,7 +677,7 @@ static int ath6kl_get_fw(struct ath6kl *ar, const char *filename,
 	const struct firmware *fw_entry;
 	int ret;
 
-	ret = request_firmware(&fw_entry, filename, ar->dev);
+	ret = firmware_request(&fw_entry, filename, ar->dev);
 	if (ret)
 		return ret;
 
@@ -687,7 +687,7 @@ static int ath6kl_get_fw(struct ath6kl *ar, const char *filename,
 	if (*fw == NULL)
 		ret = -ENOMEM;
 
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 
 	return ret;
 }
@@ -962,7 +962,7 @@ static int ath6kl_fetch_fw_apin(struct ath6kl *ar, const char *name)
 
 	snprintf(filename, sizeof(filename), "%s/%s", ar->hw.fw.dir, name);
 
-	ret = request_firmware(&fw, filename, ar->dev);
+	ret = firmware_request(&fw, filename, ar->dev);
 	if (ret) {
 		ath6kl_err("Failed request firmware, rv: %d\n", ret);
 		return ret;
@@ -1144,7 +1144,7 @@ static int ath6kl_fetch_fw_apin(struct ath6kl *ar, const char *name)
 
 	ret = 0;
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

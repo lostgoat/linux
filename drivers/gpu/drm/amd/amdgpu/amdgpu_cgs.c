@@ -526,7 +526,7 @@ static int amdgpu_cgs_rel_firmware(struct cgs_device *cgs_device, enum cgs_ucode
 {
 	CGS_FUNC_ADEV;
 	if ((CGS_UCODE_ID_SMU == type) || (CGS_UCODE_ID_SMU_SK == type)) {
-		release_firmware(adev->pm.fw);
+		firmware_release(adev->pm.fw);
 		adev->pm.fw = NULL;
 		return 0;
 	}
@@ -811,7 +811,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
 				return -EINVAL;
 			}
 
-			err = request_firmware(&adev->pm.fw, fw_name, adev->dev);
+			err = firmware_request(&adev->pm.fw, fw_name, adev->dev);
 			if (err) {
 				DRM_ERROR("Failed to request firmware\n");
 				return err;
@@ -820,7 +820,7 @@ static int amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
 			err = amdgpu_ucode_validate(adev->pm.fw);
 			if (err) {
 				DRM_ERROR("Failed to load firmware \"%s\"", fw_name);
-				release_firmware(adev->pm.fw);
+				firmware_release(adev->pm.fw);
 				adev->pm.fw = NULL;
 				return err;
 			}

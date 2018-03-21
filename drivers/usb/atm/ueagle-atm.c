@@ -712,7 +712,7 @@ static void uea_upload_pre_firmware(const struct firmware *fw_entry,
 err_fw_corrupted:
 	uea_err(usb, "firmware is corrupted\n");
 err:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	uea_leaves(usb);
 }
 
@@ -745,7 +745,7 @@ static int uea_load_firmware(struct usb_device *usb, unsigned int ver)
 		break;
 	}
 
-	ret = request_firmware_nowait(THIS_MODULE, 1, fw_name, &usb->dev,
+	ret = firmware_request_nowait(THIS_MODULE, 1, fw_name, &usb->dev,
 					GFP_KERNEL, usb,
 					uea_upload_pre_firmware);
 	if (ret)
@@ -912,7 +912,7 @@ static int request_dsp(struct uea_softc *sc)
 			dsp_name = DSPEP_FIRMWARE;
 	}
 
-	ret = request_firmware(&sc->dsp_firm, dsp_name, &sc->usb_dev->dev);
+	ret = firmware_request(&sc->dsp_firm, dsp_name, &sc->usb_dev->dev);
 	if (ret < 0) {
 		uea_err(INS_TO_USBDEV(sc),
 		       "requesting firmware %s failed with error %d\n",
@@ -928,7 +928,7 @@ static int request_dsp(struct uea_softc *sc)
 	if (ret) {
 		uea_err(INS_TO_USBDEV(sc), "firmware %s is corrupted\n",
 		       dsp_name);
-		release_firmware(sc->dsp_firm);
+		firmware_release(sc->dsp_firm);
 		sc->dsp_firm = NULL;
 		return -EILSEQ;
 	}
@@ -954,7 +954,7 @@ static void uea_load_page_e1(struct work_struct *work)
 
 	/* reload firmware when reboot start and it's loaded already */
 	if (ovl == 0 && pageno == 0) {
-		release_firmware(sc->dsp_firm);
+		firmware_release(sc->dsp_firm);
 		sc->dsp_firm = NULL;
 	}
 
@@ -1076,7 +1076,7 @@ static void uea_load_page_e4(struct work_struct *work)
 
 	/* reload firmware when reboot start and it's loaded already */
 	if (pageno == 0) {
-		release_firmware(sc->dsp_firm);
+		firmware_release(sc->dsp_firm);
 		sc->dsp_firm = NULL;
 	}
 
@@ -1385,7 +1385,7 @@ static int uea_stat_e1(struct uea_softc *sc)
 		/* release the dsp firmware as it is not needed until
 		 * the next failure
 		 */
-		release_firmware(sc->dsp_firm);
+		firmware_release(sc->dsp_firm);
 		sc->dsp_firm = NULL;
 	}
 
@@ -1522,7 +1522,7 @@ static int uea_stat_e4(struct uea_softc *sc)
 		/* release the dsp firmware as it is not needed until
 		 * the next failure
 		 */
-		release_firmware(sc->dsp_firm);
+		firmware_release(sc->dsp_firm);
 		sc->dsp_firm = NULL;
 	}
 
@@ -1630,7 +1630,7 @@ static int request_cmvs_old(struct uea_softc *sc,
 	char cmv_name[UEA_FW_NAME_MAX]; /* 30 bytes stack variable */
 
 	cmvs_file_name(sc, cmv_name, 1);
-	ret = request_firmware(fw, cmv_name, &sc->usb_dev->dev);
+	ret = firmware_request(fw, cmv_name, &sc->usb_dev->dev);
 	if (ret < 0) {
 		uea_err(INS_TO_USBDEV(sc),
 		       "requesting firmware %s failed with error %d\n",
@@ -1651,7 +1651,7 @@ static int request_cmvs_old(struct uea_softc *sc,
 
 err_fw_corrupted:
 	uea_err(INS_TO_USBDEV(sc), "firmware %s is corrupted\n", cmv_name);
-	release_firmware(*fw);
+	firmware_release(*fw);
 	return -EILSEQ;
 }
 
@@ -1664,7 +1664,7 @@ static int request_cmvs(struct uea_softc *sc,
 	char cmv_name[UEA_FW_NAME_MAX]; /* 30 bytes stack variable */
 
 	cmvs_file_name(sc, cmv_name, 2);
-	ret = request_firmware(fw, cmv_name, &sc->usb_dev->dev);
+	ret = firmware_request(fw, cmv_name, &sc->usb_dev->dev);
 	if (ret < 0) {
 		/* if caller can handle old version, try to provide it */
 		if (*ver == 1) {
@@ -1685,7 +1685,7 @@ static int request_cmvs(struct uea_softc *sc,
 		if (*ver == 1) {
 			uea_warn(INS_TO_USBDEV(sc), "firmware %s is corrupted,"
 				" try to get older cmvs\n", cmv_name);
-			release_firmware(*fw);
+			firmware_release(*fw);
 			return request_cmvs_old(sc, cmvs, fw);
 		}
 		goto err_fw_corrupted;
@@ -1712,7 +1712,7 @@ static int request_cmvs(struct uea_softc *sc,
 
 err_fw_corrupted:
 	uea_err(INS_TO_USBDEV(sc), "firmware %s is corrupted\n", cmv_name);
-	release_firmware(*fw);
+	firmware_release(*fw);
 	return -EILSEQ;
 }
 
@@ -1778,7 +1778,7 @@ static int uea_send_cmvs_e1(struct uea_softc *sc)
 	uea_info(INS_TO_USBDEV(sc), "modem started, waiting "
 						"synchronization...\n");
 out:
-	release_firmware(cmvs_fw);
+	firmware_release(cmvs_fw);
 	return ret;
 }
 
@@ -1833,7 +1833,7 @@ static int uea_send_cmvs_e4(struct uea_softc *sc)
 	uea_info(INS_TO_USBDEV(sc), "modem started, waiting "
 						"synchronization...\n");
 out:
-	release_firmware(cmvs_fw);
+	firmware_release(cmvs_fw);
 	return ret;
 }
 
@@ -1957,7 +1957,7 @@ static int load_XILINX_firmware(struct uea_softc *sc)
 
 	uea_enters(INS_TO_USBDEV(sc));
 
-	ret = request_firmware(&fw_entry, fw_name, &sc->usb_dev->dev);
+	ret = firmware_request(&fw_entry, fw_name, &sc->usb_dev->dev);
 	if (ret) {
 		uea_err(INS_TO_USBDEV(sc), "firmware %s is not available\n",
 		       fw_name);
@@ -1998,7 +1998,7 @@ static int load_XILINX_firmware(struct uea_softc *sc)
 								" %d\n", ret);
 
 err1:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 err0:
 	uea_leaves(INS_TO_USBDEV(sc));
 	return ret;
@@ -2259,7 +2259,7 @@ static void uea_stop(struct uea_softc *sc)
 	/* flush the work item, when no one can schedule it */
 	flush_work(&sc->task);
 
-	release_firmware(sc->dsp_firm);
+	firmware_release(sc->dsp_firm);
 	uea_leaves(INS_TO_USBDEV(sc));
 }
 

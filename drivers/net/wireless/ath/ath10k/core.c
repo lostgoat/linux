@@ -652,7 +652,7 @@ static const struct firmware *ath10k_fetch_fw_file(struct ath10k *ar,
 		dir = ".";
 
 	snprintf(filename, sizeof(filename), "%s/%s", dir, file);
-	ret = request_firmware(&fw, filename, ar->dev);
+	ret = firmware_request(&fw, filename, ar->dev);
 	ath10k_dbg(ar, ATH10K_DBG_BOOT, "boot fw request '%s': %d\n",
 		   filename, ret);
 
@@ -1095,7 +1095,7 @@ static int ath10k_download_fw(struct ath10k *ar)
 static void ath10k_core_free_board_files(struct ath10k *ar)
 {
 	if (!IS_ERR(ar->normal_mode_fw.board))
-		release_firmware(ar->normal_mode_fw.board);
+		firmware_release(ar->normal_mode_fw.board);
 
 	ar->normal_mode_fw.board = NULL;
 	ar->normal_mode_fw.board_data = NULL;
@@ -1105,13 +1105,13 @@ static void ath10k_core_free_board_files(struct ath10k *ar)
 static void ath10k_core_free_firmware_files(struct ath10k *ar)
 {
 	if (!IS_ERR(ar->normal_mode_fw.fw_file.firmware))
-		release_firmware(ar->normal_mode_fw.fw_file.firmware);
+		firmware_release(ar->normal_mode_fw.fw_file.firmware);
 
 	if (!IS_ERR(ar->cal_file))
-		release_firmware(ar->cal_file);
+		firmware_release(ar->cal_file);
 
 	if (!IS_ERR(ar->pre_cal_file))
-		release_firmware(ar->pre_cal_file);
+		firmware_release(ar->pre_cal_file);
 
 	ath10k_swap_code_seg_release(ar, &ar->normal_mode_fw.fw_file);
 

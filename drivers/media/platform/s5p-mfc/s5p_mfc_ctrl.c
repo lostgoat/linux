@@ -61,7 +61,7 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
 	for (i = MFC_FW_MAX_VERSIONS - 1; i >= 0; i--) {
 		if (!dev->variant->fw_name[i])
 			continue;
-		err = request_firmware((const struct firmware **)&fw_blob,
+		err = firmware_request((const struct firmware **)&fw_blob,
 				dev->variant->fw_name[i], dev->v4l2_dev.dev);
 		if (!err) {
 			dev->fw_ver = (enum s5p_mfc_fw_ver) i;
@@ -75,13 +75,13 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
 	}
 	if (fw_blob->size > dev->fw_buf.size) {
 		mfc_err("MFC firmware is too big to be loaded\n");
-		release_firmware(fw_blob);
+		firmware_release(fw_blob);
 		return -ENOMEM;
 	}
 	memcpy(dev->fw_buf.virt, fw_blob->data, fw_blob->size);
 	wmb();
 	dev->fw_get_done = true;
-	release_firmware(fw_blob);
+	firmware_release(fw_blob);
 	mfc_debug_leave();
 	return 0;
 }

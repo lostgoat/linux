@@ -385,7 +385,7 @@ int pcxhr_setup_firmware(struct pcxhr_mgr *mgr)
 		if (!fw_files[fw_set][i])
 			continue;
 		sprintf(path, "pcxhr/%s", fw_files[fw_set][i]);
-		if (request_firmware(&fw_entry, path, &mgr->pci->dev)) {
+		if (firmware_request(&fw_entry, path, &mgr->pci->dev)) {
 			dev_err(&mgr->pci->dev,
 				"pcxhr: can't load firmware %s\n",
 				   path);
@@ -393,7 +393,7 @@ int pcxhr_setup_firmware(struct pcxhr_mgr *mgr)
 		}
 		/* fake hwdep dsp record */
 		err = pcxhr_dsp_load(mgr, i, fw_entry);
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		if (err < 0)
 			return err;
 		mgr->dsp_loaded |= 1 << i;

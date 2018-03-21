@@ -1282,7 +1282,7 @@ typhoon_request_firmware(struct typhoon *tp)
 	if (typhoon_fw)
 		return 0;
 
-	err = request_firmware(&typhoon_fw, FIRMWARE_NAME, &tp->pdev->dev);
+	err = firmware_request(&typhoon_fw, FIRMWARE_NAME, &tp->pdev->dev);
 	if (err) {
 		netdev_err(tp->dev, "Failed to load firmware \"%s\"\n",
 			   FIRMWARE_NAME);
@@ -1321,7 +1321,7 @@ typhoon_request_firmware(struct typhoon *tp)
 
 invalid_fw:
 	netdev_err(tp->dev, "Invalid firmware image\n");
-	release_firmware(typhoon_fw);
+	firmware_release(typhoon_fw);
 	typhoon_fw = NULL;
 	return -EINVAL;
 }
@@ -2554,7 +2554,7 @@ typhoon_init(void)
 static void __exit
 typhoon_cleanup(void)
 {
-	release_firmware(typhoon_fw);
+	firmware_release(typhoon_fw);
 	pci_unregister_driver(&typhoon_driver);
 }
 

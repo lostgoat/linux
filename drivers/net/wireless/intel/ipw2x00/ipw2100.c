@@ -8415,7 +8415,7 @@ static int ipw2100_get_firmware(struct ipw2100_priv *priv,
 		break;
 	}
 
-	rc = request_firmware(&fw->fw_entry, fw_name, &priv->pci_dev->dev);
+	rc = firmware_request(&fw->fw_entry, fw_name, &priv->pci_dev->dev);
 
 	if (rc < 0) {
 		printk(KERN_ERR DRV_NAME ": "
@@ -8441,7 +8441,7 @@ static void ipw2100_release_firmware(struct ipw2100_priv *priv,
 				     struct ipw2100_fw *fw)
 {
 	fw->version = 0;
-	release_firmware(fw->fw_entry);
+	firmware_release(fw->fw_entry);
 	fw->fw_entry = NULL;
 }
 

@@ -6314,7 +6314,7 @@ static void drxk_release(struct dvb_frontend *fe)
 	struct drxk_state *state = fe->demodulator_priv;
 
 	dprintk(1, "\n");
-	release_firmware(state->fw);
+	firmware_release(state->fw);
 
 	kfree(state);
 }
@@ -6836,7 +6836,7 @@ struct dvb_frontend *drxk_attach(const struct drxk_config *config,
 	if (state->microcode_name) {
 		const struct firmware *fw = NULL;
 
-		status = request_firmware(&fw, state->microcode_name,
+		status = firmware_request(&fw, state->microcode_name,
 					  state->i2c->dev.parent);
 		if (status < 0)
 			fw = NULL;

@@ -358,7 +358,7 @@ static int ds3000_firmware_ondemand(struct dvb_frontend *fe)
 	/* request the firmware, this will block until someone uploads it */
 	printk(KERN_INFO "%s: Waiting for firmware upload (%s)...\n", __func__,
 				DS3000_DEFAULT_FIRMWARE);
-	ret = request_firmware(&fw, DS3000_DEFAULT_FIRMWARE,
+	ret = firmware_request(&fw, DS3000_DEFAULT_FIRMWARE,
 				state->i2c->dev.parent);
 	printk(KERN_INFO "%s: Waiting for firmware upload(2)...\n", __func__);
 	if (ret) {
@@ -371,7 +371,7 @@ static int ds3000_firmware_ondemand(struct dvb_frontend *fe)
 	if (ret)
 		printk("%s: Writing firmware to device failed\n", __func__);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	dprintk("%s: Firmware upload %s\n", __func__,
 			ret == 0 ? "complete" : "failed");

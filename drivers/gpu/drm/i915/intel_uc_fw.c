@@ -57,7 +57,7 @@ void intel_uc_fw_fetch(struct drm_i915_private *dev_priv,
 			 intel_uc_fw_type_repr(uc_fw->type),
 			 intel_uc_fw_status_repr(uc_fw->fetch_status));
 
-	err = request_firmware(&fw, uc_fw->path, &pdev->dev);
+	err = firmware_request(&fw, uc_fw->path, &pdev->dev);
 	if (err) {
 		DRM_DEBUG_DRIVER("%s fw request_firmware err=%d\n",
 				 intel_uc_fw_type_repr(uc_fw->type), err);
@@ -178,7 +178,7 @@ void intel_uc_fw_fetch(struct drm_i915_private *dev_priv,
 			 intel_uc_fw_type_repr(uc_fw->type),
 			 intel_uc_fw_status_repr(uc_fw->fetch_status));
 
-	release_firmware(fw);
+	firmware_release(fw);
 	return;
 
 fail:
@@ -192,7 +192,7 @@ fail:
 	DRM_INFO("%s: Firmware can be downloaded from %s\n",
 		 intel_uc_fw_type_repr(uc_fw->type), INTEL_UC_FIRMWARE_URL);
 
-	release_firmware(fw);		/* OK even if fw is NULL */
+	firmware_release(fw);		/* OK even if fw is NULL */
 }
 
 /**

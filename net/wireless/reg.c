@@ -736,7 +736,7 @@ static bool regdb_has_valid_signature(const u8 *data, unsigned int size)
 	const struct firmware *sig;
 	bool result;
 
-	if (request_firmware(&sig, "regulatory.db.p7s", &reg_pdev->dev))
+	if (firmware_request(&sig, "regulatory.db.p7s", &reg_pdev->dev))
 		return false;
 
 	result = verify_pkcs7_signature(data, size, sig->data, sig->size,
@@ -744,7 +744,7 @@ static bool regdb_has_valid_signature(const u8 *data, unsigned int size)
 					VERIFYING_UNSPECIFIED_SIGNATURE,
 					NULL, NULL) == 0;
 
-	release_firmware(sig);
+	firmware_release(sig);
 
 	return result;
 }
@@ -912,7 +912,7 @@ static void regdb_fw_cb(const struct firmware *fw, void *context)
 
 	kfree(context);
 
-	release_firmware(fw);
+	firmware_release(fw);
 }
 
 static int query_regdb_file(const char *alpha2)
@@ -926,7 +926,7 @@ static int query_regdb_file(const char *alpha2)
 	if (!alpha2)
 		return -ENOMEM;
 
-	return request_firmware_nowait(THIS_MODULE, true, "regulatory.db",
+	return firmware_request_nowait(THIS_MODULE, true, "regulatory.db",
 				       &reg_pdev->dev, GFP_KERNEL,
 				       (void *)alpha2, regdb_fw_cb);
 }
@@ -937,7 +937,7 @@ int reg_reload_regdb(void)
 	void *db;
 	int err;
 
-	err = request_firmware(&fw, "regulatory.db", &reg_pdev->dev);
+	err = firmware_request(&fw, "regulatory.db", &reg_pdev->dev);
 	if (err)
 		return err;
 
@@ -959,7 +959,7 @@ int reg_reload_regdb(void)
 	rtnl_unlock();
 
  out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return err;
 }
 

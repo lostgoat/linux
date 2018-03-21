@@ -571,7 +571,7 @@ static ssize_t elan_sysfs_update_fw(struct device *dev,
 	}
 
 	dev_info(dev, "requesting fw '%s'\n", fw_name);
-	error = request_firmware(&fw, fw_name, dev);
+	error = firmware_request(&fw, fw_name, dev);
 	kfree(fw_name);
 	if (error) {
 		dev_err(dev, "failed to request firmware: %d\n", error);
@@ -597,7 +597,7 @@ static ssize_t elan_sysfs_update_fw(struct device *dev,
 	mutex_unlock(&data->sysfs_mutex);
 
 out_release_fw:
-	release_firmware(fw);
+	firmware_release(fw);
 	return error ?: count;
 }
 

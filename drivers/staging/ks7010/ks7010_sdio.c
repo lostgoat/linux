@@ -673,7 +673,7 @@ static int ks7010_upload_firmware(struct ks_sdio_card *card)
 		goto release_host_and_free;
 	}
 
-	ret = request_firmware(&fw_entry, ROM_FILE,
+	ret = firmware_request(&fw_entry, ROM_FILE,
 			       &priv->ks_sdio_card->func->dev);
 	if (ret)
 		goto release_host_and_free;
@@ -737,7 +737,7 @@ static int ks7010_upload_firmware(struct ks_sdio_card *card)
 	ret = 0;
 
  release_firmware:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
  release_host_and_free:
 	sdio_release_host(card->func);
 	kfree(rom_buf);

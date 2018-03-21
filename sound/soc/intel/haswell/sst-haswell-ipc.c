@@ -1860,7 +1860,7 @@ int sst_hsw_module_load(struct sst_hsw *hsw,
 			/* try and load any other optional modules if they are
 			 * available. Use dev_info instead of dev_err in case
 			 * request firmware failed */
-			ret = request_firmware(&fw, name, dev);
+			ret = firmware_request(&fw, name, dev);
 			if (ret) {
 				dev_info(dev, "fw image %s not available(%d)\n",
 						name, ret);
@@ -1884,7 +1884,7 @@ int sst_hsw_module_load(struct sst_hsw *hsw,
 out:
 	/* release fw, but base fw should be released by acpi driver */
 	if (fw && module_id != SST_HSW_MODULE_BASE_FW)
-		release_firmware(fw);
+		firmware_release(fw);
 
 	return ret;
 }

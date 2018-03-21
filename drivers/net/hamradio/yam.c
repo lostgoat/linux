@@ -370,7 +370,7 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
 			printk(KERN_ERR "yam: Failed to register firmware\n");
 			return NULL;
 		}
-		err = request_firmware(&fw, fw_name[predef], &pdev->dev);
+		err = firmware_request(&fw, fw_name[predef], &pdev->dev);
 		platform_device_unregister(pdev);
 		if (err) {
 			printk(KERN_ERR "Failed to load firmware \"%s\"\n",
@@ -380,7 +380,7 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
 		if (fw->size != YAM_FPGA_SIZE) {
 			printk(KERN_ERR "Bogus length %zu in firmware \"%s\"\n",
 			       fw->size, fw_name[predef]);
-			release_firmware(fw);
+			firmware_release(fw);
 			return NULL;
 		}
 		bits = (unsigned char *)fw->data;
@@ -402,7 +402,7 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
 
 	/* Allocate a new mcs */
 	if ((p = kmalloc(sizeof(struct yam_mcs), GFP_KERNEL)) == NULL) {
-		release_firmware(fw);
+		firmware_release(fw);
 		return NULL;
 	}
 	memcpy(p->bits, bits, YAM_FPGA_SIZE);
@@ -410,7 +410,7 @@ static unsigned char *add_mcs(unsigned char *bits, int bitrate,
 	p->next = yam_data;
 	yam_data = p;
  out:
-	release_firmware(fw);
+	firmware_release(fw);
 	return p->bits;
 }
 

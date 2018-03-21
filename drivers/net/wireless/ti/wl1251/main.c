@@ -69,7 +69,7 @@ static int wl1251_fetch_firmware(struct wl1251 *wl)
 	struct device *dev = wiphy_dev(wl->hw->wiphy);
 	int ret;
 
-	ret = request_firmware(&fw, WL1251_FW_NAME, dev);
+	ret = firmware_request(&fw, WL1251_FW_NAME, dev);
 
 	if (ret < 0) {
 		wl1251_error("could not get firmware: %d", ret);
@@ -97,7 +97,7 @@ static int wl1251_fetch_firmware(struct wl1251 *wl)
 	ret = 0;
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }
@@ -108,7 +108,7 @@ static int wl1251_fetch_nvs(struct wl1251 *wl)
 	struct device *dev = wiphy_dev(wl->hw->wiphy);
 	int ret;
 
-	ret = request_firmware(&fw, WL1251_NVS_NAME, dev);
+	ret = firmware_request(&fw, WL1251_NVS_NAME, dev);
 
 	if (ret < 0) {
 		wl1251_error("could not get nvs file: %d", ret);
@@ -134,7 +134,7 @@ static int wl1251_fetch_nvs(struct wl1251 *wl)
 	ret = 0;
 
 out:
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

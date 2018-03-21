@@ -225,7 +225,7 @@ static int prism2_fwtry(struct usb_device *udev, struct wlandevice *wlandev)
 		    PRISM2_USB_FWFILE, fw_entry->size);
 	prism2_fwapply((const struct ihex_binrec *)fw_entry->data, wlandev);
 
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return 0;
 }
 

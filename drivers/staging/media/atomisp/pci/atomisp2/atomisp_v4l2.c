@@ -1088,7 +1088,7 @@ atomisp_load_firmware(struct atomisp_device *isp)
 		return NULL;
 	}
 
-	rc = request_firmware(&fw, fw_path, isp->dev);
+	rc = firmware_request(&fw, fw_path, isp->dev);
 	if (rc) {
 		dev_err(isp->dev,
 			"atomisp: Error %d while requesting firmware %s\n",
@@ -1514,7 +1514,7 @@ static void atomisp_pci_remove(struct pci_dev *dev)
 	destroy_workqueue(isp->wdt_work_queue);
 	atomisp_file_input_cleanup(isp);
 
-	release_firmware(isp->firmware);
+	firmware_release(isp->firmware);
 
 	hmm_pool_unregister(HMM_POOL_TYPE_RESERVED);
 }

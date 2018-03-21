@@ -85,7 +85,7 @@ int radeon_vce_init(struct radeon_device *rdev)
 		return -EINVAL;
 	}
 
-	r = request_firmware(&rdev->vce_fw, fw_name, rdev->dev);
+	r = firmware_request(&rdev->vce_fw, fw_name, rdev->dev);
 	if (r) {
 		dev_err(rdev->dev, "radeon_vce: Can't load firmware \"%s\"\n",
 			fw_name);
@@ -185,7 +185,7 @@ void radeon_vce_fini(struct radeon_device *rdev)
 
 	radeon_bo_unref(&rdev->vce.vcpu_bo);
 
-	release_firmware(rdev->vce_fw);
+	firmware_release(rdev->vce_fw);
 }
 
 /**

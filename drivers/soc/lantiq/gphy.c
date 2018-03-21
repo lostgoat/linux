@@ -91,7 +91,7 @@ static int xway_gphy_load(struct device *dev, struct xway_gphy_priv *priv,
 	size_t size;
 	int ret;
 
-	ret = request_firmware(&fw, priv->fw_name, dev);
+	ret = firmware_request(&fw, priv->fw_name, dev);
 	if (ret) {
 		dev_err(dev, "failed to load firmware: %s, error: %i\n",
 			priv->fw_name, ret);
@@ -114,7 +114,7 @@ static int xway_gphy_load(struct device *dev, struct xway_gphy_priv *priv,
 		ret = -ENOMEM;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

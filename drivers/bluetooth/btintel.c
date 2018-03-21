@@ -273,7 +273,7 @@ int btintel_load_ddc_config(struct hci_dev *hdev, const char *ddc_name)
 	const u8 *fw_ptr;
 	int err;
 
-	err = request_firmware_direct(&fw, ddc_name, &hdev->dev);
+	err = firmware_request_direct(&fw, ddc_name, &hdev->dev);
 	if (err < 0) {
 		bt_dev_err(hdev, "Failed to load Intel DDC file %s (%d)",
 			   ddc_name, err);
@@ -295,7 +295,7 @@ int btintel_load_ddc_config(struct hci_dev *hdev, const char *ddc_name)
 		if (IS_ERR(skb)) {
 			bt_dev_err(hdev, "Failed to send Intel_Write_DDC (%ld)",
 				   PTR_ERR(skb));
-			release_firmware(fw);
+			firmware_release(fw);
 			return PTR_ERR(skb);
 		}
 
@@ -303,7 +303,7 @@ int btintel_load_ddc_config(struct hci_dev *hdev, const char *ddc_name)
 		kfree_skb(skb);
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	bt_dev_info(hdev, "Applying Intel DDC parameters completed");
 

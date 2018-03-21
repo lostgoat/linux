@@ -653,7 +653,7 @@ static int bcm3510_download_firmware(struct dvb_frontend* fe)
 		}
 		i += 4 + len;
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	deb_info("firmware download successfully completed\n");
 	return 0;
 }

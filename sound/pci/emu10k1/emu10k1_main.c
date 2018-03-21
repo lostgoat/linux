@@ -733,7 +733,7 @@ static int snd_emu1010_load_firmware(struct snd_emu10k1 *emu, int dock,
 		filename = firmware_names[emu->card_capabilities->emu_model][dock];
 		if (!filename)
 			return 0;
-		err = request_firmware(fw, filename, &emu->pci->dev);
+		err = firmware_request(fw, filename, &emu->pci->dev);
 		if (err)
 			return err;
 	}
@@ -1268,8 +1268,8 @@ static int snd_emu10k1_free(struct snd_emu10k1 *emu)
 		snd_emu1010_fpga_write(emu, EMU_HANA_DOCK_PWR, 0);
 	}
 	cancel_delayed_work_sync(&emu->emu1010.firmware_work);
-	release_firmware(emu->firmware);
-	release_firmware(emu->dock_fw);
+	firmware_release(emu->firmware);
+	firmware_release(emu->dock_fw);
 	if (emu->irq >= 0)
 		free_irq(emu->irq, emu);
 	/* remove reserved page */

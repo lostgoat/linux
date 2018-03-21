@@ -1050,7 +1050,7 @@ static int adf7242_hw_init(struct adf7242_local *lp)
 	 * and place under /lib/firmware/adf7242_firmware.bin
 	 * or compile firmware into the kernel.
 	 */
-	ret = request_firmware(&fw, FIRMWARE, &lp->spi->dev);
+	ret = firmware_request(&fw, FIRMWARE, &lp->spi->dev);
 	if (ret) {
 		dev_err(&lp->spi->dev,
 			"request_firmware() failed with %d\n", ret);
@@ -1061,7 +1061,7 @@ static int adf7242_hw_init(struct adf7242_local *lp)
 	if (ret) {
 		dev_err(&lp->spi->dev,
 			"upload firmware failed with %d\n", ret);
-		release_firmware(fw);
+		firmware_release(fw);
 		return ret;
 	}
 
@@ -1069,13 +1069,13 @@ static int adf7242_hw_init(struct adf7242_local *lp)
 	if (ret) {
 		dev_err(&lp->spi->dev,
 			"verify firmware failed with %d\n", ret);
-		release_firmware(fw);
+		firmware_release(fw);
 		return ret;
 	}
 
 	adf7242_cmd(lp, CMD_RC_PC_RESET);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	adf7242_write_reg(lp, REG_FFILT_CFG,
 			  ACCEPT_BEACON_FRAMES |

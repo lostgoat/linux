@@ -92,23 +92,23 @@ static int go7007_load_encoder(struct go7007 *go)
 	u16 intr_val, intr_data;
 
 	if (go->boot_fw == NULL) {
-		if (request_firmware(&fw_entry, fw_name, go->dev)) {
+		if (firmware_request(&fw_entry, fw_name, go->dev)) {
 			v4l2_err(go, "unable to load firmware from file \"%s\"\n", fw_name);
 			return -1;
 		}
 		if (fw_entry->size < 16 || memcmp(fw_entry->data, "WISGO7007FW", 11)) {
 			v4l2_err(go, "file \"%s\" does not appear to be go7007 firmware\n", fw_name);
-			release_firmware(fw_entry);
+			firmware_release(fw_entry);
 			return -1;
 		}
 		fw_len = fw_entry->size - 16;
 		bounce = kmemdup(fw_entry->data + 16, fw_len, GFP_KERNEL);
 		if (bounce == NULL) {
 			v4l2_err(go, "unable to allocate %d bytes for firmware transfer\n", fw_len);
-			release_firmware(fw_entry);
+			firmware_release(fw_entry);
 			return -1;
 		}
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 		go->boot_fw_len = fw_len;
 		go->boot_fw = bounce;
 	}

@@ -452,7 +452,7 @@ static int opera1_xilinx_load_firmware(struct usb_device *dev,
 	u8 testval;
 	info("start downloading fpga firmware %s",filename);
 
-	if ((ret = request_firmware(&fw, filename, &dev->dev)) != 0) {
+	if ((ret = firmware_request(&fw, filename, &dev->dev)) != 0) {
 		err("did not find the firmware file. (%s) Please see linux/Documentation/dvb/ for more details on firmware-problems.",
 			filename);
 		return ret;
@@ -491,7 +491,7 @@ static int opera1_xilinx_load_firmware(struct usb_device *dev,
 		}
 	}
 	kfree(p);
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

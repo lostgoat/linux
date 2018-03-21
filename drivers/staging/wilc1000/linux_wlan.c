@@ -340,7 +340,7 @@ int wilc_wlan_get_firmware(struct net_device *dev)
 	if (!(&vif->ndev->dev))
 		goto _fail_;
 
-	if (request_firmware(&wilc_firmware, firmware, wilc->dev) != 0) {
+	if (firmware_request(&wilc_firmware, firmware, wilc->dev) != 0) {
 		netdev_err(dev, "%s - firmware not available\n", firmware);
 		ret = -1;
 		goto _fail_;
@@ -391,7 +391,7 @@ static int wilc1000_firmware_download(struct net_device *dev)
 	if (ret < 0)
 		return ret;
 
-	release_firmware(wilc->firmware);
+	firmware_release(wilc->firmware);
 	wilc->firmware = NULL;
 
 	netdev_dbg(dev, "Download Succeeded\n");
@@ -1181,7 +1181,7 @@ void wilc_netdev_cleanup(struct wilc *wilc)
 		unregister_inetaddr_notifier(&g_dev_notifier);
 
 	if (wilc && wilc->firmware) {
-		release_firmware(wilc->firmware);
+		firmware_release(wilc->firmware);
 		wilc->firmware = NULL;
 	}
 

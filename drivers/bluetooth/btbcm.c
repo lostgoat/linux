@@ -507,7 +507,7 @@ int btbcm_setup_patchram(struct hci_dev *hdev)
 		    hw_name ? : "BCM", (subver & 0xe000) >> 13,
 		    (subver & 0x1f00) >> 8, (subver & 0x00ff), rev & 0x0fff);
 
-	err = request_firmware(&fw, fw_name, &hdev->dev);
+	err = firmware_request(&fw, fw_name, &hdev->dev);
 	if (err < 0) {
 		bt_dev_info(hdev, "BCM: Patch %s not found", fw_name);
 		goto done;
@@ -515,7 +515,7 @@ int btbcm_setup_patchram(struct hci_dev *hdev)
 
 	btbcm_patchram(hdev, fw);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/* Reset */
 	err = btbcm_reset(hdev);

@@ -1647,7 +1647,7 @@ static int wm_adsp_load(struct wm_adsp *dsp)
 		 wm_adsp_fw[dsp->fw].file);
 	file[PAGE_SIZE - 1] = '\0';
 
-	ret = request_firmware(&firmware, file, dsp->dev);
+	ret = firmware_request(&firmware, file, dsp->dev);
 	if (ret != 0) {
 		adsp_err(dsp, "Failed to request '%s'\n", file);
 		goto out;
@@ -1840,7 +1840,7 @@ static int wm_adsp_load(struct wm_adsp *dsp)
 out_fw:
 	regmap_async_complete(regmap);
 	wm_adsp_buf_free(&buf_list);
-	release_firmware(firmware);
+	firmware_release(firmware);
 	kfree(text);
 out:
 	kfree(file);
@@ -2214,7 +2214,7 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
 		 wm_adsp_fw[dsp->fw].file);
 	file[PAGE_SIZE - 1] = '\0';
 
-	ret = request_firmware(&firmware, file, dsp->dev);
+	ret = firmware_request(&firmware, file, dsp->dev);
 	if (ret != 0) {
 		adsp_warn(dsp, "Failed to request '%s'\n", file);
 		ret = 0;
@@ -2375,7 +2375,7 @@ static int wm_adsp_load_coeff(struct wm_adsp *dsp)
 
 out_fw:
 	regmap_async_complete(regmap);
-	release_firmware(firmware);
+	firmware_release(firmware);
 	wm_adsp_buf_free(&buf_list);
 out:
 	kfree(file);

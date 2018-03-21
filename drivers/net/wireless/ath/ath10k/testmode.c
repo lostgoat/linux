@@ -157,7 +157,7 @@ static int ath10k_tm_fetch_utf_firmware_api_1(struct ath10k *ar,
 		 ar->hw_params.fw.dir, ATH10K_FW_UTF_FILE);
 
 	/* load utf firmware image */
-	ret = request_firmware_direct(&fw_file->firmware, filename, ar->dev);
+	ret = firmware_request_direct(&fw_file->firmware, filename, ar->dev);
 	ath10k_dbg(ar, ATH10K_DBG_TESTMODE, "testmode fw request '%s': %d\n",
 		   filename, ret);
 
@@ -307,7 +307,7 @@ err_release_utf_mode_fw:
 		ath10k_swap_code_seg_release(ar,
 					     &ar->testmode.utf_mode_fw.fw_file);
 
-	release_firmware(ar->testmode.utf_mode_fw.fw_file.firmware);
+	firmware_release(ar->testmode.utf_mode_fw.fw_file.firmware);
 	ar->testmode.utf_mode_fw.fw_file.firmware = NULL;
 
 err:
@@ -334,7 +334,7 @@ static void __ath10k_tm_cmd_utf_stop(struct ath10k *ar)
 		ath10k_swap_code_seg_release(ar,
 					     &ar->testmode.utf_mode_fw.fw_file);
 
-	release_firmware(ar->testmode.utf_mode_fw.fw_file.firmware);
+	firmware_release(ar->testmode.utf_mode_fw.fw_file.firmware);
 	ar->testmode.utf_mode_fw.fw_file.firmware = NULL;
 
 	ar->state = ATH10K_STATE_OFF;

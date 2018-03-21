@@ -487,7 +487,7 @@ static int brcmstb_dpfe_download_firmware(struct platform_device *pdev,
 			return 0;
 	}
 
-	ret = request_firmware(&fw, FIRMWARE_NAME, dev);
+	ret = firmware_request(&fw, FIRMWARE_NAME, dev);
 	/* request_firmware() prints its own error messages. */
 	if (ret)
 		return ret;

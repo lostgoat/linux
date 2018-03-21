@@ -1835,10 +1835,10 @@ gf100_gr_ctor_fw_legacy(struct gf100_gr *gr, const char *fwname,
 	nvkm_debug(subdev, "%s: falling back to legacy path\n", fwname);
 
 	snprintf(f, sizeof(f), "nouveau/nv%02x_%s", device->chipset, fwname);
-	ret = request_firmware(&fw, f, device->dev);
+	ret = firmware_request(&fw, f, device->dev);
 	if (ret) {
 		snprintf(f, sizeof(f), "nouveau/%s", fwname);
-		ret = request_firmware(&fw, f, device->dev);
+		ret = firmware_request(&fw, f, device->dev);
 		if (ret) {
 			nvkm_error(subdev, "failed to load %s\n", fwname);
 			return ret;
@@ -1847,7 +1847,7 @@ gf100_gr_ctor_fw_legacy(struct gf100_gr *gr, const char *fwname,
 
 	fuc->size = fw->size;
 	fuc->data = kmemdup(fw->data, fuc->size, GFP_KERNEL);
-	release_firmware(fw);
+	firmware_release(fw);
 	return (fuc->data != NULL) ? 0 : -ENOMEM;
 }
 

@@ -11754,7 +11754,7 @@ static int drx_ctrl_u_code(struct drx_demod_instance *demod,
 	if (!demod->firmware) {
 		const struct firmware *fw = NULL;
 
-		rc = request_firmware(&fw, mc_file, demod->i2c->dev.parent);
+		rc = firmware_request(&fw, mc_file, demod->i2c->dev.parent);
 		if (rc < 0) {
 			pr_err("Couldn't read firmware %s\n", mc_file);
 			return rc;
@@ -11897,7 +11897,7 @@ static int drx_ctrl_u_code(struct drx_demod_instance *demod,
 	return 0;
 
 release:
-	release_firmware(demod->firmware);
+	firmware_release(demod->firmware);
 	demod->firmware = NULL;
 
 	return rc;
@@ -12266,7 +12266,7 @@ static void drx39xxj_release(struct dvb_frontend *fe)
 	kfree(demod->my_ext_attr);
 	kfree(demod->my_common_attr);
 	kfree(demod->my_i2c_dev_addr);
-	release_firmware(demod->firmware);
+	firmware_release(demod->firmware);
 	kfree(demod);
 	kfree(state);
 }

@@ -1240,7 +1240,7 @@ static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
 	cmd_cnt = 0;
 	set_bit(FM_FW_DW_INPROGRESS, &fmdev->flag);
 
-	ret = request_firmware(&fw_entry, fw_name,
+	ret = firmware_request(&fw_entry, fw_name,
 				&fmdev->radio_dev->dev);
 	if (ret < 0) {
 		fmerr("Unable to read firmware(%s) content\n", fw_name);
@@ -1286,7 +1286,7 @@ static int fm_download_firmware(struct fmdev *fmdev, const u8 *fw_name)
 	}
 	fmdbg("Firmware commands(%d) loaded to chip\n", cmd_cnt);
 rel_fw:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	clear_bit(FM_FW_DW_INPROGRESS, &fmdev->flag);
 
 	return ret;

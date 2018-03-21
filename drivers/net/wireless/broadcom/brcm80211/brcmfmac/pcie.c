@@ -1477,7 +1477,7 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
 				  (void *)fw->data, fw->size);
 
 	resetintr = get_unaligned_le32(fw->data);
-	release_firmware(fw);
+	firmware_release(fw);
 
 	/* reset last 4 bytes of RAM address. to be used for shared
 	 * area. This identifies when FW is running

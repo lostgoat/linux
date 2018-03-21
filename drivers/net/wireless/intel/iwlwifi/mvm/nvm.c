@@ -415,7 +415,7 @@ int iwl_mvm_read_external_nvm(struct iwl_mvm *mvm)
 	 * get here after that we assume the NVM request can be satisfied
 	 * synchronously.
 	 */
-	ret = request_firmware(&fw_entry, mvm->nvm_file_name,
+	ret = firmware_request(&fw_entry, mvm->nvm_file_name,
 			       mvm->trans->dev);
 	if (ret) {
 		IWL_ERR(mvm, "ERROR: %s isn't available %d\n",
@@ -529,7 +529,7 @@ int iwl_mvm_read_external_nvm(struct iwl_mvm *mvm)
 		file_sec = (void *)(file_sec->data + section_size);
 	}
 out:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	return ret;
 }
 

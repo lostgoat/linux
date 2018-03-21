@@ -416,7 +416,7 @@ static int tda10045_fwupload(struct dvb_frontend* fe)
 	tda10045h_set_bandwidth(state, 8000000);
 
 	ret = tda1004x_do_upload(state, fw->data, fw->size, TDA10045H_FWPAGE, TDA10045H_CODE_IN);
-	release_firmware(fw);
+	firmware_release(fw);
 	if (ret)
 		return ret;
 	printk(KERN_INFO "tda1004x: firmware upload complete\n");
@@ -558,7 +558,7 @@ static int tda10046_fwupload(struct dvb_frontend* fe)
 	}
 	tda1004x_write_mask(state, TDA1004X_CONFC4, 8, 8); // going to boot from HOST
 	ret = tda1004x_do_upload(state, fw->data, fw->size, TDA10046H_CODE_CPT, TDA10046H_CODE_IN);
-	release_firmware(fw);
+	firmware_release(fw);
 	return tda1004x_check_upload_ok(state);
 }
 

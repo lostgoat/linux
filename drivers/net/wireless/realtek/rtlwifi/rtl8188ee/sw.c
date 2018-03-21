@@ -171,7 +171,7 @@ int rtl88e_init_sw_vars(struct ieee80211_hw *hw)
 	fw_name = "rtlwifi/rtl8188efw.bin";
 	rtlpriv->max_fw_size = 0x8000;
 	pr_info("Using firmware %s\n", fw_name);
-	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
+	err = firmware_request_nowait(THIS_MODULE, 1, fw_name,
 				      rtlpriv->io.dev, GFP_KERNEL, hw,
 				      rtl_fw_cb);
 	if (err) {

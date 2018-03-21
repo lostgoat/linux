@@ -1040,14 +1040,14 @@ static int r100_cp_init_microcode(struct radeon_device *rdev)
 		fw_name = FIRMWARE_R520;
 	}
 
-	err = request_firmware(&rdev->me_fw, fw_name, rdev->dev);
+	err = firmware_request(&rdev->me_fw, fw_name, rdev->dev);
 	if (err) {
 		pr_err("radeon_cp: Failed to load firmware \"%s\"\n", fw_name);
 	} else if (rdev->me_fw->size % 8) {
 		pr_err("radeon_cp: Bogus length %zu in firmware \"%s\"\n",
 		       rdev->me_fw->size, fw_name);
 		err = -EINVAL;
-		release_firmware(rdev->me_fw);
+		firmware_release(rdev->me_fw);
 		rdev->me_fw = NULL;
 	}
 	return err;

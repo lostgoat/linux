@@ -216,7 +216,7 @@ static int usb6fire_fw_ezusb_upload(
 	if (!rec)
 		return -ENOMEM;
 
-	ret = request_firmware(&fw, fwname, &device->dev);
+	ret = firmware_request(&fw, fwname, &device->dev);
 	if (ret < 0) {
 		kfree(rec);
 		dev_err(&intf->dev,
@@ -226,7 +226,7 @@ static int usb6fire_fw_ezusb_upload(
 	ret = usb6fire_fw_ihex_init(fw, rec);
 	if (ret < 0) {
 		kfree(rec);
-		release_firmware(fw);
+		firmware_release(fw);
 		dev_err(&intf->dev,
 			"error validating ezusb firmware %s.\n", fwname);
 		return ret;
@@ -236,7 +236,7 @@ static int usb6fire_fw_ezusb_upload(
 	ret = usb6fire_fw_ezusb_write(device, 0xa0, 0xe600, &data, 1);
 	if (ret < 0) {
 		kfree(rec);
-		release_firmware(fw);
+		firmware_release(fw);
 		dev_err(&intf->dev,
 			"unable to upload ezusb firmware %s: begin message.\n",
 			fwname);
@@ -248,7 +248,7 @@ static int usb6fire_fw_ezusb_upload(
 				rec->data, rec->len);
 		if (ret < 0) {
 			kfree(rec);
-			release_firmware(fw);
+			firmware_release(fw);
 			dev_err(&intf->dev,
 				"unable to upload ezusb firmware %s: data urb.\n",
 				fwname);
@@ -256,7 +256,7 @@ static int usb6fire_fw_ezusb_upload(
 		}
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 	kfree(rec);
 	if (postdata) { /* write data after firmware has been uploaded */
 		ret = usb6fire_fw_ezusb_write(device, 0xa0, postaddr,
@@ -294,7 +294,7 @@ static int usb6fire_fw_fpga_upload(
 	if (!buffer)
 		return -ENOMEM;
 
-	ret = request_firmware(&fw, fwname, &device->dev);
+	ret = firmware_request(&fw, fwname, &device->dev);
 	if (ret < 0) {
 		dev_err(&intf->dev, "unable to get fpga firmware %s.\n",
 				fwname);
@@ -308,7 +308,7 @@ static int usb6fire_fw_fpga_upload(
 	ret = usb6fire_fw_ezusb_write(device, 8, 0, NULL, 0);
 	if (ret < 0) {
 		kfree(buffer);
-		release_firmware(fw);
+		firmware_release(fw);
 		dev_err(&intf->dev,
 			"unable to upload fpga firmware: begin urb.\n");
 		return ret;
@@ -320,14 +320,14 @@ static int usb6fire_fw_fpga_upload(
 
 		ret = usb6fire_fw_fpga_write(device, buffer, i);
 		if (ret < 0) {
-			release_firmware(fw);
+			firmware_release(fw);
 			kfree(buffer);
 			dev_err(&intf->dev,
 				"unable to upload fpga firmware: fw urb.\n");
 			return ret;
 		}
 	}
-	release_firmware(fw);
+	firmware_release(fw);
 	kfree(buffer);
 
 	ret = usb6fire_fw_ezusb_write(device, 9, 0, NULL, 0);

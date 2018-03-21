@@ -196,7 +196,7 @@ static int bxt_load_base_firmware(struct sst_dsp *ctx)
 	int ret, i;
 
 	if (ctx->fw == NULL) {
-		ret = request_firmware(&ctx->fw, ctx->fw_name, ctx->dev);
+		ret = firmware_request(&ctx->fw, ctx->fw_name, ctx->dev);
 		if (ret < 0) {
 			dev_err(ctx->dev, "Request firmware failed %d\n", ret);
 			return ret;
@@ -255,7 +255,7 @@ static int bxt_load_base_firmware(struct sst_dsp *ctx)
 	return ret;
 
 sst_load_base_firmware_failed:
-	release_firmware(ctx->fw);
+	firmware_release(ctx->fw);
 	ctx->fw = NULL;
 	return ret;
 }
@@ -631,7 +631,7 @@ void bxt_sst_dsp_cleanup(struct device *dev, struct skl_sst *ctx)
 
 	skl_release_library(ctx->lib_info, ctx->lib_count);
 	if (ctx->dsp->fw)
-		release_firmware(ctx->dsp->fw);
+		firmware_release(ctx->dsp->fw);
 	skl_freeup_uuid_list(ctx);
 	skl_ipc_free(&ctx->ipc);
 	ctx->dsp->ops->free(ctx->dsp);

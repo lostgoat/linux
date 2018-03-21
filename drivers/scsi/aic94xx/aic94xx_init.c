@@ -380,7 +380,7 @@ static ssize_t asd_store_update_bios(struct device *dev,
 		err = FLASH_IN_PROGRESS;
 		goto out1;
 	}
-	err = request_firmware(&asd_ha->bios_image,
+	err = firmware_request(&asd_ha->bios_image,
 				   filename_ptr,
 				   &asd_ha->pcidev->dev);
 	if (err) {
@@ -441,7 +441,7 @@ static ssize_t asd_store_update_bios(struct device *dev,
 	}
 
 out2:
-	release_firmware(asd_ha->bios_image);
+	firmware_release(asd_ha->bios_image);
 out1:
 	kfree(cmd_ptr);
 out:

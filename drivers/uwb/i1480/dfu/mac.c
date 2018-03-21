@@ -329,7 +329,7 @@ int __mac_fw_upload(struct i1480 *i1480, const char *fw_name,
 	const struct firmware *fw;
 	struct fw_hdr *fw_hdrs;
 
-	result = request_firmware(&fw, fw_name, i1480->dev);
+	result = firmware_request(&fw, fw_name, i1480->dev);
 	if (result < 0)	/* Up to caller to complain on -ENOENT */
 		goto out;
 	result = fw_hdrs_load(i1480, &fw_hdrs, fw->data, fw->size);
@@ -351,7 +351,7 @@ out_hdrs_release:
 			"power cycle device\n", fw_tag, fw_name, result);
 	fw_hdrs_free(fw_hdrs);
 out_release:
-	release_firmware(fw);
+	firmware_release(fw);
 out:
 	return result;
 }

@@ -259,7 +259,7 @@ static int sd_init(struct gspca_dev *gspca_dev)
 
 	kfree(firmware_buf);
 exit:
-	release_firmware(fw);
+	firmware_release(fw);
 	return ret;
 }
 

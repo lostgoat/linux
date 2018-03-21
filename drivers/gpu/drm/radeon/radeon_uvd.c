@@ -138,7 +138,7 @@ int radeon_uvd_init(struct radeon_device *rdev)
 	rdev->uvd.max_handles = RADEON_DEFAULT_UVD_HANDLES;
 	if (fw_name) {
 		/* Let's try to load the newer firmware first */
-		r = request_firmware(&rdev->uvd_fw, fw_name, rdev->dev);
+		r = firmware_request(&rdev->uvd_fw, fw_name, rdev->dev);
 		if (r) {
 			dev_err(rdev->dev, "radeon_uvd: Can't load firmware \"%s\"\n",
 				fw_name);
@@ -173,7 +173,7 @@ int radeon_uvd_init(struct radeon_device *rdev)
 	 * firmware now.
 	 */
 	if (!fw_name || r) {
-		r = request_firmware(&rdev->uvd_fw, legacy_fw_name, rdev->dev);
+		r = firmware_request(&rdev->uvd_fw, legacy_fw_name, rdev->dev);
 		if (r) {
 			dev_err(rdev->dev, "radeon_uvd: Can't load firmware \"%s\"\n",
 				legacy_fw_name);
@@ -243,7 +243,7 @@ void radeon_uvd_fini(struct radeon_device *rdev)
 
 	radeon_ring_fini(rdev, &rdev->ring[R600_RING_TYPE_UVD_INDEX]);
 
-	release_firmware(rdev->uvd_fw);
+	firmware_release(rdev->uvd_fw);
 }
 
 int radeon_uvd_suspend(struct radeon_device *rdev)

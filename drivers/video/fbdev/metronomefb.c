@@ -678,7 +678,7 @@ static int metronomefb_probe(struct platform_device *dev)
 	/* load the waveform in. assume mode 3, temp 31 for now
 		a) request the waveform file from userspace
 		b) process waveform and decode into metromem */
-	retval = request_firmware(&fw_entry, "metronome.wbf", &dev->dev);
+	retval = firmware_request(&fw_entry, "metronome.wbf", &dev->dev);
 	if (retval < 0) {
 		dev_err(&dev->dev, "Failed to get waveform\n");
 		goto err_csum_table;
@@ -686,7 +686,7 @@ static int metronomefb_probe(struct platform_device *dev)
 
 	retval = load_waveform((u8 *) fw_entry->data, fw_entry->size, 3, 31,
 				par);
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 	if (retval < 0) {
 		dev_err(&dev->dev, "Failed processing waveform\n");
 		goto err_csum_table;

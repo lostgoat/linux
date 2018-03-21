@@ -169,7 +169,7 @@ EXPORT_SYMBOL_GPL(apply_msr_data);
 int load_msr_list(struct i2c_client *client, char *name,
 		const struct firmware **fw)
 {
-	int ret = request_firmware(fw, name, &client->dev);
+	int ret = firmware_request(fw, name, &client->dev);
 	if (ret) {
 		dev_err(&client->dev,
 			"Error %d while requesting firmware %s\n",
@@ -185,7 +185,7 @@ EXPORT_SYMBOL_GPL(load_msr_list);
 
 void release_msr_list(struct i2c_client *client, const struct firmware *fw)
 {
-	release_firmware(fw);
+	firmware_release(fw);
 }
 EXPORT_SYMBOL_GPL(release_msr_list);
 

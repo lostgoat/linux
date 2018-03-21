@@ -904,7 +904,7 @@ static int cdn_dp_request_firmware(struct cdn_dp_device *dp)
 	mutex_unlock(&dp->lock);
 
 	while (time_before(jiffies, timeout)) {
-		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
+		ret = firmware_request(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
 		if (ret == -ENOENT) {
 			msleep(sleep);
 			sleep *= 2;
@@ -1115,7 +1115,7 @@ static void cdn_dp_unbind(struct device *dev, struct device *master, void *data)
 
 	pm_runtime_disable(dev);
 	if (dp->fw_loaded)
-		release_firmware(dp->fw);
+		firmware_release(dp->fw);
 	kfree(dp->edid);
 	dp->edid = NULL;
 }

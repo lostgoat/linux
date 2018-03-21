@@ -13523,7 +13523,7 @@ static int bnx2x_init_firmware(struct bnx2x *bp)
 	}
 	BNX2X_DEV_INFO("Loading %s\n", fw_file_name);
 
-	rc = request_firmware(&bp->firmware, fw_file_name, &bp->pdev->dev);
+	rc = firmware_request(&bp->firmware, fw_file_name, &bp->pdev->dev);
 	if (rc) {
 		BNX2X_ERR("Can't load firmware file %s\n",
 			  fw_file_name);
@@ -13579,7 +13579,7 @@ init_offsets_alloc_err:
 init_ops_alloc_err:
 	kfree(bp->init_data);
 request_firmware_exit:
-	release_firmware(bp->firmware);
+	firmware_release(bp->firmware);
 	bp->firmware = NULL;
 
 	return rc;
@@ -13590,7 +13590,7 @@ static void bnx2x_release_firmware(struct bnx2x *bp)
 	kfree(bp->init_ops_offsets);
 	kfree(bp->init_ops);
 	kfree(bp->init_data);
-	release_firmware(bp->firmware);
+	firmware_release(bp->firmware);
 	bp->firmware = NULL;
 }
 

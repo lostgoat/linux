@@ -355,8 +355,8 @@ static void brcms_release_fw(struct brcms_info *wl)
 {
 	int i;
 	for (i = 0; i < MAX_FW_IMAGES; i++) {
-		release_firmware(wl->fw.fw_bin[i]);
-		release_firmware(wl->fw.fw_hdr[i]);
+		firmware_release(wl->fw.fw_bin[i]);
+		firmware_release(wl->fw.fw_hdr[i]);
 	}
 }
 
@@ -377,7 +377,7 @@ static int brcms_request_fw(struct brcms_info *wl, struct bcma_device *pdev)
 			break;
 		sprintf(fw_name, "%s-%d.fw", brcms_firmwares[i],
 			UCODE_LOADER_API_VER);
-		status = request_firmware(&wl->fw.fw_bin[i], fw_name, device);
+		status = firmware_request(&wl->fw.fw_bin[i], fw_name, device);
 		if (status) {
 			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
 				  KBUILD_MODNAME, fw_name);
@@ -385,7 +385,7 @@ static int brcms_request_fw(struct brcms_info *wl, struct bcma_device *pdev)
 		}
 		sprintf(fw_name, "%s_hdr-%d.fw", brcms_firmwares[i],
 			UCODE_LOADER_API_VER);
-		status = request_firmware(&wl->fw.fw_hdr[i], fw_name, device);
+		status = firmware_request(&wl->fw.fw_hdr[i], fw_name, device);
 		if (status) {
 			wiphy_err(wl->wiphy, "%s: fail to load firmware %s\n",
 				  KBUILD_MODNAME, fw_name);

@@ -457,12 +457,12 @@ static int si2168_init(struct dvb_frontend *fe)
 		goto err;
 
 	/* request the firmware, this will block and timeout */
-	ret = request_firmware(&fw, dev->firmware_name, &client->dev);
+	ret = firmware_request(&fw, dev->firmware_name, &client->dev);
 	if (ret) {
 		/* fallback mechanism to handle old name for Si2168 B40 fw */
 		if (dev->chip_id == SI2168_CHIP_ID_B40) {
 			dev->firmware_name = SI2168_B40_FIRMWARE_FALLBACK;
-			ret = request_firmware(&fw, dev->firmware_name,
+			ret = firmware_request(&fw, dev->firmware_name,
 					       &client->dev);
 		}
 
@@ -517,7 +517,7 @@ static int si2168_init(struct dvb_frontend *fe)
 		goto err_release_firmware;
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	memcpy(cmd.args, "\x01\x01", 2);
 	cmd.wlen = 2;
@@ -567,7 +567,7 @@ warm:
 
 	return 0;
 err_release_firmware:
-	release_firmware(fw);
+	firmware_release(fw);
 err:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

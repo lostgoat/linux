@@ -973,7 +973,7 @@ static void skl_remove(struct pci_dev *pci)
 	struct hdac_ext_bus *ebus = pci_get_drvdata(pci);
 	struct skl *skl = ebus_to_skl(ebus);
 
-	release_firmware(skl->tplg);
+	firmware_release(skl->tplg);
 
 	pm_runtime_get_noresume(&pci->dev);
 

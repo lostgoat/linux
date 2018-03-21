@@ -4429,9 +4429,9 @@ static int wm8994_codec_remove(struct snd_soc_codec *codec)
 			free_irq(wm8994->micdet_irq, wm8994);
 		break;
 	}
-	release_firmware(wm8994->mbc);
-	release_firmware(wm8994->mbc_vss);
-	release_firmware(wm8994->enh_eq);
+	firmware_release(wm8994->mbc);
+	firmware_release(wm8994->mbc_vss);
+	firmware_release(wm8994->enh_eq);
 	kfree(wm8994->retune_mobile_texts);
 	return 0;
 }

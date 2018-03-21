@@ -64,21 +64,21 @@ int venus_boot(struct device *dev, const char *fwname)
 		return -ENOMEM;
 	}
 
-	ret = request_firmware(&mdt, fwname, dev);
+	ret = firmware_request(&mdt, fwname, dev);
 	if (ret < 0)
 		goto err_unmap;
 
 	fw_size = qcom_mdt_get_size(mdt);
 	if (fw_size < 0) {
 		ret = fw_size;
-		release_firmware(mdt);
+		firmware_release(mdt);
 		goto err_unmap;
 	}
 
 	ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
 			    mem_size);
 
-	release_firmware(mdt);
+	firmware_release(mdt);
 
 	if (ret)
 		goto err_unmap;

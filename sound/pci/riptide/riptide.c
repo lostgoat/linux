@@ -1229,7 +1229,7 @@ static int try_to_load_firmware(struct cmdif *cif, struct snd_riptide *chip)
 
 	snd_printdd("Writing Firmware\n");
 	if (!chip->fw_entry) {
-		err = request_firmware(&chip->fw_entry, "riptide.hex",
+		err = firmware_request(&chip->fw_entry, "riptide.hex",
 				       &chip->pci->dev);
 		if (err) {
 			snd_printk(KERN_ERR
@@ -1825,7 +1825,7 @@ static int snd_riptide_free(struct snd_riptide *chip)
 	}
 	if (chip->irq >= 0)
 		free_irq(chip->irq, chip);
-	release_firmware(chip->fw_entry);
+	firmware_release(chip->fw_entry);
 	release_and_free_resource(chip->res_port);
 	kfree(chip);
 	return 0;

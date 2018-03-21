@@ -72,7 +72,7 @@ static void cik_sdma_free_microcode(struct amdgpu_device *adev)
 {
 	int i;
 	for (i = 0; i < adev->sdma.num_instances; i++) {
-			release_firmware(adev->sdma.instance[i].fw);
+			firmware_release(adev->sdma.instance[i].fw);
 			adev->sdma.instance[i].fw = NULL;
 	}
 }
@@ -135,7 +135,7 @@ static int cik_sdma_init_microcode(struct amdgpu_device *adev)
 			snprintf(fw_name, sizeof(fw_name), "radeon/%s_sdma.bin", chip_name);
 		else
 			snprintf(fw_name, sizeof(fw_name), "radeon/%s_sdma1.bin", chip_name);
-		err = request_firmware(&adev->sdma.instance[i].fw, fw_name, adev->dev);
+		err = firmware_request(&adev->sdma.instance[i].fw, fw_name, adev->dev);
 		if (err)
 			goto out;
 		err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
@@ -144,7 +144,7 @@ out:
 	if (err) {
 		pr_err("cik_sdma: Failed to load firmware \"%s\"\n", fw_name);
 		for (i = 0; i < adev->sdma.num_instances; i++) {
-			release_firmware(adev->sdma.instance[i].fw);
+			firmware_release(adev->sdma.instance[i].fw);
 			adev->sdma.instance[i].fw = NULL;
 		}
 	}

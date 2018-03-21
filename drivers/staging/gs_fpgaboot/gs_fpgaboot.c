@@ -198,7 +198,7 @@ static int gs_load_image(struct fpgaimage *fimage, char *fw_file)
 
 	pr_info("load fpgaimage %s\n", fw_file);
 
-	err = request_firmware(&fimage->fw_entry, fw_file, &firmware_pdev->dev);
+	err = firmware_request(&fimage->fw_entry, fw_file, &firmware_pdev->dev);
 	if (err != 0) {
 		pr_err("firmware %s is missing, cannot continue.\n", fw_file);
 		return err;
@@ -275,7 +275,7 @@ static int gs_download_image(struct fpgaimage *fimage, enum wbus bus_bytes)
 
 static int gs_release_image(struct fpgaimage *fimage)
 {
-	release_firmware(fimage->fw_entry);
+	firmware_release(fimage->fw_entry);
 	pr_info("release fpgaimage\n");
 
 	return 0;

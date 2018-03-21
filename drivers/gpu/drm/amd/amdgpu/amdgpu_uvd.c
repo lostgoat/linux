@@ -171,7 +171,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
 		return -EINVAL;
 	}
 
-	r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
+	r = firmware_request(&adev->uvd.fw, fw_name, adev->dev);
 	if (r) {
 		dev_err(adev->dev, "amdgpu_uvd: Can't load firmware \"%s\"\n",
 			fw_name);
@@ -182,7 +182,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
 	if (r) {
 		dev_err(adev->dev, "amdgpu_uvd: Can't validate firmware \"%s\"\n",
 			fw_name);
-		release_firmware(adev->uvd.fw);
+		firmware_release(adev->uvd.fw);
 		adev->uvd.fw = NULL;
 		return r;
 	}
@@ -283,7 +283,7 @@ int amdgpu_uvd_sw_fini(struct amdgpu_device *adev)
 	for (i = 0; i < AMDGPU_MAX_UVD_ENC_RINGS; ++i)
 		amdgpu_ring_fini(&adev->uvd.ring_enc[i]);
 
-	release_firmware(adev->uvd.fw);
+	firmware_release(adev->uvd.fw);
 
 	return 0;
 }

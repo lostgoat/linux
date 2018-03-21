@@ -686,7 +686,7 @@ static int flash_upgrade(struct solos_card *card, int chip)
 		return -ENODEV;
 	}
 
-	if (request_firmware(&fw, fw_name, &card->dev->dev))
+	if (firmware_request(&fw, fw_name, &card->dev->dev))
 		return -ENOENT;
 
 	dev_info(&card->dev->dev, "Flash upgrade starting\n");
@@ -742,7 +742,7 @@ static int flash_upgrade(struct solos_card *card, int chip)
 		wait_event(card->fw_wq, !ioread32(card->config_regs + FLASH_BUSY));
 	}
 
-	release_firmware(fw);
+	firmware_release(fw);
 	iowrite32(0, card->config_regs + WRITE_FLASH);
 	iowrite32(0, card->config_regs + FPGA_MODE);
 	iowrite32(0, card->config_regs + FLASH_MODE);

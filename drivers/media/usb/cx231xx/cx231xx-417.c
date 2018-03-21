@@ -991,7 +991,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
 		return retval;
 	}
 
-	retval = request_firmware(&firmware, CX231xx_FIRM_IMAGE_NAME,
+	retval = firmware_request(&firmware, CX231xx_FIRM_IMAGE_NAME,
 				  dev->dev);
 
 	if (retval != 0) {
@@ -1009,7 +1009,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
 		dev_err(dev->dev,
 			"ERROR: Firmware size mismatch (have %zd, expected %d)\n",
 			firmware->size, CX231xx_FIRM_IMAGE_SIZE);
-		release_firmware(firmware);
+		firmware_release(firmware);
 		vfree(p_current_fw);
 		vfree(p_buffer);
 		return -EINVAL;
@@ -1018,7 +1018,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
 	if (0 != memcmp(firmware->data, magic, 8)) {
 		dev_err(dev->dev,
 			"ERROR: Firmware magic mismatch, wrong file?\n");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		vfree(p_current_fw);
 		vfree(p_buffer);
 		return -EINVAL;
@@ -1060,7 +1060,7 @@ static int cx231xx_load_firmware(struct cx231xx *dev)
 	vfree(p_current_fw);
 	p_current_fw = NULL;
 	uninitGPIO(dev);
-	release_firmware(firmware);
+	firmware_release(firmware);
 	dprintk(1, "Firmware upload successful.\n");
 
 	retval |= mc417_register_write(dev, IVTV_REG_HW_BLOCKS,

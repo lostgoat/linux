@@ -260,7 +260,7 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
 	struct microcode *mcode;
 	int j, ret = 0;
 
-	ret = request_firmware(&fw_entry, fw, dev);
+	ret = firmware_request(&fw_entry, fw, dev);
 	if (ret)
 		return ret;
 
@@ -313,7 +313,7 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
 	cpt->next_mc_idx++;
 
 fw_release:
-	release_firmware(fw_entry);
+	firmware_release(fw_entry);
 
 	return ret;
 }

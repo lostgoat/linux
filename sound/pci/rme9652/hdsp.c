@@ -5132,7 +5132,7 @@ static int hdsp_request_fw_loader(struct hdsp *hdsp)
 		return -EINVAL;
 	}
 
-	if (request_firmware(&fw, fwfile, &hdsp->pci->dev)) {
+	if (firmware_request(&fw, fwfile, &hdsp->pci->dev)) {
 		dev_err(hdsp->card->dev,
 			"cannot load firmware %s\n", fwfile);
 		return -ENOENT;
@@ -5141,7 +5141,7 @@ static int hdsp_request_fw_loader(struct hdsp *hdsp)
 		dev_err(hdsp->card->dev,
 			"too short firmware size %d (expected %d)\n",
 			   (int)fw->size, HDSP_FIRMWARE_SIZE);
-		release_firmware(fw);
+		firmware_release(fw);
 		return -EINVAL;
 	}
 
@@ -5334,7 +5334,7 @@ static int snd_hdsp_free(struct hdsp *hdsp)
 
 	snd_hdsp_free_buffers(hdsp);
 
-	release_firmware(hdsp->firmware);
+	firmware_release(hdsp->firmware);
 	vfree(hdsp->fw_uploaded);
 	iounmap(hdsp->iobase);
 

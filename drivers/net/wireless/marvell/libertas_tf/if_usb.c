@@ -816,7 +816,7 @@ static int if_usb_prog_firmware(struct if_usb_card *cardp)
 	lbtf_deb_enter(LBTF_DEB_USB);
 
 	kernel_param_lock(THIS_MODULE);
-	ret = request_firmware(&cardp->fw, lbtf_fw_name, &cardp->udev->dev);
+	ret = firmware_request(&cardp->fw, lbtf_fw_name, &cardp->udev->dev);
 	if (ret < 0) {
 		pr_err("request_firmware() failed with %#x\n", ret);
 		pr_err("firmware %s not found\n", lbtf_fw_name);
@@ -891,7 +891,7 @@ restart:
 	cardp->priv->fw_ready = 1;
 
  release_fw:
-	release_firmware(cardp->fw);
+	firmware_release(cardp->fw);
 	cardp->fw = NULL;
 
 	if_usb_setup_firmware(cardp->priv);

@@ -33,7 +33,7 @@ static void do_load_firmware(struct lbs_private *priv, const char *name,
 	int ret;
 
 	lbs_deb_fw("Requesting %s\n", name);
-	ret = request_firmware_nowait(THIS_MODULE, true, name,
+	ret = firmware_request_nowait(THIS_MODULE, true, name,
 			priv->fw_device, GFP_KERNEL, priv, cb);
 	if (ret) {
 		lbs_deb_fw("request_firmware_nowait error %d\n", ret);
@@ -54,10 +54,10 @@ static void main_firmware_cb(const struct firmware *firmware, void *context)
 	/* Firmware found! */
 	lbs_fw_loaded(priv, 0, priv->helper_fw, firmware);
 	if (priv->helper_fw) {
-		release_firmware (priv->helper_fw);
+		firmware_release(priv->helper_fw);
 		priv->helper_fw = NULL;
 	}
-	release_firmware (firmware);
+	firmware_release(firmware);
 }
 
 static void helper_firmware_cb(const struct firmware *firmware, void *context)
@@ -90,7 +90,7 @@ static void load_next_firmware_from_table(struct lbs_private *priv)
 		iter = ++priv->fw_iter;
 
 	if (priv->helper_fw) {
-		release_firmware(priv->helper_fw);
+		firmware_release(priv->helper_fw);
 		priv->helper_fw = NULL;
 	}
 
@@ -186,7 +186,7 @@ int lbs_get_firmware(struct device *dev, u32 card_model,
 			goto next;
 
 		if (*helper == NULL) {
-			ret = request_firmware(helper, iter->helper, dev);
+			ret = firmware_request(helper, iter->helper, dev);
 			if (ret)
 				goto next;
 
@@ -199,12 +199,12 @@ int lbs_get_firmware(struct device *dev, u32 card_model,
 		}
 
 		if (*mainfw == NULL) {
-			ret = request_firmware(mainfw, iter->fwname, dev);
+			ret = firmware_request(mainfw, iter->fwname, dev);
 			if (ret) {
 				/* Clear the helper to ensure we don't have
 				 * mismatched firmware pairs.
 				 */
-				release_firmware(*helper);
+				firmware_release(*helper);
 				*helper = NULL;
 			}
 		}
@@ -217,9 +217,9 @@ int lbs_get_firmware(struct device *dev, u32 card_model,
 	}
 
 	/* Failed */
-	release_firmware(*helper);
+	firmware_release(*helper);
 	*helper = NULL;
-	release_firmware(*mainfw);
+	firmware_release(*mainfw);
 	*mainfw = NULL;
 
 	return -ENOENT;

@@ -133,14 +133,14 @@ static int fwe_probe(struct fmc_device *fmc)
 		       KBUILD_MODNAME, dev_name(dev));
 		return -ENOENT;
 	}
-	err = request_firmware(&fw, s, dev);
+	err = firmware_request(&fw, s, dev);
 	if (err < 0) {
 		dev_err(&fmc->dev, "request firmware \"%s\": error %i\n",
 			s, err);
 		return err;
 	}
 	fwe_run(fmc, fw, s);
-	release_firmware(fw);
+	firmware_release(fw);
 	return 0;
 }
 

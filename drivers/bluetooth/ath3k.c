@@ -424,7 +424,7 @@ static int ath3k_load_patch(struct usb_device *udev)
 	snprintf(filename, ATH3K_NAME_LEN, "ar3k/AthrBT_0x%08x.dfu",
 		 le32_to_cpu(fw_version.rom_version));
 
-	ret = request_firmware(&firmware, filename, &udev->dev);
+	ret = firmware_request(&firmware, filename, &udev->dev);
 	if (ret < 0) {
 		BT_ERR("Patch file not found %s", filename);
 		return ret;
@@ -438,12 +438,12 @@ static int ath3k_load_patch(struct usb_device *udev)
 	if (pt_rom_version != le32_to_cpu(fw_version.rom_version) ||
 	    pt_build_version <= le32_to_cpu(fw_version.build_version)) {
 		BT_ERR("Patch file version did not match with firmware");
-		release_firmware(firmware);
+		firmware_release(firmware);
 		return -EINVAL;
 	}
 
 	ret = ath3k_load_fwfile(udev, firmware);
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	return ret;
 }
@@ -487,14 +487,14 @@ static int ath3k_load_syscfg(struct usb_device *udev)
 	snprintf(filename, ATH3K_NAME_LEN, "ar3k/ramps_0x%08x_%d%s",
 		le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
 
-	ret = request_firmware(&firmware, filename, &udev->dev);
+	ret = firmware_request(&firmware, filename, &udev->dev);
 	if (ret < 0) {
 		BT_ERR("Configuration file not found %s", filename);
 		return ret;
 	}
 
 	ret = ath3k_load_fwfile(udev, firmware);
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	return ret;
 }
@@ -546,7 +546,7 @@ static int ath3k_probe(struct usb_interface *intf,
 		return 0;
 	}
 
-	ret = request_firmware(&firmware, ATH3K_FIRMWARE, &udev->dev);
+	ret = firmware_request(&firmware, ATH3K_FIRMWARE, &udev->dev);
 	if (ret < 0) {
 		if (ret == -ENOENT)
 			BT_ERR("Firmware file \"%s\" not found",
@@ -558,7 +558,7 @@ static int ath3k_probe(struct usb_interface *intf,
 	}
 
 	ret = ath3k_load_firmware(udev, firmware);
-	release_firmware(firmware);
+	firmware_release(firmware);
 
 	return ret;
 }

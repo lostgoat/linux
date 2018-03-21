@@ -129,7 +129,7 @@ orinoco_dl_firmware(struct orinoco_private *priv,
 		goto free;
 
 	if (!orinoco_cached_fw_get(priv, false)) {
-		err = request_firmware(&fw_entry, firmware, priv->dev);
+		err = firmware_request(&fw_entry, firmware, priv->dev);
 
 		if (err) {
 			dev_err(dev, "Cannot find firmware %s\n", firmware);
@@ -189,7 +189,7 @@ orinoco_dl_firmware(struct orinoco_private *priv,
 abort:
 	/* If we requested the firmware, release it. */
 	if (!orinoco_cached_fw_get(priv, false))
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 
 free:
 	kfree(pda);
@@ -292,7 +292,7 @@ symbol_dl_firmware(struct orinoco_private *priv,
 	const struct firmware *fw_entry;
 
 	if (!orinoco_cached_fw_get(priv, true)) {
-		if (request_firmware(&fw_entry, fw->pri_fw, priv->dev) != 0) {
+		if (firmware_request(&fw_entry, fw->pri_fw, priv->dev) != 0) {
 			dev_err(dev, "Cannot find firmware: %s\n", fw->pri_fw);
 			return -ENOENT;
 		}
@@ -304,14 +304,14 @@ symbol_dl_firmware(struct orinoco_private *priv,
 			      fw_entry->data + fw_entry->size, 0);
 
 	if (!orinoco_cached_fw_get(priv, true))
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 	if (ret) {
 		dev_err(dev, "Primary firmware download failed\n");
 		return ret;
 	}
 
 	if (!orinoco_cached_fw_get(priv, false)) {
-		if (request_firmware(&fw_entry, fw->sta_fw, priv->dev) != 0) {
+		if (firmware_request(&fw_entry, fw->sta_fw, priv->dev) != 0) {
 			dev_err(dev, "Cannot find firmware: %s\n", fw->sta_fw);
 			return -ENOENT;
 		}
@@ -322,7 +322,7 @@ symbol_dl_firmware(struct orinoco_private *priv,
 	ret = symbol_dl_image(priv, fw, fw_entry->data,
 			      fw_entry->data + fw_entry->size, 1);
 	if (!orinoco_cached_fw_get(priv, false))
-		release_firmware(fw_entry);
+		firmware_release(fw_entry);
 	if (ret)
 		dev_err(dev, "Secondary firmware download failed\n");
 
@@ -367,20 +367,20 @@ void orinoco_cache_fw(struct orinoco_private *priv, int ap)
 		fw = orinoco_fw[priv->firmware_type].sta_fw;
 
 	if (pri_fw) {
-		if (request_firmware(&fw_entry, pri_fw, priv->dev) == 0)
+		if (firmware_request(&fw_entry, pri_fw, priv->dev) == 0)
 			priv->cached_pri_fw = fw_entry;
 	}
 
 	if (fw) {
-		if (request_firmware(&fw_entry, fw, priv->dev) == 0)
+		if (firmware_request(&fw_entry, fw, priv->dev) == 0)
 			priv->cached_fw = fw_entry;
 	}
 }
 
 void orinoco_uncache_fw(struct orinoco_private *priv)
 {
-	release_firmware(priv->cached_pri_fw);
-	release_firmware(priv->cached_fw);
+	firmware_release(priv->cached_pri_fw);
+	firmware_release(priv->cached_fw);
 	priv->cached_pri_fw = NULL;
 	priv->cached_fw = NULL;
 }

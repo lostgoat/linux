@@ -110,7 +110,7 @@ out:
 	if (mem_region)
 		memunmap(mem_region);
 
-	release_firmware(fw);
+	firmware_release(fw);
 
 	return ret;
 }

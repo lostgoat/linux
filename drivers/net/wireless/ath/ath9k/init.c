@@ -544,7 +544,7 @@ static int ath9k_eeprom_request(struct ath_softc *sc, const char *name)
 	init_completion(&ec.complete);
 	ec.ah = sc->sc_ah;
 
-	err = request_firmware_nowait(THIS_MODULE, 1, name, sc->dev, GFP_KERNEL,
+	err = firmware_request_nowait(THIS_MODULE, 1, name, sc->dev, GFP_KERNEL,
 				      &ec, ath9k_eeprom_request_cb);
 	if (err < 0) {
 		ath_err(ath9k_hw_common(ah),
@@ -565,7 +565,7 @@ static int ath9k_eeprom_request(struct ath_softc *sc, const char *name)
 
 static void ath9k_eeprom_release(struct ath_softc *sc)
 {
-	release_firmware(sc->sc_ah->eeprom_blob);
+	firmware_release(sc->sc_ah->eeprom_blob);
 }
 
 static int ath9k_init_platform(struct ath_softc *sc)

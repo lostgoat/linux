@@ -207,9 +207,9 @@ wraperr:
 		dev_err(&dev->dev,"%s - error loading firmware: error = %d\n",
 			__func__, err);
 
-	release_firmware(loader_fw);
-	release_firmware(bitstream_fw);
-	release_firmware(firmware_fw);
+	firmware_release(loader_fw);
+	firmware_release(bitstream_fw);
+	firmware_release(firmware_fw);
 
 	kfree(buf);
 	return err;

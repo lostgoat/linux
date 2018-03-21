@@ -1621,7 +1621,7 @@ static struct fwentry *at76_load_firmware(struct usb_device *udev,
 	}
 
 	at76_dbg(DBG_FW, "downloading firmware %s", fwe->fwname);
-	ret = request_firmware(&fwe->fw, fwe->fwname, &udev->dev);
+	ret = firmware_request(&fwe->fw, fwe->fwname, &udev->dev);
 	if (ret < 0) {
 		dev_err(&udev->dev, "firmware %s not found!\n",
 			fwe->fwname);
@@ -2597,7 +2597,7 @@ static void __exit at76_mod_exit(void)
 	printk(KERN_INFO DRIVER_DESC " " DRIVER_VERSION " unloading\n");
 	usb_deregister(&at76_driver);
 	for (i = 0; i < ARRAY_SIZE(firmwares); i++)
-		release_firmware(firmwares[i].fw);
+		firmware_release(firmwares[i].fw);
 	led_trigger_unregister_simple(ledtrig_tx);
 }
 

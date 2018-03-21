@@ -1282,7 +1282,7 @@ next:
 	if (adapter->ahw->fw_type == QLCNIC_FLASH_ROMIMAGE) {
 		adapter->fw = NULL;
 	} else {
-		rc = request_firmware(&adapter->fw,
+		rc = firmware_request(&adapter->fw,
 				      fw_name[adapter->ahw->fw_type],
 				      &pdev->dev);
 		if (rc != 0)
@@ -1290,7 +1290,7 @@ next:
 
 		rc = qlcnic_validate_firmware(adapter);
 		if (rc != 0) {
-			release_firmware(adapter->fw);
+			firmware_release(adapter->fw);
 			usleep_range(1000, 1500);
 			goto next;
 		}
@@ -1301,6 +1301,6 @@ next:
 void
 qlcnic_release_firmware(struct qlcnic_adapter *adapter)
 {
-	release_firmware(adapter->fw);
+	firmware_release(adapter->fw);
 	adapter->fw = NULL;
 }

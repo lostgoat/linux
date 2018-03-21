@@ -213,7 +213,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
 	rtlpriv->max_fw_size = 0x8000;
 	/*load normal firmware*/
 	pr_info("Using firmware %s\n", fw_name);
-	err = request_firmware_nowait(THIS_MODULE, 1, fw_name,
+	err = firmware_request_nowait(THIS_MODULE, 1, fw_name,
 				      rtlpriv->io.dev, GFP_KERNEL, hw,
 				      rtl_fw_cb);
 	if (err) {
@@ -224,7 +224,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
 	}
 	/*load wowlan firmware*/
 	pr_info("Using firmware %s\n", wowlan_fw_name);
-	err = request_firmware_nowait(THIS_MODULE, 1,
+	err = firmware_request_nowait(THIS_MODULE, 1,
 				      wowlan_fw_name,
 				      rtlpriv->io.dev, GFP_KERNEL, hw,
 				      rtl_wowlan_fw_cb);
