@@ -86,21 +86,6 @@ static inline int firmware_request_into_buf(const struct firmware **firmware_p,
 
 #endif
 
-/*
- * Mapping to the old scheme. This mapping will eventually be removed, once we
- * move all subsystems to the new naming scheme. To convert a subsystem:
- *
- * make coccicheck COCCI=scripts/coccinelle/cross-tree/firmware-api-rename.cocci \
- * 	MODE=patch \
- * 	M=path-to-subsys/ \
- * 	SPFLAGS="--in-place"
- */
-#define request_firmware		firmware_request
-#define request_firmware_nowait		firmware_request_nowait
-#define request_firmware_direct		firmware_request_direct
-#define request_firmware_into_buf	firmware_request_into_buf
-#define release_firmware		firmware_release
-
 int firmware_request_cache(struct device *device, const char *name);
 
 #endif
