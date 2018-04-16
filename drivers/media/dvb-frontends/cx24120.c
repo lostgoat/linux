@@ -1366,7 +1366,7 @@ static int cx24120_init(struct dvb_frontend *fe)
 		ret = -EREMOTEIO;
 	}
 	cx24120_writereg(state, 0xdc, 0x00);
-	firmware_release(fw);
+	release_firmware(fw);
 	if (ret != 0)
 		return ret;
 

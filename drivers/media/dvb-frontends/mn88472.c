@@ -429,7 +429,7 @@ static int mn88472_init(struct dvb_frontend *fe)
 	if (!(utmp & 0x01))
 		goto warm;
 
-	ret = firmware_request(&firmware, name, &client->dev);
+	ret = request_firmware(&firmware, name, &client->dev);
 	if (ret) {
 		dev_err(&client->dev, "firmware file '%s' not found\n", name);
 		goto err;
@@ -467,7 +467,7 @@ static int mn88472_init(struct dvb_frontend *fe)
 	if (ret)
 		goto err_release_firmware;
 
-	firmware_release(firmware);
+	release_firmware(firmware);
 warm:
 	/* TS config */
 	switch (dev->ts_mode) {
@@ -504,7 +504,7 @@ warm:
 
 	return 0;
 err_release_firmware:
-	firmware_release(firmware);
+	release_firmware(firmware);
 err:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

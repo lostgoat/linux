@@ -186,7 +186,7 @@ int as102_fw_upload(struct as10x_bus_adapter_t *bus_adap)
 	}
 
 	/* request kernel to locate firmware file: part1 */
-	errno = firmware_request(&firmware, fw1, &dev->dev);
+	errno = request_firmware(&firmware, fw1, &dev->dev);
 	if (errno < 0) {
 		pr_err("%s: unable to locate firmware file: %s\n",
 		       DRIVER_NAME, fw1);
@@ -203,14 +203,14 @@ int as102_fw_upload(struct as10x_bus_adapter_t *bus_adap)
 
 	pr_info("%s: firmware: %s loaded with success\n",
 		DRIVER_NAME, fw1);
-	firmware_release(firmware);
+	release_firmware(firmware);
 	firmware = NULL;
 
 	/* wait for boot to complete */
 	mdelay(100);
 
 	/* request kernel to locate firmware file: part2 */
-	errno = firmware_request(&firmware, fw2, &dev->dev);
+	errno = request_firmware(&firmware, fw2, &dev->dev);
 	if (errno < 0) {
 		pr_err("%s: unable to locate firmware file: %s\n",
 		       DRIVER_NAME, fw2);
@@ -229,7 +229,7 @@ int as102_fw_upload(struct as10x_bus_adapter_t *bus_adap)
 		DRIVER_NAME, fw2);
 error:
 	kfree(cmd_buf);
-	firmware_release(firmware);
+	release_firmware(firmware);
 
 	return errno;
 }

@@ -797,7 +797,7 @@ static int atomisp_open(struct file *file)
 			goto error;
 		}
 		/* No need to keep FW in memory anymore. */
-		firmware_release(isp->firmware);
+		release_firmware(isp->firmware);
 		isp->firmware = NULL;
 		isp->css_env.isp_css_fw.data = NULL;
 	}

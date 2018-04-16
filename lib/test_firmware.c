@@ -128,7 +128,7 @@ static void __test_release_all_firmware(void)
 	for (i = 0; i < test_fw_config->num_requests; i++) {
 		req = &test_fw_config->reqs[i];
 		if (req->fw)
-			firmware_release(req->fw);
+			release_firmware(req->fw);
 	}
 
 	vfree(test_fw_config->reqs);
@@ -460,9 +460,9 @@ static ssize_t trigger_request_store(struct device *dev,
 	pr_info("loading '%s'\n", name);
 
 	mutex_lock(&test_fw_mutex);
-	firmware_release(test_firmware);
+	release_firmware(test_firmware);
 	test_firmware = NULL;
-	rc = firmware_request(&test_firmware, name, dev);
+	rc = request_firmware(&test_firmware, name, dev);
 	if (rc) {
 		pr_info("load of '%s' failed: %d\n", name, rc);
 		goto out;
@@ -501,9 +501,9 @@ static ssize_t trigger_async_request_store(struct device *dev,
 	pr_info("loading '%s'\n", name);
 
 	mutex_lock(&test_fw_mutex);
-	firmware_release(test_firmware);
+	release_firmware(test_firmware);
 	test_firmware = NULL;
-	rc = firmware_request_nowait(THIS_MODULE, 1, name, dev, GFP_KERNEL,
+	rc = request_firmware_nowait(THIS_MODULE, 1, name, dev, GFP_KERNEL,
 				     NULL, trigger_async_request_cb);
 	if (rc) {
 		pr_info("async load of '%s' failed: %d\n", name, rc);
@@ -544,9 +544,9 @@ static ssize_t trigger_custom_fallback_store(struct device *dev,
 	pr_info("loading '%s' using custom fallback mechanism\n", name);
 
 	mutex_lock(&test_fw_mutex);
-	firmware_release(test_firmware);
+	release_firmware(test_firmware);
 	test_firmware = NULL;
-	rc = firmware_request_nowait(THIS_MODULE, FW_ACTION_NOHOTPLUG, name,
+	rc = request_firmware_nowait(THIS_MODULE, FW_ACTION_NOHOTPLUG, name,
 				     dev, GFP_KERNEL, NULL,
 				     trigger_async_request_cb);
 	if (rc) {
@@ -742,7 +742,7 @@ ssize_t trigger_batched_requests_async_store(struct device *dev,
 		req->fw = NULL;
 		req->idx = i;
 		init_completion(&req->completion);
-		rc = firmware_request_nowait(THIS_MODULE, send_uevent,
+		rc = request_firmware_nowait(THIS_MODULE, send_uevent,
 					     req->name,
 					     dev, GFP_KERNEL, req,
 					     trigger_batched_cb);
@@ -910,7 +910,7 @@ module_init(test_firmware_init);
 static void __exit test_firmware_exit(void)
 {
 	mutex_lock(&test_fw_mutex);
-	firmware_release(test_firmware);
+	release_firmware(test_firmware);
 	misc_deregister(&test_fw_misc_device);
 	__test_firmware_config_free();
 	kfree(test_fw_config);

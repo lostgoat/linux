@@ -145,7 +145,7 @@ mt76pci_load_rom_patch(struct mt76x2_dev *dev)
 		goto out;
 	}
 
-	ret = firmware_request(&fw, MT7662_ROM_PATCH, dev->mt76.dev);
+	ret = request_firmware(&fw, MT7662_ROM_PATCH, dev->mt76.dev);
 	if (ret)
 		goto out;
 
@@ -178,7 +178,7 @@ out:
 	/* release semaphore */
 	if (rom_protect)
 		mt76_wr(dev, MT_MCU_SEMAPHORE_03, 1);
-	firmware_release(fw);
+	release_firmware(fw);
 	return ret;
 }
 
@@ -191,7 +191,7 @@ mt76pci_load_firmware(struct mt76x2_dev *dev)
 	__le32 *cur;
 	u32 offset, val;
 
-	ret = firmware_request(&fw, MT7662_FIRMWARE, dev->mt76.dev);
+	ret = request_firmware(&fw, MT7662_FIRMWARE, dev->mt76.dev);
 	if (ret)
 		return ret;
 
@@ -251,19 +251,19 @@ mt76pci_load_firmware(struct mt76x2_dev *dev)
 
 	if (!i) {
 		dev_err(dev->mt76.dev, "Firmware failed to start\n");
-		firmware_release(fw);
+		release_firmware(fw);
 		return -ETIMEDOUT;
 	}
 
 	dev_info(dev->mt76.dev, "Firmware running!\n");
 
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 
 error:
 	dev_err(dev->mt76.dev, "Invalid firmware\n");
-	firmware_release(fw);
+	release_firmware(fw);
 	return -ENOENT;
 }
 

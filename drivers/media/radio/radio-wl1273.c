@@ -510,7 +510,7 @@ static int wl1273_fm_upload_firmware_patch(struct wl1273_device *radio)
 	 * Uploading the firmware patch is not always necessary,
 	 * so we only print an info message.
 	 */
-	if (firmware_request(&fw_p, fw_name, dev)) {
+	if (request_firmware(&fw_p, fw_name, dev)) {
 		dev_info(dev, "%s - %s not found\n", __func__, fw_name);
 
 		return 0;
@@ -531,7 +531,7 @@ static int wl1273_fm_upload_firmware_patch(struct wl1273_device *radio)
 
 	dev_dbg(dev, "%s - download OK, r: %d\n", __func__, r);
 out:
-	firmware_release(fw_p);
+	release_firmware(fw_p);
 	return r;
 }
 

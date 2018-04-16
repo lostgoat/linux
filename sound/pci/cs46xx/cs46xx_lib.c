@@ -405,7 +405,7 @@ static int load_firmware(struct snd_cs46xx *chip,
 	char fw_path[32];
 
 	sprintf(fw_path, "cs46xx/%s", fw_name);
-	err = firmware_request(&fw, fw_path, &chip->pci->dev);
+	err = request_firmware(&fw, fw_path, &chip->pci->dev);
 	if (err < 0)
 		return err;
 	fwsize = fw->size / 4;
@@ -468,14 +468,14 @@ static int load_firmware(struct snd_cs46xx *chip,
 	}
 
 	*module_ret = module;
-	firmware_release(fw);
+	release_firmware(fw);
 	return 0;
 
  error_inval:
 	err = -EINVAL;
  error:
 	free_module_desc(module);
-	firmware_release(fw);
+	release_firmware(fw);
 	return err;
 }
 
@@ -517,7 +517,7 @@ static int load_firmware(struct snd_cs46xx *chip)
 	const struct firmware *fw;
 	int i, size, err;
 
-	err = firmware_request(&fw, "cs46xx/ba1", &chip->pci->dev);
+	err = request_firmware(&fw, "cs46xx/ba1", &chip->pci->dev);
 	if (err < 0)
 		return err;
 	if (fw->size != sizeof(*chip->ba1)) {
@@ -541,7 +541,7 @@ static int load_firmware(struct snd_cs46xx *chip)
 		err = -EINVAL;
 
  error:
-	firmware_release(fw);
+	release_firmware(fw);
 	return err;
 }
 

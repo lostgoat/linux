@@ -652,7 +652,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	skb_queue_head_init(&data->pending_q);
 	skb_queue_head_init(&data->completed_q);
 
-	if (firmware_request(&firmware, "bfubase.frm", &udev->dev) < 0) {
+	if (request_firmware(&firmware, "bfubase.frm", &udev->dev) < 0) {
 		BT_ERR("Firmware request failed");
 		goto done;
 	}
@@ -664,7 +664,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 		goto release;
 	}
 
-	firmware_release(firmware);
+	release_firmware(firmware);
 
 	/* Initialize and register HCI device */
 	hdev = hci_alloc_dev();
@@ -697,7 +697,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	return 0;
 
 release:
-	firmware_release(firmware);
+	release_firmware(firmware);
 
 done:
 	return -EIO;

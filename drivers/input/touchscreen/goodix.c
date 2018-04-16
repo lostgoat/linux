@@ -757,7 +757,7 @@ static void goodix_config_cb(const struct firmware *cfg, void *ctx)
 	goodix_configure_dev(ts);
 
 err_release_cfg:
-	firmware_release(cfg);
+	release_firmware(cfg);
 	complete_all(&ts->firmware_loading_complete);
 }
 
@@ -816,7 +816,7 @@ static int goodix_ts_probe(struct i2c_client *client,
 		if (!ts->cfg_name)
 			return -ENOMEM;
 
-		error = firmware_request_nowait(THIS_MODULE, true, ts->cfg_name,
+		error = request_firmware_nowait(THIS_MODULE, true, ts->cfg_name,
 						&client->dev, GFP_KERNEL, ts,
 						goodix_config_cb);
 		if (error) {

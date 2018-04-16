@@ -70,7 +70,7 @@ int iop_fw_load_spu(const unsigned char *fw_name, unsigned int spu_inst)
 		return -ENODEV;
 
 	/* get firmware */
-	retval = firmware_request(&fw_entry,
+	retval = request_firmware(&fw_entry,
 				  fw_name,
 				  &iop_spu_device[spu_inst]);
 	if (retval != 0)
@@ -122,7 +122,7 @@ int iop_fw_load_spu(const unsigned char *fw_name, unsigned int spu_inst)
 	(void) REG_RD(iop_sw_cpu, regi_iop_sw_cpu, rs_mc_data);
 
  out:
-	firmware_release(fw_entry);
+	release_firmware(fw_entry);
 	return retval;
 }
 
@@ -135,7 +135,7 @@ int iop_fw_load_mpu(unsigned char *fw_name)
 	int retval, i;
 
 	/* get firmware */
-	retval = firmware_request(&fw_entry, fw_name, &iop_mpu_device);
+	retval = request_firmware(&fw_entry, fw_name, &iop_mpu_device);
 	if (retval != 0)
 	{
 		printk(KERN_ERR
@@ -162,7 +162,7 @@ int iop_fw_load_mpu(unsigned char *fw_name)
 	}
 
  out:
-	firmware_release(fw_entry);
+	release_firmware(fw_entry);
 	return retval;
 }
 

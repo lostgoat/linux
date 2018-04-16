@@ -296,7 +296,7 @@ static int silead_ts_load_fw(struct i2c_client *client)
 
 	dev_dbg(dev, "Firmware file name: %s", data->fw_name);
 
-	error = firmware_request(&fw, data->fw_name, dev);
+	error = request_firmware(&fw, data->fw_name, dev);
 	if (error) {
 		dev_err(dev, "Firmware request error %d\n", error);
 		return error;
@@ -316,7 +316,7 @@ static int silead_ts_load_fw(struct i2c_client *client)
 		}
 	}
 
-	firmware_release(fw);
+	release_firmware(fw);
 	return error ?: 0;
 }
 

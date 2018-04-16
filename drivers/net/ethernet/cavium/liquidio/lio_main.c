@@ -2074,17 +2074,17 @@ static int load_firmware(struct octeon_device *oct)
 		octeon_get_conf(oct)->card_name, tmp_fw_type,
 		LIO_FW_NAME_SUFFIX);
 
-	ret = firmware_request(&fw, fw_name, &oct->pci_dev->dev);
+	ret = request_firmware(&fw, fw_name, &oct->pci_dev->dev);
 	if (ret) {
 		dev_err(&oct->pci_dev->dev, "Request firmware failed. Could not find file %s.\n.",
 			fw_name);
-		firmware_release(fw);
+		release_firmware(fw);
 		return ret;
 	}
 
 	ret = octeon_download_firmware(oct, fw->data, fw->size);
 
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

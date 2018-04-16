@@ -9,7 +9,7 @@ static int ast_load_dp501_microcode(struct drm_device *dev)
 {
 	struct ast_private *ast = dev->dev_private;
 
-	return firmware_request(&ast->dp501_fw, "ast_dp501_fw.bin", dev->dev);
+	return request_firmware(&ast->dp501_fw, "ast_dp501_fw.bin", dev->dev);
 }
 
 static void send_ack(struct ast_private *ast)
@@ -437,6 +437,6 @@ void ast_release_firmware(struct drm_device *dev)
 {
 	struct ast_private *ast = dev->dev_private;
 
-	firmware_release(ast->dp501_fw);
+	release_firmware(ast->dp501_fw);
 	ast->dp501_fw = NULL;
 }

@@ -455,7 +455,7 @@ static int obtain_one_firmware(struct hfi1_devdata *dd, const char *name,
 
 	memset(fdet, 0, sizeof(*fdet));
 
-	ret = firmware_request(&fdet->fw, name, &dd->pcidev->dev);
+	ret = request_firmware(&fdet->fw, name, &dd->pcidev->dev);
 	if (ret) {
 		dd_dev_warn(dd, "cannot find firmware \"%s\", err %d\n",
 			    name, ret);
@@ -568,7 +568,7 @@ done:
 
 static void dispose_one_firmware(struct firmware_details *fdet)
 {
-	firmware_release(fdet->fw);
+	release_firmware(fdet->fw);
 	/* erase all previous information */
 	memset(fdet, 0, sizeof(*fdet));
 }

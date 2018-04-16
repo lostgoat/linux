@@ -429,7 +429,7 @@ static void update_edgeport_E2PROM(struct edgeport_serial *edge_serial)
 	} else {
 		dev_dbg(dev, "Boot Image -- already up to date\n");
 	}
-	firmware_release(fw);
+	release_firmware(fw);
 }
 
 #if 0
@@ -2817,7 +2817,7 @@ static void load_application_firmware(struct edgeport_serial *edge_serial)
 				    USB_REQUEST_ION_EXEC_DL_CODE,
 				    0x40, 0x4000, 0x0001, NULL, 0, 3000);
 
-	firmware_release(fw);
+	release_firmware(fw);
 }
 
 

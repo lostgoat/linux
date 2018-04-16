@@ -3873,7 +3873,7 @@ static void __exit
 bnad_module_exit(void)
 {
 	pci_unregister_driver(&bnad_pci_driver);
-	firmware_release(bfi_fw);
+	release_firmware(bfi_fw);
 }
 
 module_init(bnad_module_init);

@@ -339,5 +339,5 @@ err:
 
 out:
 	/* No need to keep that firmware laying around anymore */
-	firmware_release(fw);
+	release_firmware(fw);
 }

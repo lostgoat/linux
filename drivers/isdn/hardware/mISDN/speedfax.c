@@ -391,7 +391,7 @@ setup_instance(struct sfax_hw *card)
 	card->isar.name = card->name;
 	card->isar.owner = THIS_MODULE;
 
-	err = firmware_request(&firmware, "isdn/ISAR.BIN", &card->pdev->dev);
+	err = request_firmware(&firmware, "isdn/ISAR.BIN", &card->pdev->dev);
 	if (err < 0) {
 		pr_info("%s: firmware request failed %d\n",
 			card->name, err);
@@ -427,7 +427,7 @@ setup_instance(struct sfax_hw *card)
 		goto error_init;
 	err = card->isar.firmware(&card->isar, firmware->data, firmware->size);
 	if (!err)  {
-		firmware_release(firmware);
+		release_firmware(firmware);
 		sfax_cnt++;
 		pr_notice("SpeedFax %d cards installed\n", sfax_cnt);
 		return 0;
@@ -441,7 +441,7 @@ error:
 error_setup:
 	card->isac.release(&card->isac);
 	card->isar.release(&card->isar);
-	firmware_release(firmware);
+	release_firmware(firmware);
 error_fw:
 	pci_disable_device(card->pdev);
 	write_lock_irqsave(&card_lock, flags);

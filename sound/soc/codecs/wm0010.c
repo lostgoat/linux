@@ -359,7 +359,7 @@ static int wm0010_firmware_load(const char *name, struct snd_soc_codec *codec)
 
 	INIT_LIST_HEAD(&xfer_list);
 
-	ret = firmware_request(&fw, name, codec->dev);
+	ret = request_firmware(&fw, name, codec->dev);
 	if (ret != 0) {
 		dev_err(codec->dev, "Failed to request application(%s): %d\n",
 			name, ret);
@@ -492,7 +492,7 @@ abort1:
 	}
 
 abort:
-	firmware_release(fw);
+	release_firmware(fw);
 	return ret;
 }
 
@@ -508,7 +508,7 @@ static int wm0010_stage2_load(struct snd_soc_codec *codec)
 	int i;
 	int ret = 0;
 
-	ret = firmware_request(&fw, "wm0010_stage2.bin", codec->dev);
+	ret = request_firmware(&fw, "wm0010_stage2.bin", codec->dev);
 	if (ret != 0) {
 		dev_err(codec->dev, "Failed to request stage2 loader: %d\n",
 			ret);
@@ -565,7 +565,7 @@ abort:
 abort1:
 	kfree(img);
 abort2:
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

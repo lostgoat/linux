@@ -533,7 +533,7 @@ int npe_load_firmware(struct npe *npe, const char *name, struct device *dev)
 	int i, j, err, data_size, instr_size, blocks, table_end;
 	u32 cmd;
 
-	if ((err = firmware_request(&fw_entry, name, dev)) != 0)
+	if ((err = request_firmware(&fw_entry, name, dev)) != 0)
 		return err;
 
 	err = -EINVAL;
@@ -654,7 +654,7 @@ int npe_load_firmware(struct npe *npe, const char *name, struct device *dev)
 	npe_start(npe);
 	if (!npe_running(npe))
 		print_npe(KERN_ERR, npe, "unable to start\n");
-	firmware_release(fw_entry);
+	release_firmware(fw_entry);
 	return 0;
 
 too_big:
@@ -663,7 +663,7 @@ too_big:
 		  blk->type == FW_BLOCK_TYPE_INSTR ? 'I' : 'D',
 		  cb->npe_addr, cb->size);
 err:
-	firmware_release(fw_entry);
+	release_firmware(fw_entry);
 	return err;
 }
 

@@ -903,19 +903,19 @@ static int load_firmware(struct drxd_state *state, const char *fw_name)
 {
 	const struct firmware *fw;
 
-	if (firmware_request(&fw, fw_name, state->dev) < 0) {
+	if (request_firmware(&fw, fw_name, state->dev) < 0) {
 		printk(KERN_ERR "drxd: firmware load failure [%s]\n", fw_name);
 		return -EIO;
 	}
 
 	state->microcode = kmemdup(fw->data, fw->size, GFP_KERNEL);
 	if (!state->microcode) {
-		firmware_release(fw);
+		release_firmware(fw);
 		return -ENOMEM;
 	}
 
 	state->microcode_length = fw->size;
-	firmware_release(fw);
+	release_firmware(fw);
 	return 0;
 }
 

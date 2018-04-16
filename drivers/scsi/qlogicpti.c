@@ -474,7 +474,7 @@ static int qlogicpti_load_firmware(struct qlogicpti *qpti)
 	unsigned long flags;
 	int i, timeout;
 
-	err = firmware_request(&fw, fwname, &qpti->op->dev);
+	err = request_firmware(&fw, fwname, &qpti->op->dev);
 	if (err) {
 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
 		       fwname, err);
@@ -633,7 +633,7 @@ static int qlogicpti_load_firmware(struct qlogicpti *qpti)
 out:
 	spin_unlock_irqrestore(host->host_lock, flags);
 outfirm:
-	firmware_release(fw);
+	release_firmware(fw);
 	return err;
 }
 

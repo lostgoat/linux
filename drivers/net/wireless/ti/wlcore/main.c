@@ -753,7 +753,7 @@ static int wl12xx_fetch_firmware(struct wl1271 *wl, bool plt)
 
 	wl1271_debug(DEBUG_BOOT, "booting firmware %s", fw_name);
 
-	ret = firmware_request(&fw, fw_name, wl->dev);
+	ret = request_firmware(&fw, fw_name, wl->dev);
 
 	if (ret < 0) {
 		wl1271_error("could not get firmware %s: %d", fw_name, ret);
@@ -782,7 +782,7 @@ static int wl12xx_fetch_firmware(struct wl1271 *wl, bool plt)
 	ret = 0;
 	wl->fw_type = fw_type;
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }
@@ -6571,7 +6571,7 @@ out_free_nvs:
 	kfree(wl->nvs);
 
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	complete_all(&wl->nvs_loading_complete);
 }
 
@@ -6590,7 +6590,7 @@ int wlcore_probe(struct wl1271 *wl, struct platform_device *pdev)
 
 	if (pdev_data->family && pdev_data->family->nvs_name) {
 		nvs_name = pdev_data->family->nvs_name;
-		ret = firmware_request_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
+		ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
 					      nvs_name, &pdev->dev, GFP_KERNEL,
 					      wl, wlcore_nvs_cb);
 		if (ret < 0) {

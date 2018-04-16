@@ -504,7 +504,7 @@ static void mwl8k_release_fw(const struct firmware **fw)
 {
 	if (*fw == NULL)
 		return;
-	firmware_release(*fw);
+	release_firmware(*fw);
 	*fw = NULL;
 }
 
@@ -533,11 +533,11 @@ static int mwl8k_request_fw(struct mwl8k_priv *priv,
 		mwl8k_release_fw(fw);
 
 	if (nowait)
-		return firmware_request_nowait(THIS_MODULE, 1, fname,
+		return request_firmware_nowait(THIS_MODULE, 1, fname,
 					       &priv->pdev->dev, GFP_KERNEL,
 					       priv, mwl8k_fw_state_machine);
 	else
-		return firmware_request(fw, fname, &priv->pdev->dev);
+		return request_firmware(fw, fname, &priv->pdev->dev);
 }
 
 static int mwl8k_request_firmware(struct mwl8k_priv *priv, char *fw_image,

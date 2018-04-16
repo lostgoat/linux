@@ -293,7 +293,7 @@ static int ttusb_boot_dsp(struct ttusb *ttusb)
 	int i, err;
 	u8 b[40];
 
-	err = firmware_request(&fw, "ttusb-budget/dspbootcode.bin",
+	err = request_firmware(&fw, "ttusb-budget/dspbootcode.bin",
 			       &ttusb->dev->dev);
 	if (err) {
 		printk(KERN_ERR "ttusb-budget: failed to request firmware\n");
@@ -334,7 +334,7 @@ static int ttusb_boot_dsp(struct ttusb *ttusb)
 	err = ttusb_cmd(ttusb, b, 4, 0);
 
       done:
-	firmware_release(fw);
+	release_firmware(fw);
 	if (err) {
 		dprintk("%s: usb_bulk_msg() failed, return value %i!\n",
 			__func__, err);
@@ -1141,7 +1141,7 @@ static int philips_tdm1316l_request_firmware(struct dvb_frontend* fe, const stru
 {
 	struct ttusb* ttusb = (struct ttusb*) fe->dvb->priv;
 
-	return firmware_request(fw, name, &ttusb->dev->dev);
+	return request_firmware(fw, name, &ttusb->dev->dev);
 }
 
 static struct tda1004x_config philips_tdm1316l_config = {

@@ -59,14 +59,14 @@ static inline int request_ihex_firmware(const struct firmware **fw,
 	const struct firmware *lfw;
 	int ret;
 
-	ret = firmware_request(&lfw, fw_name, dev);
+	ret = request_firmware(&lfw, fw_name, dev);
 	if (ret)
 		return ret;
 	ret = ihex_validate_fw(lfw);
 	if (ret) {
 		dev_err(dev, "Firmware \"%s\" not valid IHEX records\n",
 			fw_name);
-		firmware_release(lfw);
+		release_firmware(lfw);
 		return ret;
 	}
 	*fw = lfw;

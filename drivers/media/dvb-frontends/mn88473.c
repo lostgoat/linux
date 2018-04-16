@@ -486,7 +486,7 @@ static int mn88473_init(struct dvb_frontend *fe)
 		goto warm;
 
 	/* Request the firmware, this will block and timeout */
-	ret = firmware_request(&fw, name, &client->dev);
+	ret = request_firmware(&fw, name, &client->dev);
 	if (ret) {
 		dev_err(&client->dev, "firmware file '%s' not found\n", name);
 		goto err;
@@ -509,7 +509,7 @@ static int mn88473_init(struct dvb_frontend *fe)
 		}
 	}
 
-	firmware_release(fw);
+	release_firmware(fw);
 
 	/* Parity check of firmware */
 	ret = regmap_read(dev->regmap[0], 0xf8, &uitmp);
@@ -552,7 +552,7 @@ warm:
 
 	return 0;
 err_release_firmware:
-	firmware_release(fw);
+	release_firmware(fw);
 err:
 	dev_dbg(&client->dev, "failed=%d\n", ret);
 	return ret;

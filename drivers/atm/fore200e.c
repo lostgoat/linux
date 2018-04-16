@@ -2504,7 +2504,7 @@ static int fore200e_load_and_start_fw(struct fore200e *fore200e)
 	return err;
 
     sprintf(buf, "%s%s", fore200e->bus->proc_name, FW_EXT);
-    if ((err = firmware_request(&firmware, buf, device)) < 0) {
+    if ((err = request_firmware(&firmware, buf, device)) < 0) {
 	printk(FORE200E "problem loading firmware image %s\n", fore200e->bus->model_name);
 	return err;
     }
@@ -2546,7 +2546,7 @@ static int fore200e_load_and_start_fw(struct fore200e *fore200e)
     err = 0;
 
 release:
-    firmware_release(firmware);
+    release_firmware(firmware);
     return err;
 }
 

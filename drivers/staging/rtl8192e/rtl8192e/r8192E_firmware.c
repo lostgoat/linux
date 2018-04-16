@@ -108,7 +108,7 @@ static bool _rtl92e_fw_prepare(struct net_device *dev, struct rt_fw_blob *blob,
 	int rc, i;
 	bool ret = true;
 
-	rc = firmware_request(&fw, name, &dev->dev);
+	rc = request_firmware(&fw, name, &dev->dev);
 	if (rc < 0)
 		return false;
 
@@ -133,7 +133,7 @@ static bool _rtl92e_fw_prepare(struct net_device *dev, struct rt_fw_blob *blob,
 		*data = swab32p(data);
 	}
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return ret;
 }
 

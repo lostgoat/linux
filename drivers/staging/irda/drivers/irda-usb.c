@@ -1070,7 +1070,7 @@ static int stir421x_patch_device(struct irda_usb_cb *self)
          */
         sprintf(stir421x_fw_name, "4210%4X.sb",
 		le16_to_cpu(self->usbdev->descriptor.bcdDevice));
-        ret = firmware_request(&fw, stir421x_fw_name, &self->usbdev->dev);
+        ret = request_firmware(&fw, stir421x_fw_name, &self->usbdev->dev);
         if (ret < 0)
                 return ret;
 
@@ -1126,7 +1126,7 @@ static int stir421x_patch_device(struct irda_usb_cb *self)
                 }
         }
 
-        firmware_release(fw);
+        release_firmware(fw);
 
         return ret;
 }

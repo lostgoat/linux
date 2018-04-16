@@ -1286,7 +1286,7 @@ static const struct firmware *e100_request_firmware(struct nic *nic)
 	 * request_firmware() cannot be used.
 	 */
 	if (!fw)
-		err = firmware_request(&fw, fw_name, &nic->pdev->dev);
+		err = request_firmware(&fw, fw_name, &nic->pdev->dev);
 
 	if (err) {
 		if (required) {
@@ -1308,7 +1308,7 @@ static const struct firmware *e100_request_firmware(struct nic *nic)
 		netif_err(nic, probe, nic->netdev,
 			  "Firmware \"%s\" has wrong size %zu\n",
 			  fw_name, fw->size);
-		firmware_release(fw);
+		release_firmware(fw);
 		return ERR_PTR(-EINVAL);
 	}
 
@@ -1322,7 +1322,7 @@ static const struct firmware *e100_request_firmware(struct nic *nic)
 		netif_err(nic, probe, nic->netdev,
 			  "\"%s\" has bogus offset values (0x%x,0x%x,0x%x)\n",
 			  fw_name, timer, bundle, min_size);
-		firmware_release(fw);
+		release_firmware(fw);
 		return ERR_PTR(-EINVAL);
 	}
 

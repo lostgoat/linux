@@ -482,7 +482,7 @@ static int sigmadsp_firmware_load(struct sigmadsp *sigmadsp, const char *name)
 	u32 crc;
 
 	/* first load the blob */
-	ret = firmware_request(&fw, name, sigmadsp->dev);
+	ret = request_firmware(&fw, name, sigmadsp->dev);
 	if (ret) {
 		pr_debug("%s: request_firmware() failed with %i\n", __func__, ret);
 		goto done;
@@ -536,7 +536,7 @@ static int sigmadsp_firmware_load(struct sigmadsp *sigmadsp, const char *name)
 		sigmadsp_firmware_release(sigmadsp);
 
 done:
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

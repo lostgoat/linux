@@ -755,7 +755,7 @@ static int pcmcia_load_firmware(struct pcmcia_device *dev, char *filename)
 
 	dev_dbg(&dev->dev, "trying to load CIS file %s\n", filename);
 
-	if (firmware_request(&fw, filename, &dev->dev) == 0) {
+	if (request_firmware(&fw, filename, &dev->dev) == 0) {
 		if (fw->size >= CISTPL_MAX_CIS_SIZE) {
 			ret = -EINVAL;
 			dev_err(&dev->dev, "pcmcia: CIS override is too big\n");
@@ -785,7 +785,7 @@ static int pcmcia_load_firmware(struct pcmcia_device *dev, char *filename)
 		pcmcia_parse_uevents(s, PCMCIA_UEVENT_REQUERY);
 	}
  release:
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

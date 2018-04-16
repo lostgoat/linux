@@ -1966,13 +1966,13 @@ static int ucode_init(loader_block *lb, amb_dev *dev)
       break;
     rec = ihex_next_binrec(rec);
   }
-  firmware_release(fw);
+  release_firmware(fw);
   if (!res)
     res = loader_start(lb, dev, start_address);
 
   return res;
 fail:
-  firmware_release(fw);
+  release_firmware(fw);
   PRINTK(KERN_ERR, "Bad microcode data (%s)", errmsg);
   return -EINVAL;
 }

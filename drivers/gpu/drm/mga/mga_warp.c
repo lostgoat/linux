@@ -127,7 +127,7 @@ int mga_warp_install_microcode(drm_mga_private_t *dev_priv)
 	}
 
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return rc;
 }
 

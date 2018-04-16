@@ -1489,7 +1489,7 @@ static int ar5523_load_firmware(struct usb_device *dev)
 	int foolen; /* XXX(hch): handle short transfers */
 	int error = -ENXIO;
 
-	if (firmware_request(&fw, AR5523_FIRMWARE_FILE, &dev->dev)) {
+	if (request_firmware(&fw, AR5523_FIRMWARE_FILE, &dev->dev)) {
 		dev_err(&dev->dev, "no firmware found: %s\n",
 			AR5523_FIRMWARE_FILE);
 		return -ENOENT;
@@ -1567,7 +1567,7 @@ static int ar5523_load_firmware(struct usb_device *dev)
  out_free_txblock:
 	kfree(txblock);
  out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return error;
 }
 

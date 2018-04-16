@@ -250,7 +250,7 @@ snd_wavefront_fx_start (snd_wavefront_t *dev)
 	if (dev->fx_initialized)
 		return 0;
 
-	err = firmware_request(&firmware, "yamaha/yss225_registers.bin",
+	err = request_firmware(&firmware, "yamaha/yss225_registers.bin",
 			       dev->card->dev);
 	if (err < 0) {
 		err = -1;
@@ -278,7 +278,7 @@ snd_wavefront_fx_start (snd_wavefront_t *dev)
 	err = 0;
 
 out:
-	firmware_release(firmware);
+	release_firmware(firmware);
 	return err;
 }
 

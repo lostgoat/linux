@@ -1511,7 +1511,7 @@ void i2400m_fw_destroy(struct kref *kref)
 {
 	struct i2400m_fw *i2400m_fw =
 		container_of(kref, struct i2400m_fw, kref);
-	firmware_release(i2400m_fw->fw);
+	release_firmware(i2400m_fw->fw);
 	kfree(i2400m_fw);
 }
 
@@ -1581,7 +1581,7 @@ int i2400m_dev_bootstrap(struct i2400m *i2400m, enum i2400m_bri flags)
 			break;
 		}
 		d_printf(1, dev, "trying firmware %s (%d)\n", fw_name, itr);
-		ret = firmware_request(&fw, fw_name, dev);
+		ret = request_firmware(&fw, fw_name, dev);
 		if (ret < 0) {
 			dev_err(dev, "fw %s: cannot load file: %d\n",
 				fw_name, ret);
@@ -1589,7 +1589,7 @@ int i2400m_dev_bootstrap(struct i2400m *i2400m, enum i2400m_bri flags)
 		}
 		i2400m->fw_name = fw_name;
 		ret = i2400m_fw_bootstrap(i2400m, fw, flags);
-		firmware_release(fw);
+		release_firmware(fw);
 		if (ret >= 0)	/* firmware loaded successfully */
 			break;
 		i2400m->fw_name = NULL;
@@ -1627,7 +1627,7 @@ void i2400m_fw_cache(struct i2400m *i2400m)
 	if (i2400m_fw == NULL)
 		goto out;
 	kref_init(&i2400m_fw->kref);
-	result = firmware_request(&i2400m_fw->fw, i2400m->fw_name, dev);
+	result = request_firmware(&i2400m_fw->fw, i2400m->fw_name, dev);
 	if (result < 0) {
 		dev_err(dev, "firmware %s: failed to cache: %d\n",
 			i2400m->fw_name, result);

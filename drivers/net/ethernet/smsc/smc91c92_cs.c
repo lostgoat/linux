@@ -646,7 +646,7 @@ static int osi_load_firmware(struct pcmcia_device *link)
 	const struct firmware *fw;
 	int i, err;
 
-	err = firmware_request(&fw, FIRMWARE_NAME, &link->dev);
+	err = request_firmware(&fw, FIRMWARE_NAME, &link->dev);
 	if (err) {
 		pr_err("Failed to load firmware \"%s\"\n", FIRMWARE_NAME);
 		return err;
@@ -657,7 +657,7 @@ static int osi_load_firmware(struct pcmcia_device *link)
 	    outb(fw->data[i], link->resource[0]->start + 2);
 	    udelay(50);
 	}
-	firmware_release(fw);
+	release_firmware(fw);
 	return err;
 }
 

@@ -1008,7 +1008,7 @@ static int download_fw(struct edgeport_serial *serial)
 	const char *fw_name = "edgeport/down3.bin";
 	struct edgeport_fw_hdr *fw_hdr;
 
-	status = firmware_request(&fw, fw_name, dev);
+	status = request_firmware(&fw, fw_name, dev);
 	if (status) {
 		dev_err(dev, "Failed to load image \"%s\" err %d\n",
 				fw_name, status);
@@ -1062,7 +1062,7 @@ static int download_fw(struct edgeport_serial *serial)
 	}
 
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return status;
 }
 

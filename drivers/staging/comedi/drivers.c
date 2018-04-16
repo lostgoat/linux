@@ -800,10 +800,10 @@ int comedi_load_firmware(struct comedi_device *dev,
 	if (!cb)
 		return -EINVAL;
 
-	ret = firmware_request(&fw, name, device);
+	ret = request_firmware(&fw, name, device);
 	if (ret == 0) {
 		ret = cb(dev, fw->data, fw->size, context);
-		firmware_release(fw);
+		release_firmware(fw);
 	}
 
 	return ret < 0 ? ret : 0;

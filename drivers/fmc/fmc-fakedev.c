@@ -107,7 +107,7 @@ static int ff_reprogram(struct fmc_device *fmc, struct fmc_driver *drv,
 	}
 
 	dev_info(&fmc->dev, "reprogramming with %s\n", gw);
-	ret = firmware_request(&fw, gw, &fmc->dev);
+	ret = request_firmware(&fw, gw, &fmc->dev);
 	if (ret < 0) {
 		dev_warn(&fmc->dev, "request firmware \"%s\": error %i\n",
 			 gw, ret);
@@ -117,7 +117,7 @@ static int ff_reprogram(struct fmc_device *fmc, struct fmc_driver *drv,
 	fmc->flags |= FMC_DEVICE_HAS_CUSTOM;
 
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return ret;
 }
 
@@ -318,14 +318,14 @@ static int ff_init(void)
 	for (i = 0; i < ff_nr_eeprom; i++) {
 		if (!strlen(ff_eeprom[i]))
 			continue;
-		ret = firmware_request(&fw, ff_eeprom[i], &ff->dev);
+		ret = request_firmware(&fw, ff_eeprom[i], &ff->dev);
 		if (ret < 0) {
 			dev_err(&ff->dev, "Mezzanine %i: can't load \"%s\" "
 				"(error %i)\n", i, ff_eeprom[i], -ret);
 		} else {
 			len = min_t(size_t, fw->size, (size_t)FF_EEPROM_SIZE);
 			memcpy(ff_eeimg[i], fw->data, len);
-			firmware_release(fw);
+			release_firmware(fw);
 			dev_info(&ff->dev, "Mezzanine %i: eeprom \"%s\"\n", i,
 				ff_eeprom[i]);
 		}

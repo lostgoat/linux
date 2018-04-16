@@ -329,7 +329,7 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
 
 	mgr->state = FPGA_MGR_STATE_FIRMWARE_REQ;
 
-	ret = firmware_request(&fw, image_name, dev);
+	ret = request_firmware(&fw, image_name, dev);
 	if (ret) {
 		mgr->state = FPGA_MGR_STATE_FIRMWARE_REQ_ERR;
 		dev_err(dev, "Error requesting firmware %s\n", image_name);
@@ -338,7 +338,7 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
 
 	ret = fpga_mgr_buf_load(mgr, info, fw->data, fw->size);
 
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

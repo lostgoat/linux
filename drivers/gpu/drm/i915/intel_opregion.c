@@ -929,7 +929,7 @@ static int intel_load_vbt_firmware(struct drm_i915_private *dev_priv)
 	if (!name || !*name)
 		return -ENOENT;
 
-	ret = firmware_request(&fw, name, &dev_priv->drm.pdev->dev);
+	ret = request_firmware(&fw, name, &dev_priv->drm.pdev->dev);
 	if (ret) {
 		DRM_ERROR("Requesting VBT firmware \"%s\" failed (%d)\n",
 			  name, ret);
@@ -951,7 +951,7 @@ static int intel_load_vbt_firmware(struct drm_i915_private *dev_priv)
 		ret = -EINVAL;
 	}
 
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return ret;
 }

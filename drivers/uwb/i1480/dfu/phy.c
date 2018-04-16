@@ -169,7 +169,7 @@ int i1480_phy_fw_upload(struct i1480 *i1480)
 	size_t data_size;
 	u8 phy_stat;
 
-	result = firmware_request(&fw, i1480->phy_fw_name, i1480->dev);
+	result = request_firmware(&fw, i1480->phy_fw_name, i1480->dev);
 	if (result < 0)
 		goto out;
 	/* Loop writing data in chunks as big as possible until done. */
@@ -195,7 +195,7 @@ int i1480_phy_fw_upload(struct i1480 *i1480)
 error_phy_status:
 error_mpi_status:
 error_mpi_write:
-	firmware_release(fw);
+	release_firmware(fw);
 	if (result < 0)
 		dev_err(i1480->dev, "PHY fw '%s': failed to upload (%d), "
 			"power cycle device\n", i1480->phy_fw_name, result);

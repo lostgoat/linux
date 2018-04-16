@@ -415,7 +415,7 @@ int saa7164_downloadfirmware(struct saa7164_dev *dev)
 		printk(KERN_INFO "%s() Waiting for firmware upload (%s)\n",
 			__func__, fwname);
 
-		ret = firmware_request(&fw, fwname, &dev->pci->dev);
+		ret = request_firmware(&fw, fwname, &dev->pci->dev);
 		if (ret) {
 			printk(KERN_ERR "%s() Upload failed. (file not found?)\n",
 			       __func__);
@@ -602,6 +602,6 @@ int saa7164_downloadfirmware(struct saa7164_dev *dev)
 	ret = 0;
 
 out:
-	firmware_release(fw);
+	release_firmware(fw);
 	return ret;
 }

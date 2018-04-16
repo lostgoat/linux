@@ -117,7 +117,7 @@ struct isci_orom *isci_request_firmware(struct pci_dev *pdev, const struct firmw
 	struct isci_orom *orom = NULL, *data;
 	int i, j;
 
-	if (firmware_request(&fw, ISCI_FW_NAME, &pdev->dev) != 0)
+	if (request_firmware(&fw, ISCI_FW_NAME, &pdev->dev) != 0)
 		return NULL;
 
 	if (fw->size < sizeof(*orom))
@@ -150,7 +150,7 @@ struct isci_orom *isci_request_firmware(struct pci_dev *pdev, const struct firmw
 			orom->ctrl[i].phys[j].afe_tx_amp_control3 = 0xe7c03;
 		}
  out:
-	firmware_release(fw);
+	release_firmware(fw);
 
 	return orom;
 }

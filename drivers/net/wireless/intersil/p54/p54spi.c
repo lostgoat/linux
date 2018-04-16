@@ -168,7 +168,7 @@ static int p54spi_request_firmware(struct ieee80211_hw *dev)
 	int ret;
 
 	/* FIXME: should driver use it's own struct device? */
-	ret = firmware_request(&priv->firmware, "3826.arm", &priv->spi->dev);
+	ret = request_firmware(&priv->firmware, "3826.arm", &priv->spi->dev);
 
 	if (ret < 0) {
 		dev_err(&priv->spi->dev, "request_firmware() failed: %d", ret);
@@ -177,7 +177,7 @@ static int p54spi_request_firmware(struct ieee80211_hw *dev)
 
 	ret = p54_parse_firmware(dev, priv->firmware);
 	if (ret) {
-		firmware_release(priv->firmware);
+		release_firmware(priv->firmware);
 		return ret;
 	}
 
@@ -193,7 +193,7 @@ static int p54spi_request_eeprom(struct ieee80211_hw *dev)
 	/* allow users to customize their eeprom.
 	 */
 
-	ret = firmware_request_direct(&eeprom, "3826.eeprom", &priv->spi->dev);
+	ret = request_firmware_direct(&eeprom, "3826.eeprom", &priv->spi->dev);
 	if (ret < 0) {
 #ifdef CONFIG_P54_SPI_DEFAULT_EEPROM
 		dev_info(&priv->spi->dev, "loading default eeprom...\n");
@@ -206,7 +206,7 @@ static int p54spi_request_eeprom(struct ieee80211_hw *dev)
 		dev_info(&priv->spi->dev, "loading user eeprom...\n");
 		ret = p54_parse_eeprom(dev, (void *) eeprom->data,
 				       (int)eeprom->size);
-		firmware_release(eeprom);
+		release_firmware(eeprom);
 	}
 	return ret;
 }
@@ -692,7 +692,7 @@ static int p54spi_remove(struct spi_device *spi)
 
 	gpio_free(p54spi_gpio_power);
 	gpio_free(p54spi_gpio_irq);
-	firmware_release(priv->firmware);
+	release_firmware(priv->firmware);
 
 	mutex_destroy(&priv->mutex);
 
