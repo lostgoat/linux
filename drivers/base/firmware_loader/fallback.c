@@ -536,8 +536,8 @@ exit:
 }
 
 /**
- * fw_load_sysfs_fallback - load a firmware via the syfs fallback mechanism
- * @fw_sysfs: firmware syfs information for the firmware to load
+ * fw_load_sysfs_fallback - load a firmware via the sysfs fallback mechanism
+ * @fw_sysfs: firmware sysfs information for the firmware to load
  * @opt_flags: flags of options, FW_OPT_*
  * @timeout: timeout to wait for the load
  *
