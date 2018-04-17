@@ -124,7 +124,7 @@ static ssize_t timeout_show(struct class *class, struct class_attribute *attr,
 }
 
 /**
- * firmware_timeout_store - set number of seconds to wait for firmware
+ * firmware_timeout_store() - set number of seconds to wait for firmware
  * @class: device class pointer
  * @attr: device attribute pointer
  * @buf: buffer to scan for timeout value
@@ -238,7 +238,7 @@ static int map_fw_priv_pages(struct fw_priv *fw_priv)
 }
 
 /**
- * firmware_loading_store - set value in the 'loading' control file
+ * firmware_loading_store() - set value in the 'loading' control file
  * @dev: device pointer
  * @attr: device attribute pointer
  * @buf: buffer to scan for loading control value
@@ -430,7 +430,7 @@ static int fw_realloc_pages(struct fw_sysfs *fw_sysfs, int min_size)
 }
 
 /**
- * firmware_data_write - write method for firmware
+ * firmware_data_write() - write method for firmware
  * @filp: open sysfs file
  * @kobj: kobject for the device
  * @bin_attr: bin_attr structure
@@ -536,7 +536,7 @@ exit:
 }
 
 /**
- * fw_load_sysfs_fallback - load a firmware via the sysfs fallback mechanism
+ * fw_load_sysfs_fallback() - load a firmware via the sysfs fallback mechanism
  * @fw_sysfs: firmware sysfs information for the firmware to load
  * @opt_flags: flags of options, FW_OPT_*
  * @timeout: timeout to wait for the load
